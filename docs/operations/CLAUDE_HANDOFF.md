@@ -5,6 +5,21 @@ publication text must remain English. Continue implementing; do not replace real
 Oracle experiments with simulated results. Read README, the release report and
 the Git status before changing anything. Preserve existing experimental archives.
 
+## Update: autonomous operation installed (0.2.0-alpha.1, 2026-10-20)
+
+The "next engineering objective" below is now implemented. LAB runs the
+`B2DEV-Genesis-Supervisor` and `B2DEV-Genesis-Watchdog` tasks as the signed-in
+user (Interactive fallback, not SYSTEM, no password). The default policy is GA_ONLY
+12 × 100, with paid AI fixed off by a constraint. Verified progress is published
+to R2 `genesis/live/v1/`. The first autonomous run is #1
+`57fded3aff794d0ca4600dbc02b6dae6`. Control it only with
+`node runtime/genesisctl.mjs` or APEX page 9. Do not start a second supervisor or
+a manual worker against an autonomous run: Oracle refuses the claim with
+ORA-20075. Read [autonomous-operation.md](autonomous-operation.md) and the
+[0.2.0-alpha.1 report](../releases/v0.2.0-alpha.1.md) first. The website live page
+(`/genesis/live.html`) waits for review of website PR #4. The sections below are
+the earlier snapshot and remain true for the recorded archives.
+
 ## Verified handover snapshot
 
 The Haiku comparison is complete and publicly deployed. All 15 runs completed 100
@@ -83,8 +98,7 @@ available. Each current run stops at its configured generation/time boundary.
 
 The public website is a static, recorded replay. It cannot trigger paid calls or
 Oracle execution. Publishing newly completed runs is a separate validated export
-and website deployment step. **A persistent service, reboot recovery and automatic
-run queue/publication daemon have not been installed.** Do not tell the owner the
+and website deployment step. (Before 0.2.0-alpha.1, no persistent service was installed; see the update above.) Do not tell the owner the
 current finite experiment runs forever.
 
 The shared renderer has11 bounded genes and real synthetic controls. Genome/schema

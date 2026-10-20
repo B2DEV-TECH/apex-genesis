@@ -112,4 +112,18 @@ entry genesis-8 (
  }
  }
 )
+entry genesis-9 (
+ label: Autonomous Operations
+ icon {
+ imageIconCssClasses: fa-cogs
+ }
+ layout {
+ sequence: 90
+ }
+ link {
+ target: {
+ page: 9
+ }
+ }
+)
 )

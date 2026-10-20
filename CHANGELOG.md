@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.0-alpha.1 — 2026-10-20
+
+- Autonomous operation: lease-holding Node supervisor, Oracle policy and admission
+  (`apxgen_autonomy`, migration 006) and a durable command queue. Deterministic
+  independent-then-lineage runs, bounded recovery continuations and stagnation actions.
+- Two least-privilege Windows tasks (`B2DEV-Genesis-Supervisor`,
+  `B2DEV-Genesis-Watchdog`): current user, no SYSTEM, no stored password, no
+  power-policy changes. The watchdog never restarts the supervisor after a deliberate stop.
+- Resource limits: storage budget, daily generation cap, disk/memory/CPU throttling,
+  browser recycling and BelowNormal priority.
+- Verified publication of completed generations to R2: immutable hashed run and
+  catalog objects, a single verified pointer, rollback on failure, an allowlist and
+  a secret scan.
+- Native APEX page 9, Autonomous Operations, with server-side OPERATOR authorization.
+  Operator CLI `runtime/genesisctl.mjs`.
+- Website live archive (`/genesis/live.html`) proposed separately. The recorded
+  pilot and Haiku archives are unchanged.
+- `apex-local.ps1` now fails on SQL errors (the byte-order mark no longer swallows
+  `whenever sqlerror`).
+
 ## 0.1.0-alpha.1 — 2026-10-20
 
 - Oracle-owned seeded genetic engine, random-search control, immutable history,

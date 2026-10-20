@@ -1,0 +1,53 @@
+{
+ "test": "autonomy-scheduled-tasks",
+ "version": "0.1.0-alpha.1",
+ "state": "lab",
+ "testedAt": "2026-10-20T22:49:00Z",
+ "outcome": "PASSED",
+ "note": "Exercised against the installed Windows scheduled tasks and the LAB supervisor running autonomous run #1 (57fded3aff794d0ca4600dbc02b6dae6). Account names are omitted; both tasks run as the interactive non-administrator user.",
+ "tasks": {
+  "B2DEV-Genesis-Supervisor": {"logonType": "InteractiveToken", "runLevel": "LeastPrivilege (default)", "system": false, "passwordElement": false, "multipleInstances": "IgnoreNew", "executionTimeLimit": "PT0S", "trigger": "LogonTrigger (current user)", "wakeToRun": false, "batteryStop": false, "command": "conhost.exe --headless node.exe runtime/supervisor.mjs"},
+  "B2DEV-Genesis-Watchdog": {"logonType": "InteractiveToken", "runLevel": "LeastPrivilege (default)", "system": false, "passwordElement": false, "multipleInstances": "IgnoreNew", "executionTimeLimit": "PT2M", "trigger": "TimeTrigger repeating PT5M", "wakeToRun": false, "batteryStop": false, "command": "conhost.exe --headless node.exe runtime/watchdog.mjs"}
+ },
+ "phases": [
+  {
+   "phase": "crash-restart-by-watchdog-task",
+   "action": "taskkill /F /T /PID 27664 (supervisor and its headless browser) at 2026-10-20T22:42:30Z while run #1 was at generation 17",
+   "watchdogCheckedAt": "2026-10-20T22:45:44.594Z",
+   "decision": "CRASHED",
+   "heartbeatAgeSeconds": 207,
+   "watchdogAction": "schtasks /Run B2DEV-Genesis-Supervisor -> started",
+   "newPid": 28116,
+   "leaseLog": "2026-10-20T22:45:45Z Lease acquired by pid 28116 (previous lease expired)",
+   "resumedRun": "57fded3aff794d0ca4600dbc02b6dae6",
+   "checkpointAfterRestart": "generation 17 at 2026-10-20T22:45:46Z",
+   "restartsLastHour": 1,
+   "maxRestartsPerHour": 3
+  },
+  {
+   "phase": "duplicate-instance",
+   "action": "schtasks /Run B2DEV-Genesis-Supervisor while it was running, then node runtime/supervisor.mjs in a console",
+   "taskResult": "scheduled task is currently running (IgnoreNew)",
+   "consoleExitCode": 3,
+   "consoleLog": "2026-10-20T22:47:52.770Z WARN pid 34024 Another supervisor holds the local lock; exiting",
+   "supervisorProcessesAfter": 1,
+   "activeSupervisorPid": 28116
+  },
+  {
+   "phase": "graceful-shutdown-not-restarted",
+   "action": "node runtime/genesisctl.mjs shutdown --wait, then schtasks /Run B2DEV-Genesis-Watchdog",
+   "commandResult": "DONE: Supervisor stopped: Graceful shutdown (stop file)",
+   "runPausedReason": "SUPERVISOR_SHUTDOWN",
+   "watchdogDecision": "DELIBERATELY_STOPPED",
+   "watchdogAction": null
+  },
+  {
+   "phase": "operator-restart",
+   "action": "node runtime/genesisctl.mjs start (runs the scheduled task)",
+   "leaseLog": "2026-10-20T22:48:33Z Lease acquired by pid 5752",
+   "resumed": "2026-10-20T22:48:33Z Resumed run 57fded3aff794d0ca4600dbc02b6dae6",
+   "checkpointAfterRestart": "generation 20 at 2026-10-20T22:48:50Z"
+  }
+ ],
+ "notExercised": ["The AtLogOn trigger has not been observed through a real sign-out/sign-in; the task was started on demand with schtasks /Run."]
+}
