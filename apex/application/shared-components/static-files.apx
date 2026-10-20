@@ -39,6 +39,11 @@ file "genesis/dataset.mjs" (
  charSet: utf-8
 )
 
+file "genesis/fitness-context.mjs" (
+ mimeType: text/javascript
+ charSet: utf-8
+)
+
 file "genesis/apex-boot.js" (
  mimeType: text/javascript
  charSet: utf-8

@@ -83,3 +83,22 @@ Ollama and other endpoints are future adapters, not hidden required services.
 
 The published offline suite contains no paid provider call. Mock invocations have
 clearly labeled test runs and are excluded from published experimental results.
+
+## Original laboratory authorization, 2026-10-20
+
+The owner configured the APEX Web Credential and explicitly authorized a USD 20
+aggregate ceiling. Both lifetime and daily provider limits are 20; individual
+cohort runs remain capped at USD 1, 20 attempts and 256 output tokens. The lifetime
+cap includes all ledger reservations and usage, including interrupted attempts.
+It does not renew each day. No credential is included in this repository.
+
+Runtime Models API verification succeeded for `claude-haiku-5-5`, including support
+for `thinking: {"type":"disabled"}`. This adapter requires that capability and sets
+it explicitly: Haiku 5.5 otherwise defaults to adaptive thinking, which consumes
+the same bounded output budget. See [thinking configuration](https://platform.claude.com/docs/en/build-with-claude/thinking).
+
+The first bounded trial reached 256 output tokens and was rejected, with usage cost
+USD 0.0001615. The corrected one-generation validation accepted three mutations,
+rendered and evaluated the offspring, and recorded 333 input / 65 output tokens,
+USD 0.0000658. These are usage-derived estimates, not reconciled invoices.
+See [live evidence](../testing/live-haiku.json). The main paired cohort is separate.

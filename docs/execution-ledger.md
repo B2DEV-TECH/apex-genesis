@@ -70,3 +70,25 @@ feature/apex-genesis from site main 9b58a65. Existing checkout untouched. Cloudf
 authentication verified. English technical article prepared from actual results.
 28 original local English voice segments and WebVTT prepared; 347.318371-second
 timeline. Continuous real recording is running; video is not yet a completed claim.
+
+## 2026-10-20: native controls and live provider milestone
+
+Source and website PR #2 merged; original pilot/article/exhibition and real
+5:47 demonstration published and checked. Production dataset: 1,015/1,015 files
+match their manifest. Native app export imported and uninstall/reinstalled only
+in the dedicated disposable APXGEN_VERIFY owner; eight pages and bounded controls
+verified. Per-run weights, checkpoint copies, votes, downloads and lineage search
+work with recorded settings and server-side role checks.
+
+Owner configured the APEX Web Credential and explicitly authorized USD 20 total.
+Lifetime and daily caps are both20, per-run cap1 for the registered cohort. Real
+model lookup confirms claude-haiku-5-5 and thinking-disable capability. First
+trial reached256output tokens and was rejected: USD0.0001615 usage-derived cost.
+Explicit thinking-disabled request then passed:333input/65output, USD0.0000658,
+three validated operations, actual rendered/evaluated offspring. No invoice claim.
+
+Focused independent review found a provider-configuration snapshot race. Requests
+now read model/token limits from the committed reservation before HTTP. Unit11,
+budget14, AI boundary7, fallback2 and request contract2 pass; ordinary tests stay
+in APXGEN_VERIFY to preserve the live owner credential/configuration. The paired
+Haiku cohort is preregistered; its execution follows this committed milestone.

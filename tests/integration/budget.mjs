@@ -23,6 +23,16 @@ try{
  await db.execute('begin apxgen_ai.accept_response(:id,:response);end;',{id:id4,response});assert.ok((await rows(db,'select proposal from apxgen_invocations where invocation_id=:id',{id:id4}))[0].PROPOSAL);checks++;
  const parent=(await rows(db,'select g.canonical_json from apxgen_organisms o join apxgen_genomes g on g.fingerprint=o.fingerprint where o.organism_id=:id',{id:f4.parent}))[0].CANONICAL_JSON;
  await assert.rejects(()=>db.execute('begin :out:=apxgen_ai.apply_proposal(:parent,:proposal);end;',{out:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:4000},parent,proposal:'{"operations":[{"gene":"sql","value":"drop table"}]}'}));checks++;
+ await assert.rejects(()=>db.execute('begin :out:=apxgen_ai.apply_proposal(:parent,:proposal);end;',{out:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:4000},parent,proposal:'{"operations":[],"operations":[{"gene":"spacing","value":16}]}'}));checks++;
+ for(const kind of ['malformed','truncated','missing-model']){
+  const f=await fixture();await db.execute('update apxgen_run_budgets set enabled=1 where run_id=:run',{run:f.run});await db.commit();const invocation=(await reserve(db,f.run,f.parent)).outBinds.id;
+  const payload=JSON.parse(response);if(kind==='truncated')payload.stop_reason='max_tokens';if(kind==='missing-model')delete payload.model;
+  await assert.rejects(()=>db.execute('begin apxgen_ai.accept_response(:id,:response);end;',{id:invocation,response:kind==='malformed'?'{':JSON.stringify(payload)}));
+  const rejected=(await rows(db,'select state,error_code,proposal from apxgen_invocations where invocation_id=:id',{id:invocation}))[0];assert.equal(rejected.STATE,kind==='truncated'?'RECONCILED':'UNCERTAIN');assert.equal(rejected.PROPOSAL,null);assert.ok(rejected.ERROR_CODE);checks++;
+ }
+ const f5=await fixture();await db.execute('update apxgen_run_budgets set enabled=1 where run_id=:run',{run:f5.run});await db.commit();const excessive=(await reserve(db,f5.run,f5.parent)).outBinds.id;
+ const overshoot=JSON.parse(response);overshoot.usage.input_tokens=9000;await db.execute('begin apxgen_ai.accept_response(:id,:response);end;',{id:excessive,response:JSON.stringify(overshoot)});assert.equal((await rows(db,'select stopped from apxgen_run_budgets where run_id=:run',{run:f5.run}))[0].STOPPED,1);checks++;
+ const f6=await fixture();await db.execute('update apxgen_run_budgets set enabled=1 where run_id=:run',{run:f6.run});await db.execute('update apxgen_provider_config set total_limit_usd=.0000001 where singleton=1');await db.commit();await assert.rejects(()=>reserve(db,f6.run,f6.parent));assert.equal((await rows(db,'select stopped from apxgen_run_budgets where run_id=:run',{run:f6.run}))[0].STOPPED,1);checks++;
  console.log(JSON.stringify({checks,passed:true,paidRequests:0,scope:'Mocked responses and durable database reservations; no provider HTTP'}));
 }finally{
  await db.rollback();const columns=Object.keys(original).filter(k=>k!=='SINGLETON');await db.execute('update apxgen_provider_config set '+columns.map(k=>k+'=:'+k).join(',')+' where singleton=1',Object.fromEntries(columns.map(k=>[k,original[k]])));await db.commit();await db.close();await other.close();

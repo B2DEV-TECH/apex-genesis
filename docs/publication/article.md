@@ -54,7 +54,7 @@ Its primary comparison is **Pure Darwin versus random search**. The optional
 Claude mutation integration is implemented and tested with mocked responses;
 this publication does not claim a completed paid Claude experiment.
 
-<iframe src="/genesis/index.html" title="APEX Genesis: interactive recorded evolution laboratory" loading="eager" style="width:100%;height:1400px;border:1px solid var(--border-subtle);border-radius:12px;background:#07090c" allow="fullscreen"></iframe>
+<iframe src="/genesis/index.html" title="APEX Genesis: interactive recorded evolution laboratory" loading="eager" style="width:100%;height:85vh;min-height:620px;max-height:1000px;border:1px solid var(--border-subtle);border-radius:12px;background:#07090c" allow="fullscreen"></iframe>
 
 *Recorded Oracle experiments. Play, scrub, inspect organisms, explore their
 parents, and open the mutation microscope. [Open the exhibition at full size](/genesis/index.html).

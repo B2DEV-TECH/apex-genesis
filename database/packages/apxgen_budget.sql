@@ -9,7 +9,7 @@ end apxgen_budget;
 create or replace package body apxgen_budget as
   function reserve(p_run varchar2,p_generation number,p_organism number) return varchar2 is
     pragma autonomous_transaction;
-    c apxgen_provider_config%rowtype;b apxgen_run_budgets%rowtype;cost number;spent number;daily number;n number;id varchar2(32):=lower(rawtohex(sys_guid()));population_mode varchar2(20);state varchar2(24);
+    c apxgen_provider_config%rowtype;b apxgen_run_budgets%rowtype;cost number;spent number;daily number;lifetime number;n number;id varchar2(32):=lower(rawtohex(sys_guid()));population_mode varchar2(20);state varchar2(24);
   begin
     select * into c from apxgen_provider_config where singleton=1 for update;
     select * into b from apxgen_run_budgets where run_id=p_run for update;
@@ -23,8 +23,9 @@ create or replace package body apxgen_budget as
     if n>=c.max_requests_per_run then raise_application_error(-20043,'AI request count limit');end if;
     select count(*)into n from apxgen_invocations where run_id=p_run and generation=p_generation;if n>=1 then raise_application_error(-20043,'One AI request per generation');end if;
     select nvl(sum(nvl(actual_usd,reserved_usd)),0)into daily from apxgen_invocations where created_at>=trunc(systimestamp at time zone 'UTC');
+    select nvl(sum(nvl(actual_usd,reserved_usd)),0)into lifetime from apxgen_invocations;
     cost:=(c.max_input_tokens*c.input_usd_per_million+c.max_output_tokens*c.output_usd_per_million)/1000000;
-    if spent+cost>b.limit_usd or daily+cost>c.daily_limit_usd then
+    if spent+cost>b.limit_usd or daily+cost>c.daily_limit_usd or lifetime+cost>c.total_limit_usd then
       update apxgen_run_budgets set stopped=1 where run_id=p_run;commit;raise_application_error(-20044,'Budget exhausted; explicit owner reset required');
     end if;
     insert into apxgen_invocations(invocation_id,run_id,generation,organism_id,state,reserved_usd,input_rate,output_rate,max_input_tokens,max_output_tokens,model_id)values(id,p_run,p_generation,p_organism,'RESERVED',cost,c.input_usd_per_million,c.output_usd_per_million,c.max_input_tokens,c.max_output_tokens,c.verified_model_id);
@@ -57,6 +58,10 @@ create or replace package body apxgen_budget as
     select singleton into n from apxgen_provider_config where singleton=1 for update;
     for i in(select invocation_id,run_id from apxgen_invocations where state='RESERVED' and created_at<systimestamp-interval '120' second for update)loop
       update apxgen_invocations set state='UNCERTAIN',error_code='STALE_RESERVATION',completed_at=systimestamp where invocation_id=i.invocation_id;
+      update apxgen_run_budgets set stopped=1 where run_id=i.run_id;
+    end loop;
+    for i in(select invocation_id,run_id from apxgen_invocations where state='RECONCILED' and proposal is null and error_code is null and created_at<systimestamp-interval '120' second for update)loop
+      update apxgen_invocations set error_code='STALE_RESPONSE',completed_at=systimestamp where invocation_id=i.invocation_id;
       update apxgen_run_budgets set stopped=1 where run_id=i.run_id;
     end loop;commit;
   exception when others then rollback;raise;end;

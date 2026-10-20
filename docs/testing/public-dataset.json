@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "base": "https://b2dev.tech/genesis/datasets/pilot/",
+  "files": 1015,
+  "bytes": 16654367,
+  "manifestSha256": "d89a1340d286432ce05a271a359f4ecf5a910effb2311ca5fd2ed2883748a951",
+  "testedAt": "2026-10-20T20:36:39.536Z",
+  "scope": "Every published file matches the locally verified Oracle export"
+}

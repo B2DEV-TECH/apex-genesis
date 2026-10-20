@@ -1,6 +1,8 @@
 create or replace package apxgen_evolution authid definer as
   function create_run(p_label varchar2,p_mode varchar2 default 'GA_ONLY',p_seed number default 42,p_size number default 12,p_generations number default 100) return varchar2;
   procedure initialize(p_run varchar2);
+  procedure configure(p_run varchar2,p_config clob);
+  procedure run_generations(p_run varchar2,p_count number);
   procedure advance(p_run varchar2);
   procedure control(p_run varchar2,p_action varchar2);
   procedure claim(p_run varchar2,p_organism out number,p_token out varchar2,p_genome out clob);
@@ -17,8 +19,49 @@ create or replace package body apxgen_evolution as
   function create_run(p_label varchar2,p_mode varchar2 default 'GA_ONLY',p_seed number default 42,p_size number default 12,p_generations number default 100) return varchar2 is id varchar2(32):=lower(rawtohex(sys_guid()));
   begin
     if p_seed is null or p_seed<>trunc(p_seed) or p_seed not between 1 and 2147483646 or p_size<>trunc(p_size) or p_generations<>trunc(p_generations) then raise_application_error(-20020,'Invalid experiment parameters');end if;
-    insert into apxgen_runs(run_id,label,population_mode,seed,rng_state,population_size,target_generations,state,engine_version)values(id,p_label,p_mode,p_seed,p_seed,p_size,p_generations,'READY','1.0.1');
+    insert into apxgen_runs(run_id,label,population_mode,seed,rng_state,population_size,target_generations,state,engine_version)values(id,p_label,p_mode,p_seed,p_seed,p_size,p_generations,'READY','1.1.0');
     insert into apxgen_run_budgets(run_id)values(id);event(id,null,'CREATED','Provider disabled; browser evaluation required');return id;
+  end;
+  procedure configure(p_run varchar2,p_config clob) is
+    r apxgen_runs%rowtype;j json_object_t;keys json_key_list;w json_object_t;wk json_key_list;total number:=0;valid_json number;
+    function value_of(k varchar2,old_value number,lo number,hi number,whole boolean default false) return number is n number;
+    begin
+      if not j.has(k) then return old_value;end if;
+      if not j.get(k).is_number then raise_application_error(-20026,'Numeric configuration required');end if;
+      n:=j.get_number(k);if n is null or n<lo or n>hi or (whole and n<>trunc(n))then raise_application_error(-20026,'Configuration outside safe limits');end if;return n;
+    end;
+  begin
+    select * into r from apxgen_runs where run_id=p_run for update nowait;
+    if r.state<>'READY' or r.current_generation<>-1 then raise_application_error(-20026,'Configuration is immutable after initialization');end if;
+    select case when p_config is json strict with unique keys then 1 else 0 end into valid_json from dual;
+    if valid_json<>1 then raise_application_error(-20026,'Strict configuration JSON required');end if;
+    j:=json_object_t.parse(p_config);keys:=j.get_keys;
+    for i in 1..keys.count loop if keys(i) not in('mutationRate','crossoverRate','eliteCount','tournamentSize','diversityThreshold','stagnationLimit','generationTimeout','totalTimeout','fitnessWeights')then raise_application_error(-20026,'Unknown configuration property');end if;end loop;
+    r.mutation_rate:=value_of('mutationRate',r.mutation_rate,0,1);r.crossover_rate:=value_of('crossoverRate',r.crossover_rate,0,1);
+    r.elite_count:=value_of('eliteCount',r.elite_count,0,r.population_size-1,true);r.tournament_size:=value_of('tournamentSize',r.tournament_size,2,10,true);
+    r.diversity_threshold:=value_of('diversityThreshold',r.diversity_threshold,0,1);r.stagnation_limit:=value_of('stagnationLimit',r.stagnation_limit,1,1000,true);
+    r.generation_timeout:=value_of('generationTimeout',r.generation_timeout,30,7200,true);r.total_timeout:=value_of('totalTimeout',r.total_timeout,30,86400,true);
+    if r.total_timeout<r.generation_timeout then raise_application_error(-20026,'Total timeout must cover a generation');end if;
+    if j.has('fitnessWeights')then
+      w:=j.get_object('fitnessWeights');wk:=w.get_keys;
+      if wk.count<>4 then raise_application_error(-20026,'Exactly four fitness weights required');end if;
+      for i in 1..wk.count loop
+        if wk(i) not in('accessibility','hierarchy','responsiveness','performance') or not w.get(wk(i)).is_number then raise_application_error(-20026,'Unknown or invalid fitness weight');end if;
+        if w.get_number(wk(i))<0 or w.get_number(wk(i))>1 then raise_application_error(-20026,'Fitness weight outside limits');end if;total:=total+w.get_number(wk(i));
+      end loop;
+      if abs(total-1)>.000000001 then raise_application_error(-20026,'Fitness weights must sum to one');end if;r.fitness_weights:=w.to_string;
+    end if;
+    update apxgen_runs set mutation_rate=r.mutation_rate,crossover_rate=r.crossover_rate,elite_count=r.elite_count,tournament_size=r.tournament_size,diversity_threshold=r.diversity_threshold,stagnation_limit=r.stagnation_limit,generation_timeout=r.generation_timeout,total_timeout=r.total_timeout,fitness_weights=r.fitness_weights where run_id=p_run;
+    event(p_run,null,'CONFIGURED',j.to_string);
+  end;
+  procedure run_generations(p_run varchar2,p_count number) is r apxgen_runs%rowtype;gs varchar2(16);boundary number;
+  begin
+    select * into r from apxgen_runs where run_id=p_run for update nowait;
+    if p_count is null or p_count<>trunc(p_count) or p_count not between 1 and 100 or r.state not in('RUNNING','PAUSED')then raise_application_error(-20027,'Run count must be 1 to 100 for a running or paused experiment');end if;
+    select state into gs from apxgen_generations where run_id=p_run and generation=r.current_generation;
+    boundary:=least(r.target_generations,r.current_generation+p_count-case when gs='EVALUATING' then 1 else 0 end);
+    update apxgen_runs set state='RUNNING',pause_at_generation=boundary,heartbeat=systimestamp where run_id=p_run;
+    event(p_run,r.current_generation,'RUN_BOUNDED','Pause after completed generation '||boundary);
   end;
   function add_organism(p_run varchar2,p_gen number,p_ordinal number,p_g apxgen_genome.genes,p_method varchar2,p_parent number default null,p_second number default null) return number is
     id number;h varchar2(64):=apxgen_genome.persist(p_g);
@@ -50,12 +93,12 @@ create or replace package body apxgen_evolution as
     end loop;
   end;
   procedure submit_evaluation(p_organism number,p_token varchar2,p_environment varchar2,p_metrics clob,p_cached_from number default null) is
-    o apxgen_organisms%rowtype;c clob;e number;f number;a number;h number;r number;p number;cr number;env varchar2(128);n number;metrics_data clob:=p_metrics;
+    o apxgen_organisms%rowtype;c clob;e number;f number;a number;h number;r number;p number;cr number;env varchar2(128);weights varchar2(400);n number;metrics_data clob:=p_metrics;
   begin
     select * into o from apxgen_organisms where organism_id=p_organism for update;
     if o.evaluation_state<>'CLAIMED' or o.claim_token<>p_token or p_token is null or o.lease_until<systimestamp then raise_application_error(-20022,'Evaluation lease rejected');end if;
     if p_environment is null then raise_application_error(-20022,'Evaluation environment required');end if;
-    select evaluation_context into env from apxgen_runs where run_id=o.run_id for update;
+    select evaluation_context,fitness_weights into env,weights from apxgen_runs where run_id=o.run_id for update;
     if env is not null and env<>p_environment then raise_application_error(-20022,'Evaluation environment changed');end if;
     if p_cached_from is not null then
       select count(*) into n from apxgen_evaluations e join apxgen_organisms x on x.organism_id=e.organism_id where e.organism_id=p_cached_from and x.fingerprint=o.fingerprint and e.environment_hash=p_environment;
@@ -63,7 +106,7 @@ create or replace package body apxgen_evolution as
       select measurements into metrics_data from apxgen_evaluations where organism_id=p_cached_from;
     end if;
     select canonical_json into c from apxgen_genomes where fingerprint=o.fingerprint;
-    apxgen_fitness.score(c,metrics_data,e,f,a,h,r,p,cr);
+    apxgen_fitness.score(c,metrics_data,e,f,a,h,r,p,cr,weights);
     insert into apxgen_evaluations(organism_id,environment_hash,eligible,fitness,accessibility,hierarchy,responsiveness,performance_proxy,contrast_ratio,measurements,cached_from)values(p_organism,p_environment,e,f,a,h,r,p,cr,metrics_data,p_cached_from);
     update apxgen_organisms set evaluation_state='COMPLETE',claim_token=null,lease_until=null where organism_id=p_organism;
     update apxgen_runs set evaluation_context=p_environment,heartbeat=systimestamp where run_id=o.run_id;
@@ -91,7 +134,7 @@ create or replace package body apxgen_evolution as
   function needs_ai(r apxgen_runs%rowtype) return boolean is n number;attempts number;
   begin
     if r.population_mode<>'GA_HAIKU' or r.state<>'RUNNING' or r.current_generation>=r.target_generations then return false;end if;
-    select count(*) into n from apxgen_invocations where run_id=r.run_id and generation=r.current_generation and state='RESERVED';if n>0 then return true;end if;
+    select count(*) into n from apxgen_invocations where run_id=r.run_id and generation=r.current_generation and (state='RESERVED' or (state='RECONCILED' and proposal is null and error_code is null));if n>0 then return true;end if;
     select count(*)into attempts from apxgen_invocations where run_id=r.run_id and generation=r.current_generation;if attempts>0 then return false;end if;
     select count(*)into n from apxgen_provider_config c join apxgen_run_budgets b on b.run_id=r.run_id where c.singleton=1 and c.enabled=1 and b.enabled=1 and b.stopped=0 and c.request_interval>=1 and mod(r.current_generation+1,c.request_interval)=0;
     if n=0 then return false;end if;
@@ -117,6 +160,7 @@ create or replace package body apxgen_evolution as
     if pending>0 then return;end if;
     if gs<>'COMPLETE' then finalize_generation(r);end if;
     if r.current_generation>=r.target_generations then update apxgen_runs set state='COMPLETED',ended_at=systimestamp,heartbeat=systimestamp where run_id=p_run;event(p_run,r.current_generation,'COMPLETED','Target reached');return;end if;
+    if r.pause_at_generation is not null and r.current_generation>=r.pause_at_generation then update apxgen_runs set state='PAUSED',heartbeat=systimestamp where run_id=p_run;event(p_run,r.current_generation,'PAUSED','Bounded generation request completed');return;end if;
     if needs_ai(r) then
       select count(*)into pending from apxgen_events where run_id=p_run and generation=r.current_generation and event_type='AI_BOUNDARY_WAIT';
       if pending=0 then event(p_run,r.current_generation,'AI_BOUNDARY_WAIT','Waiting for a bounded provider attempt before offspring creation');end if;
@@ -154,7 +198,7 @@ create or replace package body apxgen_evolution as
   procedure control(p_run varchar2,p_action varchar2) is r apxgen_runs%rowtype;
   begin select * into r from apxgen_runs where run_id=p_run for update nowait;
     if p_action='PAUSE' and r.state='RUNNING' then update apxgen_runs set state='PAUSE_REQUESTED' where run_id=p_run;
-    elsif p_action='RESUME' and r.state='PAUSED' then update apxgen_runs set state='RUNNING',heartbeat=systimestamp where run_id=p_run;
+    elsif p_action='RESUME' and r.state='PAUSED' then update apxgen_runs set state='RUNNING',pause_at_generation=null,heartbeat=systimestamp where run_id=p_run;
     elsif p_action='STOP' and r.state in('RUNNING','PAUSED','PAUSE_REQUESTED','READY')then update apxgen_runs set state='STOP_REQUESTED' where run_id=p_run;
     else raise_application_error(-20023,'Invalid state transition');end if;event(p_run,r.current_generation,p_action,'Explicit operator request');
   end;
@@ -162,11 +206,11 @@ create or replace package body apxgen_evolution as
   begin
     select * into r from apxgen_runs where run_id=p_run;select count(*)into n from apxgen_generations where run_id=p_run and generation=p_generation and state='COMPLETE';
     if n<>1 then raise_application_error(-20024,'Completed checkpoint required');end if;
-    id:=create_run('Checkpoint of '||r.label,r.population_mode,r.seed,r.population_size,r.target_generations);
+    id:=create_run(substr('Checkpoint of '||r.label,1,120),r.population_mode,r.seed,r.population_size,r.target_generations);
     select rng_after into state_rng from apxgen_generations where run_id=p_run and generation=p_generation;
     insert into apxgen_generations(run_id,generation,rng_before,rng_after) values(id,0,state_rng,state_rng);
     for x in(select o.organism_id,o.ordinal,g.canonical_json from apxgen_organisms o join apxgen_genomes g on g.fingerprint=o.fingerprint where o.run_id=p_run and o.generation=p_generation order by ordinal)loop g:=apxgen_genome.to_genes(x.canonical_json);oid:=add_organism(id,0,x.ordinal,g,'CHECKPOINT',x.organism_id);end loop;
-    update apxgen_runs set source_run=p_run,source_generation=p_generation,current_generation=0,rng_state=state_rng,state='RUNNING',started_at=systimestamp,heartbeat=systimestamp,mutation_rate=r.mutation_rate,crossover_rate=r.crossover_rate,elite_count=r.elite_count,tournament_size=r.tournament_size where run_id=id;return id;
+    update apxgen_runs set source_run=p_run,source_generation=p_generation,current_generation=0,rng_state=state_rng,state='RUNNING',started_at=systimestamp,heartbeat=systimestamp,mutation_rate=r.mutation_rate,crossover_rate=r.crossover_rate,elite_count=r.elite_count,tournament_size=r.tournament_size,diversity_threshold=r.diversity_threshold,stagnation_limit=r.stagnation_limit,generation_timeout=r.generation_timeout,total_timeout=r.total_timeout,fitness_weights=r.fitness_weights where run_id=id;return id;
   end;
   procedure tick(p_run varchar2) is r apxgen_runs%rowtype;n number;parent_id number;error_no number;
   begin
@@ -176,7 +220,11 @@ create or replace package body apxgen_evolution as
       select count(*)into n from apxgen_invocations where run_id=p_run and generation=r.current_generation;
       if n=0 then
         select o.organism_id into parent_id from apxgen_organisms o join apxgen_evaluations e on e.organism_id=o.organism_id where o.run_id=p_run and o.generation=r.current_generation and e.eligible=1 order by e.fitness desc,o.ordinal fetch first 1 row only;
-        begin apxgen_ai.propose(p_run,parent_id);exception when others then error_no:=sqlcode;event(p_run,r.current_generation,'AI_FALLBACK','Provider attempt rejected with code '||error_no);commit;end;
+        begin apxgen_ai.propose(p_run,parent_id);exception when others then
+          error_no:=sqlcode;select count(*)into n from apxgen_invocations where run_id=p_run and generation=r.current_generation;
+          if n=0 then apxgen_budget.stop_ai(p_run);end if;
+          event(p_run,r.current_generation,'AI_FALLBACK','Provider attempt rejected with code '||error_no||'; no unrecorded retry');commit;
+        end;
       end if;
     end if;
     advance(p_run);commit;

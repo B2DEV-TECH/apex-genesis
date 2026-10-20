@@ -12,5 +12,7 @@
   reconciliation, uncertain charges and two-worker boundary tests.
 - Clean-install evidence, English technical article and real captioned demonstration.
 
-Original experiment engine: 1.0.0 at `be49b9d`. Current engine: 1.0.1, including
-post-review cache and scheduler fixes. No completed live Haiku experiment.
+Original experiment engine: 1.0.0 at `be49b9d`. Current engine: 1.1.0, including
+reviewed scheduler/response-processing fixes, immutable configurable fitness,
+bounded controls, run downloads, separate human comparisons, population selectors
+and organism search. No completed live Haiku experiment.

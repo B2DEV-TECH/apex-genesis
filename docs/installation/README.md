@@ -130,8 +130,9 @@ the checkout commit before execution. Export refuses to replace missing provenan
 with the current implementation. Keep the referenced source commit and any
 uncommitted-source disclosure with a new experiment.
 
-Original published offline runs used engine 1.0.0 at `be49b9d`; engine 1.0.1 contains
-later safety fixes. New evaluator fingerprints include the executed preview bundle.
+Original published offline runs used engine 1.0.0 at `be49b9d`; engine 1.0.1 added
+safety fixes and engine 1.1.0 adds immutable configuration and bounded controls.
+New evaluator fingerprints include the executed preview bundle.
 Do not mix evaluation contexts or claim bit-identical results across changed engines,
 database versions, browsers or fonts. Exact stored historical replay requires no
 fresh model call.
@@ -160,8 +161,11 @@ opts a particular run into a capped budget. Routine tests never call the provide
 npm test
 node tests/integration/database.mjs
 node tests/integration/evolution.mjs
+node tests/integration/fitness.mjs
+node tests/integration/controls.mjs
 node tests/integration/budget.mjs
 node tests/integration/ai-boundary.mjs
+node tests/integration/ai-fallback.mjs
 node tests/browser/renderer.mjs
 node tests/browser/showcase.mjs
 ```
@@ -170,3 +174,15 @@ Database integration tests create clearly labeled synthetic test runs. Keep them
 in a disposable verification schema when possible. Native browser tests are scoped
 to the original local lab helper settings; adapt that documented harness for your
 destination rather than treating its original application ID as portable config.
+
+The native Configuration page exposes rates, elites, selection pressure, diversity,
+stagnation, timeouts and four fitness weights. Weights must sum to one. Oracle validates
+all fields and freezes them after initialization; changing rules requires a new run.
+Bounded controls include the current unfinished generation and pause on completion.
+Resume clears that boundary. Checkpoint duplication preserves configuration and
+creates a new history. Preferences are separately stored and do not change fitness.
+
+`node scripts/benchmark.mjs` measures a separate current-engine pair with cache reuse
+disabled. It records Node CPU/RSS, renderer-page metrics and owner segment allocation;
+those values do not measure the whole Oracle/Chromium process or reproduce pilot
+runtimes. Run it from committed source and retain the resulting provenance.

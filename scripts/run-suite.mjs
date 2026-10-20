@@ -13,7 +13,7 @@ try{
   await db.execute('begin apxgen_evolution.initialize(:id);end;',{id});await db.commit();
   const started=Date.now();let evaluated=0,cached=0;
   for(let i=0;i<=protocol.generations;i++){const r=await evaluatePending(db,id,e);evaluated+=r.evaluated;cached+=r.cached;await db.execute('begin apxgen_evolution.advance(:id);end;',{id});await db.commit();}
-  const final=(await rows(db,'select state,current_generation from apxgen_runs where run_id=:id',{id}))[0];if(final.STATE!=='COMPLETED'||final.CURRENT_GENERATION!==100)throw new Error('Experiment did not complete');
+  const final=(await rows(db,'select state,current_generation from apxgen_runs where run_id=:id',{id}))[0];if(final.STATE!=='COMPLETED'||final.CURRENT_GENERATION!==protocol.generations)throw new Error('Experiment did not complete');
   const result={id,mode,seed,showcase:seed===42,evaluated,cached,elapsedSeconds:(Date.now()-started)/1000,environment:e.environment};runs.push(result);console.log(JSON.stringify(result));
   await mkdir('.local',{recursive:true});await writeFile('.local/offline-suite.json',JSON.stringify({protocol,runs,sourceCommit,sourceHashes},null,2));
  }

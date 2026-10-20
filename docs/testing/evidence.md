@@ -2,18 +2,24 @@
 
 Evidence is scoped to the documented local environment: Oracle 23.26.3.0.0,
 APEX 26.2.0, SQLcl 26.3 thin, Node 22.16, Chromium 141.0.7390.37, Windows.
-These are executed checks, not inferred from source. No paid provider request ran.
+These are executed checks, not inferred from source. Ordinary suites use mocks;
+a separate authorized live validation is recorded below.
 
 | Suite | Passed checks | Evidence scope |
 | --- | ---: | --- |
-| npm test | 9 | Grammar/schema, canonicalization, mutation, safe dataset paths, export traversal regression, executed bundle and AI evidence labels |
+| npm test | 11 | Grammar/schema, canonicalization, mutation, safe paths, bundle verification, actual AI evidence and recorded fitness context |
 | database.mjs | 9 | Actual compilation, seeded origins, immutable genomes, claims and lifecycle |
-| evolution.mjs | 7 | Repeated five-generation history, elite preservation, population size, hash conformance, checkpoint and invalid population |
-| budget.mjs | 8 | Disabled mode, concurrent reservations, usage, exhaustion, uncertainty and mocked proposal validation |
-| ai-boundary.mjs | 4 | Two Oracle connections, due/in-flight generation hold and exactly one accepted AI child; mocked response |
+| evolution.mjs | 8 | Repeated five-generation history with and without cache, elites, size, hashes, checkpoint and invalid population |
+| fitness.mjs | 8 | Actual Oracle contrast/font/geometry/focus/names gates, custom weights and timing exclusion |
+| controls.mjs (integration) | 7 | Immutable bounded configuration, run-one/run-N boundaries and checkpoint settings |
+| budget.mjs | 14 | Disabled mode, concurrent reservations, usage, exhaustion, uncertainty, malformed/truncated/missing-model responses and token overrun |
+| ai-boundary.mjs | 7 | Two connections, due/in-flight/response-processing holds, accepted child and stale known-usage recovery |
+| ai-fallback.mjs | 2 | Missing credentials stop AI and continue genetic evolution before any HTTP |
 | renderer.mjs | 5 | Actual functional renderer, keyboard/filter interaction, three viewports, separate axe audit |
-| showcase.mjs | 12 | Real export, playback/scrub, tree, mutation, analytics, mobile, full axe, no page errors and tamper rejection |
+| showcase.mjs | 14 | Real replay, global tree search, method filters, mutation, analytics, mobile, full axe, no page errors and tamper rejection |
 | apex.mjs | 10 | Authenticated eight-page native app, creation, scheduler and anonymous denial |
+| controls.mjs (browser) | 9 | Real custom-weight creation, bounded worker, private download, separate vote, short tree window and server-side reader denial |
+| publication.mjs | 10 local + 10 production | Edge video codecs, actual article/replay/mobile/CSP, media hash/range and public routes |
 | verify-export.mjs | 10 runs | 1,010 generations, 12,120 organisms, 1,015 hashed files, 16,654,367 listed bytes |
 
 The native suite includes a longer experiment-label regression. The actual callback
@@ -29,6 +35,10 @@ After compiling the current revision, the unmodified native SQL export was impor
 into a separately mapped workspace with generated app ID **121**. Two genuine
 five-generation conditions completed and all ten native browser checks passed.
 This does not claim compatibility with other Oracle/APEX versions.
+The current installer and explicit uninstall/reinstall were subsequently verified in
+this same disposable owner, with zero invalid objects, nine core checks, two actual
+five-generation runs and ten native checks against app 121. The publication owner
+and all unrelated schemas/applications were preserved.
 
 Representative renderer and exhibition axe runs reported zero violations with no
 excluded rules. They do not certify all organisms or complete accessibility. The
@@ -41,6 +51,10 @@ The real MP4 is 347.333333 seconds, H.264/AAC, 1920×1080, 15,077,195 bytes, SHA
 chapters, synthetic narration and editing disclosure. A decoded video frame was
 visually inspected. Raw captures remain local; final media is hosted separately.
 
-Not yet proven: real provider authentication, ACL/wallet/TLS, exact returned token
-accounting against an invoice, HTTP failure handling under a live provider, and a
-100-generation GA_HAIKU comparison. Mocks establish only their stated boundaries.
+Runtime model lookup and a real one-generation Haiku mutation passed using the
+APEX Web Credential and existing TLS/network configuration. [Live evidence](live-haiku.json)
+records 333 input / 65 output tokens, USD 0.0000658 usage-derived cost. A prior
+256-token truncated trial was rejected (USD 0.0001615); no automatic retry ran.
+Provider request construction now explicitly disables thinking, with two zero-cost
+contract checks. No provider invoice verification or main 100-generation AI result
+is claimed by this milestone.

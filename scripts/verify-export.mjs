@@ -11,6 +11,7 @@ for(const run of index.runs){assert.equal(run.generations.length,run.targetGener
  for(const [i,g]of run.generations.entries()){safePath(g.path);assert.ok(names.has(g.path),'Generation must be included in the verified manifest');assert.equal(g.generation,i);const part=JSON.parse(await readFile(root+'/'+g.path,'utf8'));assert.equal(part.runId,run.id);assert.equal(part.organisms.length,run.populationSize);assert.equal(part.generation,i);
   assert.equal(Math.max(...part.organisms.map(o=>o.fitness)),g.bestFitness);best=Math.max(best,g.bestFitness);assert.equal(g.bestSoFar,best);
   assert.ok(Math.abs(part.organisms.reduce((n,o)=>n+o.fitness,0)/run.populationSize-g.meanFitness)<1e-7);
+  const sorted=part.organisms.map(o=>o.fitness).toSorted((a,b)=>a-b),mid=sorted.length/2,median=Number.isInteger(mid)?(sorted[mid-1]+sorted[mid])/2:sorted[Math.floor(mid)];assert.ok(Math.abs(median-g.medianFitness)<1e-7);assert.ok(Math.abs(sorted.reduce((n,f)=>n+(f-g.meanFitness)**2,0)/sorted.length-g.varianceFitness)<1e-7);
   assert.equal(new Set(part.organisms.map(o=>o.fingerprint)).size/run.populationSize,g.diversity);
   for(const o of part.organisms){assert.ok(validateGenome(o.genome).valid);assert.equal(hash(Buffer.from(canonicalGenome(o.genome))),o.fingerprint);if(!o.eligible)assert.equal(o.fitness,0);organisms++;}
   if(i===0){const key=String(run.seed),fingerprints=part.organisms.map(o=>o.fingerprint);if(starts.has(key))assert.deepEqual(fingerprints,starts.get(key));else starts.set(key,fingerprints);}
