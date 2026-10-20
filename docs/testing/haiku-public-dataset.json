@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "base": "https://b2dev.tech/genesis/datasets/haiku-paired/",
+  "files": 1520,
+  "bytes": 25693691,
+  "manifestSha256": "9c96edc4493039788e284ee11837be8659340823cff502e9397def2569db1e1c",
+  "testedAt": "2026-10-20T21:20:20.748Z",
+  "scope": "Every published file matches the locally verified Oracle export"
+}
