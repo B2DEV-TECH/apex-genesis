@@ -9,7 +9,7 @@ app=app.replace('    name: APEX Genesis','    name: APEX Genesis\n    version: 0
 app=app.replace('    security {','    authorization {\n        scheme: @genesis-read\n        runOnPublicPages: false\n    }\n    css {\n        fileUrls: #APP_FILES#genesis/lab.css\n    }\n    javaScript {\n        fileUrls: #APP_FILES#genesis/apex-boot.js\n    }\n    security {');
 await writeFile(target+'/application.apx',app);
 await writeFile(target+'/shared-components/authorizations.apx',`authorization genesis-read (\n name: Genesis Reader\n type: plSqlFunctionBody\n settings {\n plsqlFunctionBody: return apxgen_security.allowed('READER')=1;\n }\n error {\n errorMessage: A named Genesis principal is required.\n }\n)\n`);
-const raw=await readFile('showcase/index.html','utf8');let content=raw.match(/<body>([\s\S]*)<script type="module" src="\.\/lab.mjs"><\/script><\/body>/)[1];content=content.replace(/<main /,'<div ').replace('</main>','</div>').replace(/<button /g,'<button type="button" ');
+const raw=await readFile('showcase/index.html','utf8');let content=raw.match(/<body>([\s\S]*)<script type="module" src="\.\/lab\.mjs(?:\?[^"]*)?"><\/script><\/body>/)[1];content=content.replace(/<main /,'<div ').replace('</main>','</div>').replace(/<button /g,'<button type="button" ');
 const names=['Genesis Control Center','Evolution Arena','Evolution Tree','Evolution Time Machine','Darwin vs Claude','Mutation Microscope','Research Analytics','Experiment Configuration'];
 const views=['','arena','tree','arena','arena','mutation','analytics',''];
 const control=`<div id="genesis-control">

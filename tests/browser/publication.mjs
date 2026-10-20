@@ -9,7 +9,7 @@ const browser=await chromium.launch({channel}),page=await browser.newPage({viewp
 page.on('pageerror',e=>errors.push(e.message));
 try{
  const response=await page.goto(base+'/blog/'+slug);assert.equal(response.status(),200);await page.getByRole('heading',{level:1}).waitFor();checks++;
- const embedded=page.frameLocator('iframe[src="/genesis/index.html"]');await embedded.locator('#arena-cards .specimen').first().waitFor({timeout:30000});assert.equal(await embedded.locator('.specimen').count(),2);checks++;
+ const embedded=page.frameLocator('iframe[src="/genesis/index.html"]');await embedded.locator('#arena-cards .specimen').first().waitFor({timeout:30000});assert.equal(await embedded.locator('.specimen').count(),2);assert.ok((await embedded.locator('.specimen').nth(1).textContent()).includes('Haiku-assisted Darwin'));assert.ok((await embedded.locator('#ai-evidence').textContent()).includes('20 usage records'));checks++;
  await embedded.locator('#timeline').fill('100');await embedded.locator('#generation-label').filter({hasText:'100'}).waitFor();await embedded.getByRole('button',{name:'Inspect organism ↗'}).first().click();await embedded.locator('#organism-dialog').waitFor({state:'visible'});await embedded.locator('#close-dialog').click();checks++;
  const preview=await fetch(base+'/genesis/renderer/preview.html');assert.equal(preview.status,200);assert.ok(preview.headers.get('content-security-policy')?.includes("connect-src 'none'"));checks++;
  await mkdir('test-results',{recursive:true});await page.screenshot({path:'test-results/article-desktop.png',fullPage:true});

@@ -22,11 +22,15 @@ boundaries. A Node/Playwright worker measures real synthetic dashboards at three
 viewport sizes. The native APEX application controls and inspects the experiment.
 The public exhibition replays verified static exports, independently of Oracle.
 
-This alpha contains **ten completed offline runs, five paired seeds, 100 generations
-per condition, and 12,120 candidate records**. The completed comparison is Pure
-Darwin versus random search. Haiku is an optional bounded mutation operator, tested
-with mocked responses and **disabled by default**. No completed live Haiku run or
-Claude superiority is claimed. See the [release limits](docs/releases/v0.1.0-alpha.1.md).
+This alpha includes a real **five-seed, 100-generation comparison of Pure Darwin,
+Haiku-assisted Darwin and random search: 15 runs and 18,180 candidate records**.
+All five Darwin/Haiku pairs tied at **98.95** final best-so-far. Haiku made **100
+actual requests**, with 100 validated proposals; usage-derived cost **USD 0.0061064**.
+No final-score benefit was observed. This is a proxy result, not a usability study.
+The separate original offline pilot remains archived. AI is **disabled by default**
+on installation. [Full comparison](experiments/published-results/HAIKU.md) |
+[Release limits](docs/releases/v0.1.0-alpha.1.md) |
+[Claude operational handoff](docs/operations/CLAUDE_HANDOFF.md).
 
 ## A database-owned evolutionary loop
 
@@ -66,7 +70,16 @@ The score does **not** establish beauty, task completion or general usability.
 Winning organisms often prefer large text and a long single-column composition,
 exposing an unmeasured scrolling cost. [Exact rules and limitations](docs/research/methodology.md).
 
-## Recorded results
+## Recorded Haiku comparison
+
+Five paired final Darwin/Haiku scores tied at 98.95, with zero mean final advantage
+for Haiku. Real provider usage: 100 requests, 33,299 input and 5,553 output tokens;
+usage-derived cost USD 0.0061064. All 100 proposals were validated and map to exact
+recorded offspring. No invoice, significance or real usability claim.
+[Complete comparison](experiments/published-results/HAIKU.md) and
+[immutable manifest](showcase/datasets/haiku-paired/manifest.json).
+
+## Original offline pilot
 
 | Seed | Darwin final best-so-far | Random search | Difference |
 | --- | ---: | ---: | ---: |
