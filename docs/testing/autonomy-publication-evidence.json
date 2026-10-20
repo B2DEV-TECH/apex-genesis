@@ -1,0 +1,59 @@
+{
+ "test": "autonomy-publication",
+ "startedAt": "2026-10-20T22:07:29.596Z",
+ "version": "0.1.0-alpha.1",
+ "steps": [
+  {
+   "step": "baseline",
+   "catalogRevision": 14,
+   "runs": 23,
+   "pointerSha": "dc43c6a4b0e80e95"
+  },
+  {
+   "step": "upload-failure",
+   "due": [
+    {
+     "run": "293da36eb61542ca838a029a35557453",
+     "kind": "progress"
+    }
+   ],
+   "result": {
+    "failed": "Injected upload failure (test harness)",
+    "retryAt": "2026-10-20T22:27:29.656Z"
+   },
+   "pointerUnchanged": true,
+   "failureRows": 1,
+   "catalogRevision": 14,
+   "runs": 23,
+   "pointerSha": "dc43c6a4b0e80e95"
+  },
+  {
+   "step": "pointer-verification-failure",
+   "result": {
+    "failed": "Verification hash mismatch for latest.json",
+    "retryAt": "2026-10-20T22:47:29.717Z"
+   },
+   "rolledBackPublication": 63,
+   "failureRows": 2,
+   "catalogRevision": 14,
+   "runs": 23,
+   "pointerSha": "dc43c6a4b0e80e95"
+  },
+  {
+   "step": "clean-retry",
+   "published": [
+    {
+     "runId": "293da36eb61542ca838a029a35557453",
+     "generation": 13,
+     "final": false,
+     "key": "genesis/live/v1/runs/293da36eb61542ca838a029a35557453/progress-g0013-39c61affc4d1.json"
+    }
+   ],
+   "catalogRevision": 15,
+   "runs": 23,
+   "pointerSha": "3fae881228a0718c"
+  }
+ ],
+ "outcome": "PASSED",
+ "finishedAt": "2026-10-20T22:07:29.799Z"
+}

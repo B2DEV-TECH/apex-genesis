@@ -41,6 +41,11 @@ create or replace package body apxgen_web as
       elsif action_name='STEP'then apxgen_evolution.run_generations(run_id,1);apxgen_evolution.advance(run_id);payload:='{"ok":true,"note":"Will pause at the next completed generation boundary"}';
       elsif action_name='RUN_N'then apxgen_evolution.run_generations(run_id,to_number(apex_application.g_x03));apxgen_evolution.advance(run_id);payload:='{"ok":true,"note":"Bounded generation request recorded; browser worker required"}';
       elsif action_name='STOP_AI'then apxgen_budget.stop_ai(run_id);payload:='{"ok":true}';
+      -- Autonomous operations panel (OPERATOR). Commands are queued; the supervisor applies them.
+      elsif action_name='OPS_STATUS'then payload:=apxgen_autonomy.status_json;
+      elsif action_name='OPS_COMMAND'then id:=apxgen_autonomy.enqueue(apex_application.g_x02,upper(v('APP_USER')));payload:='{"ok":true,"commandId":'||id||',"note":"Queued for the supervisor"}';
+      elsif action_name='OPS_LOG'then payload:=apxgen_autonomy.log_json(to_number(nvl(apex_application.g_x02,'100')));
+      elsif action_name='OPS_PUBLICATION'then payload:=apxgen_autonomy.publications_json(to_number(nvl(apex_application.g_x02,'50')));
       elsif action_name='CHECKPOINT'then id:=apxgen_evolution.duplicate_run(run_id,to_number(apex_application.g_x03));apxgen_evolution.schedule_run(id);payload:='{"runId":"'||id||'"}';
       elsif action_name='VOTE'then
         declare preferred number:=to_number(apex_application.g_x02);alternative number:=to_number(apex_application.g_x03);n number;preferred_run varchar2(32);begin

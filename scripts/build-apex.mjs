@@ -2,16 +2,16 @@ import {cp,readFile,writeFile,mkdir,rm,readdir} from 'node:fs/promises';
 import {join} from 'node:path';
 const target='apex/application',starter='.local/apex-26-2/apex-genesis';
 await mkdir('apex',{recursive:true});await cp(starter,target,{recursive:true});
-for(const file of await readdir(target+'/pages'))if(/^p0000[1-8]-genesis(?:-[1-8])?\.apx$/.test(file))await rm(target+'/pages/'+file);
+for(const file of await readdir(target+'/pages'))if(/^p0000[1-9]-genesis(?:-[1-9])?\.apx$/.test(file))await rm(target+'/pages/'+file);
 await writeFile(target+'/deployments/default.json','{}\n');
 let app=await readFile(target+'/application.apx','utf8');
-app=app.replace('    name: APEX Genesis','    name: APEX Genesis\n    version: 0.1.0-alpha.1');
+app=app.replace('    name: APEX Genesis','    name: APEX Genesis\n    version: 0.2.0-alpha.1');
 app=app.replace('    security {','    authorization {\n        scheme: @genesis-read\n        runOnPublicPages: false\n    }\n    css {\n        fileUrls: #APP_FILES#genesis/lab.css\n    }\n    javaScript {\n        fileUrls: #APP_FILES#genesis/apex-boot.js\n    }\n    security {');
 await writeFile(target+'/application.apx',app);
 await writeFile(target+'/shared-components/authorizations.apx',`authorization genesis-read (\n name: Genesis Reader\n type: plSqlFunctionBody\n settings {\n plsqlFunctionBody: return apxgen_security.allowed('READER')=1;\n }\n error {\n errorMessage: A named Genesis principal is required.\n }\n)\n`);
 const raw=await readFile('showcase/index.html','utf8');let content=raw.match(/<body>([\s\S]*)<script type="module" src="\.\/lab\.mjs(?:\?[^"]*)?"><\/script><\/body>/)[1];content=content.replace(/<main /,'<div ').replace('</main>','</div>').replace(/<button /g,'<button type="button" ');
-const names=['Genesis Control Center','Evolution Arena','Evolution Tree','Evolution Time Machine','Darwin vs Claude','Mutation Microscope','Research Analytics','Experiment Configuration'];
-const views=['','arena','tree','arena','arena','mutation','analytics',''];
+const names=['Genesis Control Center','Evolution Arena','Evolution Tree','Evolution Time Machine','Darwin vs Claude','Mutation Microscope','Research Analytics','Experiment Configuration','Autonomous Operations'];
+const views=['','arena','tree','arena','arena','mutation','analytics','',''];
 const control=`<div id="genesis-control">
 <p class="eyebrow">ORACLE-OWNED STATE / AUTHENTICATED CONTROL</p><h1>Genesis Control Center</h1>
 <p class="lede">The database owns every generation. Pending candidates await the browser evaluation worker.</p>
@@ -21,6 +21,16 @@ const control=`<div id="genesis-control">
 <label>Completed checkpoint generation<input id="checkpoint-generation" type="number" min="0" max="1000" value="0"></label><button type="button" data-control="CHECKPOINT">Duplicate checkpoint</button><button type="button" data-control="EXPORT">Download completed run JSON</button></div>
 <p>Bounded requests include the current unfinished generation. A completed checkpoint is copied into a new run; its source history stays intact. The public publication pipeline separately produces the verified partitioned export.</p>
 <p id="control-heartbeat" role="status"></p><h2>Evolution events</h2><ol id="control-events"></ol></div>`;
+// Autonomous operations: the supervisor applies queued commands under its lease.
+// The callbacks re-check OPERATOR in Oracle; hiding a button grants nothing.
+const operations=`<div id="genesis-operations" class="analytics-card">
+<p class="eyebrow">WORKSTATION SUPERVISOR / QUEUED COMMANDS</p><h1>Autonomous Operations</h1>
+<p class="lede">The supervisor runs bounded, seeded experiments one after another while this workstation is on. Commands are queued in Oracle and applied by the supervisor that holds the lease.</p>
+<section id="ops-metrics" class="instrument-bar" aria-label="Supervisor status"></section>
+<div class="transport"><button type="button" data-ops="RESUME">Resume</button><button type="button" data-ops="PAUSE">Pause</button><button type="button" data-ops="PUBLISH_NOW">Publish now</button><button type="button" data-ops="ENABLE">Enable autonomy</button><button type="button" data-ops="DISABLE" data-confirm="Disable autonomy? The active run pauses and no new run starts.">Disable autonomy</button><button type="button" data-ops="STOP_RUN" data-confirm="Stop the active run? Completed generations are kept; the run cannot be resumed.">Stop active run</button><button type="button" data-ops="SHUTDOWN" data-confirm="Shut the supervisor down gracefully? The watchdog does not restart a requested shutdown.">Shut down supervisor</button></div>
+<p id="ops-status" role="status"></p><ul id="ops-warnings"></ul>
+<h2>Publications</h2><p>Only completed, validated generations are uploaded. Each file is immutable and named by its SHA-256 digest.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>#</th><th>State</th><th>Kind</th><th>Generation</th><th>Target</th><th>Digest</th><th>Completed</th></tr></thead><tbody id="ops-publications"></tbody></table></div>
+<h2>Supervisor log</h2><ol id="ops-log" style="max-height:420px;overflow:auto"></ol></div>`;
 const numberField=(label,id,value,min,max,step=1)=>`<label>${label}<input id="${id}" type="number" min="${min}" max="${max}" step="${step}" value="${value}"></label>`;
 const config=`<div class="analytics-card"><p class="eyebrow">SAFE DEFAULTS / PROVIDER DISABLED</p><h1>Experiment Configuration</h1>
 <p>Every run uses synthetic data. AI requires separately configured credentials, reviewed prices, model verification and explicit owner opt-in. Creating a run never enables paid requests. Configuration becomes immutable after initialization.</p>
@@ -32,15 +42,15 @@ ${numberField('Diversity threshold','new-diversity',.3,0,1,.01)}${numberField('S
 ${numberField('Accessibility','weight-accessibility',.4,0,1,.01)}${numberField('Hierarchy','weight-hierarchy',.25,0,1,.01)}${numberField('Responsiveness','weight-responsiveness',.25,0,1,.01)}${numberField('DOM performance proxy','weight-performance',.1,0,1,.01)}</div>
 <button id="create-experiment" type="button">Create and start experiment</button><p id="create-status" role="status"></p><p>A Node/Playwright worker supplies real browser observations; DBMS_SCHEDULER advances ready generations. Limits and types are validated in Oracle.</p></div>`;
 const files=[];
-for(let n=1;n<=8;n++){
- const html=n===1?control:n===8?config:`<div data-genesis-embedded data-initial-view="${views[n-1]}">${content}</div>`;
+for(let n=1;n<=9;n++){
+ const html=n===1?control:n===8?config:n===9?operations:`<div data-genesis-embedded data-initial-view="${views[n-1]}">${content}</div>`;
  const page=`page ${n} (\n name: ${names[n-1]}\n alias: GENESIS-${n}\n title: ${names[n-1]} | APEX Genesis\n appearance {\n pageTemplate: @/standard\n templateOptions: #DEFAULT#\n }\n navigation {\n warnOnUnsavedChanges: false\n }\n security {\n authentication: required\n pageAccessProtection: argumentsMustHaveChecksum\n }\n region genesis-laboratory (\n name: ${names[n-1]}\n type: staticContent\n layout {\n sequence: 10\n slot: body\n columnSpan: 12\n startNewRow: true\n }\n appearance {\n template: @/blank-with-attributes\n templateOptions: #DEFAULT#\n }\n source {\n htmlCode: \`\`\`html\n${html}\n\`\`\`\n }\n )\n process genesis-data (\n name: GENESIS_DATA\n type: executeCode\n source {\n plsqlCode: \`\`\`plsql\napxgen_web.ajax;\n\`\`\`\n }\n execution {\n sequence: 10\n point: ajaxCallback\n }\n )\n)\n`;
  const filename=`p${String(n).padStart(5,'0')}-genesis-${n}.apx`;await writeFile(target+'/pages/'+filename,page);files.push(filename);
 }
 await rm(target+'/pages/p00001-home.apx');
-const nav=names.map((name,i)=>`entry genesis-${i+1} (\n label: ${name}\n icon {\n imageIconCssClasses: fa-${['dashboard','desktop','sitemap','history','exchange','search','bar-chart','sliders'][i]}\n }\n layout {\n sequence: ${(i+1)*10}\n }\n link {\n target: {\n page: ${i+1}\n }\n }\n)`).join('\n');
+const nav=names.map((name,i)=>`entry genesis-${i+1} (\n label: ${name}\n icon {\n imageIconCssClasses: fa-${['dashboard','desktop','sitemap','history','exchange','search','bar-chart','sliders','cogs'][i]}\n }\n layout {\n sequence: ${(i+1)*10}\n }\n link {\n target: {\n page: ${i+1}\n }\n }\n)`).join('\n');
 await writeFile(target+'/shared-components/lists/navigation-menu.apx','list navigation-menu (\nname: Navigation Menu\n'+nav+'\n)\n');
 const assets=['lab.mjs','lab.css','dataset.mjs','fitness-context.mjs','apex-boot.js','renderer/preview.html','renderer/genome.mjs'];let staticFiles=await readFile(target+'/shared-components/static-files.apx','utf8');
 for(const path of assets){const destination=join(target,'shared-components/static-files/genesis',path);await mkdir(join(destination,'..'),{recursive:true});await cp('showcase/'+path,destination);staticFiles+=`\nfile "genesis/${path}" (\n mimeType: ${path.endsWith('.css')?'text/css':path.endsWith('.html')?'text/html':'text/javascript'}\n charSet: utf-8\n)\n`;}
 await writeFile(target+'/shared-components/static-files.apx',staticFiles);
-console.log('Built eight authenticated native APEX pages and shared laboratory assets.');
+console.log('Built nine authenticated native APEX pages and shared laboratory assets.');

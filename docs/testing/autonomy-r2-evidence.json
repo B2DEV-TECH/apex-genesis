@@ -1,0 +1,55 @@
+{
+ "test": "autonomy-r2-cadence",
+ "state": "lab",
+ "outcome": "PASSED",
+ "note": "Automatic publication by the LAB supervisor with no operator command: the previous publication (manual PUBLISH_NOW at g13, 22:39:37Z) was followed by an automatic one once >=10 new generations were complete and the 15-minute minimum interval had passed. Fetched over public HTTPS without cache-busting query.",
+ "previous": {
+  "at": "2026-10-20T22:39:37Z",
+  "progressKey": "runs/57fded3aff794d0ca4600dbc02b6dae6/progress-g0013-8c44a2edd759.json",
+  "catalogKey": "catalog/000001-4cf402e48343.json",
+  "pointer": "266ed6fa60e3",
+  "trigger": "PUBLISH_NOW (operator)"
+ },
+ "automatic": {
+  "at": "2026-10-20T22:58:55Z",
+  "trigger": "policy: publishEveryGenerations=10, publishMinIntervalSeconds=900, checkSeconds=300",
+  "pointer": "08e04909242b"
+ },
+ "pointer": {
+  "status": 200,
+  "bytes": 813,
+  "sha256": "08e04909242b4886d1d330df45bb1ea7fce5146a9b5d200c3027ade979e27623",
+  "cacheControl": "public, max-age=31536000, immutable",
+  "cfCacheStatus": null,
+  "publishedAt": "2026-10-20T22:58:52.612Z",
+  "laboratoryState": "RUNNING",
+  "catalogKey": "catalog/000002-b5acbb39e5ab.json",
+  "activeKey": "runs/57fded3aff794d0ca4600dbc02b6dae6/progress-g0029-350f32ca06a3.json"
+ },
+ "catalog": {
+  "status": 200,
+  "bytes": 1217,
+  "sha256": "b5acbb39e5ab798cc8fe3540f9291f529007640ea69a9ce2ea8396728d7e880b",
+  "cacheControl": "public, max-age=31536000, immutable",
+  "cfCacheStatus": null,
+  "expectedSha256": "b5acbb39e5ab798cc8fe3540f9291f529007640ea69a9ce2ea8396728d7e880b",
+  "match": true,
+  "revision": 2,
+  "runs": 1
+ },
+ "progress": {
+  "status": 200,
+  "bytes": 52981,
+  "sha256": "350f32ca06a36f97b18bb331118329e75cf8bb95d71a1c996a6e0d414d841add",
+  "cacheControl": "public, max-age=31536000, immutable",
+  "cfCacheStatus": null,
+  "expectedSha256": "350f32ca06a36f97b18bb331118329e75cf8bb95d71a1c996a6e0d414d841add",
+  "match": true,
+  "firstGeneration": 0,
+  "lastGeneration": 29,
+  "generations": 30,
+  "runId": "57fded3aff794d0ca4600dbc02b6dae6"
+ },
+ "verifiedAt": "2026-10-20T22:59:23.233Z",
+ "cacheObservation": "The plain pointer URL returned the new pointer about 30 s after publication; no cf-cache-status header, so the Worker response is not edge-cached. Production still sends a year-long immutable Cache-Control on latest.json until website PR #4 is deployed; the live page fetches it with cache:no-store, so a browser HTTP cache does not pin an old pointer."
+}

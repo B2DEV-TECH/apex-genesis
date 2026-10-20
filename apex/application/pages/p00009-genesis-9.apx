@@ -1,0 +1,55 @@
+page 9 (
+ name: Autonomous Operations
+ alias: GENESIS-9
+ title: Autonomous Operations | APEX Genesis
+ appearance {
+ pageTemplate: @/standard
+ templateOptions: #DEFAULT#
+ }
+ navigation {
+ warnOnUnsavedChanges: false
+ }
+ security {
+ authentication: required
+ pageAccessProtection: argumentsMustHaveChecksum
+ }
+ region genesis-laboratory (
+ name: Autonomous Operations
+ type: staticContent
+ layout {
+ sequence: 10
+ slot: body
+ columnSpan: 12
+ startNewRow: true
+ }
+ appearance {
+ template: @/blank-with-attributes
+ templateOptions: #DEFAULT#
+ }
+ source {
+ htmlCode: ```html
+<div id="genesis-operations" class="analytics-card">
+<p class="eyebrow">WORKSTATION SUPERVISOR / QUEUED COMMANDS</p><h1>Autonomous Operations</h1>
+<p class="lede">The supervisor runs bounded, seeded experiments one after another while this workstation is on. Commands are queued in Oracle and applied by the supervisor that holds the lease.</p>
+<section id="ops-metrics" class="instrument-bar" aria-label="Supervisor status"></section>
+<div class="transport"><button type="button" data-ops="RESUME">Resume</button><button type="button" data-ops="PAUSE">Pause</button><button type="button" data-ops="PUBLISH_NOW">Publish now</button><button type="button" data-ops="ENABLE">Enable autonomy</button><button type="button" data-ops="DISABLE" data-confirm="Disable autonomy? The active run pauses and no new run starts.">Disable autonomy</button><button type="button" data-ops="STOP_RUN" data-confirm="Stop the active run? Completed generations are kept; the run cannot be resumed.">Stop active run</button><button type="button" data-ops="SHUTDOWN" data-confirm="Shut the supervisor down gracefully? The watchdog does not restart a requested shutdown.">Shut down supervisor</button></div>
+<p id="ops-status" role="status"></p><ul id="ops-warnings"></ul>
+<h2>Publications</h2><p>Only completed, validated generations are uploaded. Each file is immutable and named by its SHA-256 digest.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>#</th><th>State</th><th>Kind</th><th>Generation</th><th>Target</th><th>Digest</th><th>Completed</th></tr></thead><tbody id="ops-publications"></tbody></table></div>
+<h2>Supervisor log</h2><ol id="ops-log" style="max-height:420px;overflow:auto"></ol></div>
+```
+ }
+ )
+ process genesis-data (
+ name: GENESIS_DATA
+ type: executeCode
+ source {
+ plsqlCode: ```plsql
+apxgen_web.ajax;
+```
+ }
+ execution {
+ sequence: 10
+ point: ajaxCallback
+ }
+ )
+)

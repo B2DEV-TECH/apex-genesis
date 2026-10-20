@@ -103,6 +103,58 @@
       };
       await refresh(); setInterval(refresh, 5000);
     }
+    const operations = document.querySelector('#genesis-operations');
+    if (operations) {
+      // Autonomous Operations (page 9). Reads need READER, commands need OPERATOR;
+      // both are enforced by apxgen_web/apxgen_autonomy, not by this script.
+      const note = document.querySelector('#ops-status');
+      const ago = seconds => seconds == null ? '' : ' (' + (seconds < 120 ? seconds + ' s' : Math.round(seconds / 60) + ' min') + ' ago)';
+      let busy = false;
+      async function refreshOps() {
+        if (busy || document.hidden) return;
+        busy = true;
+        try {
+          const [s, log, publications] = await Promise.all([api('OPS_STATUS'), api('OPS_LOG', '60'), api('OPS_PUBLICATION', '20')]);
+          const a = s.activeRun, sv = s.supervisor, c = s.config, b = s.budgets, p = s.publication;
+          const metrics = document.querySelector('#ops-metrics'); metrics.replaceChildren();
+          for (const [name, value] of [
+            ['SUPERVISOR', sv.state + (sv.leaseHeld ? ' · lease held' : '')], ['HEARTBEAT', (sv.heartbeat || 'Never') + ago(sv.heartbeatAgeSeconds)],
+            ['AUTONOMY', (c.enabled ? 'Enabled' : 'Disabled') + ' · desired ' + c.desiredState], ['POPULATION MODE', c.populationMode + (c.paidAi ? ' · paid AI on' : ' · paid AI off')],
+            ['ACTIVE RUN', a ? '#' + a.sequence + ' · ' + a.policy + ' · seed ' + a.seed : 'None'], ['GENERATION', a ? a.generation + ' / ' + a.target : '—'],
+            ['BEST SO FAR', a?.bestSoFar ?? '—'], ['LAST CHECKPOINT', a ? 'G' + a.lastCheckpointGeneration + ' · ' + a.lastCheckpointAt : '—'],
+            ['TODAY', b.generationsToday + ' / ' + b.dailyCap + ' generations'], ['ADMISSION', b.admission + ': ' + b.admissionDetail],
+            ['STORAGE', Math.round(b.storageBytes / 1048576) + ' MiB of ' + Math.round(b.storageBudgetBytes / 1048576) + ' MiB'],
+            ['RUNS', b.autonomousRuns + ' autonomous · ' + b.finishedRuns + ' finished · ' + b.failedRuns + ' failed'],
+            ['AUTONOMOUS AI REQUESTS', s.ai.autonomousInvocations], ['PUBLICATION', (c.publishEnabled ? 'Enabled' : 'Disabled') + (p.lastLive ? ' · last ' + p.lastLive.completedAt : ' · never published')],
+            ['SCHEDULER JOB', s.scheduler.state], ['PENDING COMMANDS', s.pendingCommands]
+          ]) { const cell = el('div'); cell.append(el('span', name), el('strong', String(value))); metrics.append(cell); }
+          const warnings = document.querySelector('#ops-warnings'); warnings.replaceChildren();
+          for (const w of s.warnings) warnings.append(el('li', w));
+          if (p.lastError) warnings.append(el('li', 'Last publication error ' + p.lastError.createdAt + ': ' + p.lastError.error));
+          const rows = document.querySelector('#ops-publications'); rows.replaceChildren();
+          for (const x of publications) {
+            const tr = el('tr');
+            for (const v of [x.id, x.state, x.kind, x.generation ?? '—', x.target, (x.sha256 || '').slice(0, 12), x.completedAt || x.error || '—']) tr.append(el('td', String(v)));
+            rows.append(tr);
+          }
+          const list = document.querySelector('#ops-log'); list.replaceChildren();
+          for (const x of log) { const li = el('li'); li.append(el('strong', x.at + ' · ' + x.level + ' · ' + x.source), el('span', ' ' + x.message)); list.append(li); }
+          if (!note.dataset.sticky) note.textContent = 'Supervisor: ' + (sv.detail || sv.state) + ' · Refresh every 10 seconds';
+        } catch (error) { note.textContent = error.message; }
+        finally { busy = false; }
+      }
+      for (const button of document.querySelectorAll('[data-ops]')) button.onclick = async () => {
+        if (button.dataset.confirm && !window.confirm(button.dataset.confirm)) return;
+        try {
+          const result = await api('OPS_COMMAND', button.dataset.ops);
+          note.dataset.sticky = '1';
+          note.textContent = button.dataset.ops + ' queued as command #' + result.commandId + '. The supervisor applies it within a few seconds while it holds the lease.';
+          setTimeout(() => { delete note.dataset.sticky; }, 15000);
+          await refreshOps();
+        } catch (error) { note.textContent = error.message; }
+      };
+      await refreshOps(); setInterval(refreshOps, 10000);
+    }
     const create = document.querySelector('#create-experiment');
     if (create) create.onclick = async () => {
       const status = document.querySelector('#create-status');

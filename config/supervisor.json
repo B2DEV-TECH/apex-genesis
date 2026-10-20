@@ -1,0 +1,41 @@
+{
+ "comment": "Process-level limits for the Genesis supervisor. Research policy (population, generations, caps, cooldown, publication cadence) lives in APXGEN_AUTONOMY_CONFIG. Per-machine overrides go in .local/autonomy/<state>/supervisor.json. No secrets belong here.",
+ "leaseSeconds": 90,
+ "idlePollSeconds": 15,
+ "workPollMilliseconds": 1500,
+ "measureTimeoutSeconds": 60,
+ "browserRecycleEvaluations": 400,
+ "limits": {
+  "maxBrowserWorkingSetMb": 1200,
+  "maxTreeWorkingSetMb": 2000,
+  "minFreeDiskMb": 2048,
+  "maxSystemCpuPercent": 85,
+  "minFreeMemoryMb": 1024,
+  "throttleSeconds": 30,
+  "maxEvaluationsPerCycle": 24
+ },
+ "resourceSampleSeconds": 60,
+ "backoff": {
+  "initialSeconds": 5,
+  "maxSeconds": 300,
+  "safeStopAfterFailures": 8
+ },
+ "publication": {
+  "checkSeconds": 300,
+  "target": "R2",
+  "bucket": "b2dev-media",
+  "prefix": "genesis/live/v1/",
+  "publicBase": "https://b2dev.tech/media/",
+  "wrangler": "../genesis-site/node_modules/wrangler/bin/wrangler.js",
+  "wranglerCwd": "../genesis-site",
+  "directory": null,
+  "maxBackoffMinutes": 60,
+  "pointerHeartbeatMinutes": 20,
+  "maxDocumentBytes": 4194304
+ },
+ "watchdog": {
+  "staleHeartbeatSeconds": 300,
+  "maxRestartsPerHour": 3,
+  "taskName": "B2DEV-Genesis-Supervisor"
+ }
+}

@@ -1,0 +1,52 @@
+{
+ "test": "autonomy-crash",
+ "version": "0.1.0-alpha.1",
+ "outcome": "PASSED",
+ "orphan": {
+  "orphanedAt": "2026-10-20T22:12:32.404Z",
+  "runId": "293da36eb61542ca838a029a35557453",
+  "leasePid": 37120,
+  "unguardedClaimRejected": "ORA-20075: Autonomous runs are evaluated only by the lease-holding supervisor",
+  "organism": {
+   "id": 737,
+   "generation": 32,
+   "ordinal": 1,
+   "state": "CLAIMED",
+   "claimLeaseUntil": "2026-10-20T22:14:32.392Z"
+  }
+ },
+ "takeover": {
+  "at": "2026-10-20T22:14:09Z",
+  "message": "Lease acquired by pid 27512 (previous lease expired)"
+ },
+ "reclaimed": {
+  "state": "COMPLETE",
+  "evaluatedAt": "2026-10-20T22:14:33.150Z",
+  "fitness": 97.034612,
+  "cachedFrom": 727,
+  "evaluations": 1
+ },
+ "run": {
+  "state": "COMPLETED",
+  "generation": 40
+ },
+ "duplicateOrdinals": 0,
+ "multiplyEvaluatedOrganisms": 0,
+ "hardKill": {
+  "at": "2026-10-20T22:08:42Z",
+  "command": "taskkill /PID 2240 /T /F",
+  "killed": "supervisor node process and its Chromium children",
+  "claimsAtKill": {
+   "generation": 32,
+   "pending": 4,
+   "claimed": 0
+  },
+  "databaseLeaseLeftBy": "pid 2240, state RUNNING, lease_until 2026-10-20T22:10:12Z (expired without release)",
+  "watchdogDryRun": {
+   "decision": "CRASHED",
+   "action": "dry run: would restart",
+   "heartbeatAgeSeconds": 13
+  }
+ },
+ "finishedAt": "2026-10-20T22:20:33.879Z"
+}
