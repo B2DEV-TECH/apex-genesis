@@ -5,6 +5,36 @@ publication text must remain English. Continue implementing; do not replace real
 Oracle experiments with simulated results. Read README, the release report and
 the Git status before changing anything. Preserve existing experimental archives.
 
+## Verified handover snapshot
+
+The Haiku comparison is complete and publicly deployed. All 15 runs completed 100
+advances plus generation 0 (18,180 organisms). Real Haiku requests 100, approved
+proposals 100, rejected cohort attempts 0. All five final Darwin/Haiku scores tied
+at 98.95. Cohort usage-derived cost USD 0.0061064; session total including two
+integration trials USD 0.0063337. No invoice or superiority claim.
+
+Code 36f5e0e was merged in source PR #4 (main 75164df); website 9de1a4a was merged in
+website PR #3 (main ed12cd8). Deployment 823a3519-989f-48a1-b84c-834b9be82546.
+All 1,520 live dataset files match manifest SHA-256
+9c96edc4493039788e284ee11837be8659340823cff502e9397def2569db1e1c.
+Production Edge 10 checks passed, including actual Haiku replay. The exact final
+portable SQL export was independently imported as app 121 and passed 10 checks.
+See [machine-readable receipt](../releases/publication-receipt.json).
+
+At handover: all cohort run budgets are stopped; no Genesis scheduler job is
+enabled, and no continuous Node controller is left running. Historical test jobs
+were stopped without deleting their records. Oracle/ORDS remain available.
+The provider row is enabled, but new runs default to paid execution disabled and
+model/pricing verification expires after one day. Current lab storage 119,341,056
+bytes (about 114 MiB), against the dedicated owner's 500 MiB quota. Continuous
+operation needs measured storage limits and a retention/archive policy; do not
+silently delete evidence, enlarge quotas or reset the spending ledger.
+
+The completed cohort runner is not an always-on service. Do not rerun it merely
+to continue activity. Historical recovery expects its archived 54f35e5 source
+hashes; later publication changes intentionally differ. Build a new, tested
+controller under the next objective below.
+
 ## Authorized scope
 
 The owner requested periodic commits, pushes and merges, real Haiku comparisons
@@ -91,7 +121,7 @@ and must never appear as actual Haiku research results.
 2. `experiments/configurations/haiku-paired.json`: preregistered engine1.1.0
    cohort at source `54f35e538b75722af22efc61dc321fd35134d682`, five seeds,
    GA_ONLY/GA_HAIKU/RANDOM_SEARCH,100 generations,12 population, equal1,212
-   slots/condition. Prior pilot saturation at98.95 was disclosed before running.
+   slots/condition. Prior pilot saturation at 98.95 was disclosed before running.
    See `experiments/published-results/HAIKU.md` and `haiku-analysis.json` for
    final actual outcomes; never infer them from the condition name.
 3. Separate one-generation live validation: `docs/testing/live-haiku.json`.

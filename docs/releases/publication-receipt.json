@@ -1,0 +1,61 @@
+{
+  "publishedAt": "2026-10-20T21:19:34.484Z",
+  "sourceCodeCommit": "36f5e0ee3a5f5038bfdc5f82d3ccdc45a5135bbb",
+  "sourceMergeCommit": "75164df07294045f5cd19b7bc25a3868f08cd2f9",
+  "experimentSourceCommit": "54f35e538b75722af22efc61dc321fd35134d682",
+  "websiteCommit": "9de1a4af55ee9ea2927288146e3049d242b1749a",
+  "websiteMergeCommit": "ed12cd8689e6f8ed0d3e54443aceaf074d122e7a",
+  "deploymentId": "823a3519-989f-48a1-b84c-834b9be82546",
+  "releaseTag": "v0.1.0-alpha.1",
+  "releaseUrl": "https://github.com/B2DEV-TECH/apex-genesis/releases/tag/v0.1.0-alpha.1",
+  "articleUrl": "https://b2dev.tech/blog/apex-genesis-evolving-interfaces-plsql-claude",
+  "exhibitionUrl": "https://b2dev.tech/genesis/index.html",
+  "publication": {
+    "checks": 10,
+    "passed": true,
+    "base": "https://b2dev.tech",
+    "browser": "155.0.4283.62",
+    "channel": "msedge",
+    "testedAt": "2026-10-20T21:19:34.484Z",
+    "errors": [],
+    "videoSha256": "b320cf1d6a0748f3378db178aeb42888bf550124f715227a39655388a0722216",
+    "scope": "Real built article, embedded replay, mobile, preview CSP, media metadata/range/hash, project/video pages"
+  },
+  "dataset": {
+    "passed": true,
+    "base": "https://b2dev.tech/genesis/datasets/haiku-paired/",
+    "files": 1520,
+    "bytes": 25693691,
+    "manifestSha256": "9c96edc4493039788e284ee11837be8659340823cff502e9397def2569db1e1c",
+    "testedAt": "2026-10-20T21:20:20.748Z",
+    "scope": "Every published file matches the locally verified Oracle export"
+  },
+  "nativePortableExport": {
+    "sha256": "0ba5be4cccd432eed25c07efcaa7b4f02b791514162f7e9770a821da32f8f4f0",
+    "independentlyImportedApplicationId": 121,
+    "browserChecks": 10,
+    "testedAt": "2026-10-20T21:17:11.761Z"
+  },
+  "handoffState": {
+    "stoppedTestRuns": 62,
+    "cohort": [
+      {
+        "STATE": "COMPLETED",
+        "N": 15
+      }
+    ],
+    "enabledGenesisJobs": [
+      {
+        "N": 0
+      }
+    ],
+    "storageBytes": 119341056
+  },
+  "continuousControllerInstalled": false,
+  "authorizedLifetimeCapUsd": 20,
+  "actualPaidRequests": 102,
+  "cohortUsageDerivedCostUsd": 0.0061064,
+  "integrationUsageDerivedCostUsd": 0.0002273,
+  "sessionUsageDerivedCostUsd": 0.0063337,
+  "invoiceVerified": false
+}
