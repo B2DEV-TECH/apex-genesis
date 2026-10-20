@@ -1,0 +1,10 @@
+node_modules/
+.local/
+test-results/
+playwright-report/
+*.log
+*.mp4
+*.webm
+.worktrees/
+.env*
+!.env.example

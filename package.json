@@ -1,0 +1,23 @@
+{
+  "name": "apex-genesis",
+  "version": "0.1.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test tests/unit/*.test.mjs",
+    "test:database": "node tests/integration/database.mjs",
+    "test:browser": "node tests/browser/showcase.mjs",
+    "serve": "node scripts/serve.mjs",
+    "experiment": "node scripts/run-experiment.mjs",
+    "export": "node scripts/export.mjs",
+    "verify": "node scripts/verify-export.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.11.0",
+    "ajv": "8.17.1",
+    "oracledb": "6.10.0",
+    "playwright": "1.56.1"
+  }
+}
