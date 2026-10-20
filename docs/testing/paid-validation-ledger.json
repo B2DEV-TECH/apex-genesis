@@ -1,0 +1,31 @@
+{
+  "trials": [
+    {
+      "RUN_ID": "88d7941e5885474ab77ca9e5fc1a8781",
+      "RUN_STATE": "STOPPED",
+      "INVOCATION_ID": "d5faa13add83405abb31398a840a36e5",
+      "STATE": "RECONCILED",
+      "MODEL_ID": "claude-haiku-5-5",
+      "INPUT_TOKENS": 335,
+      "OUTPUT_TOKENS": 256,
+      "ACTUAL_USD": 0.0001615,
+      "ERROR_CODE": "RESPONSE_REJECTED",
+      "APPLIED_ORGANISM": null
+    },
+    {
+      "RUN_ID": "52ecfdc674114f01bba651c4615b293b",
+      "RUN_STATE": "COMPLETED",
+      "INVOCATION_ID": "6ae266aba95441b1904adb5e4ee5155b",
+      "STATE": "RECONCILED",
+      "MODEL_ID": "claude-haiku-5-5",
+      "INPUT_TOKENS": 333,
+      "OUTPUT_TOKENS": 65,
+      "ACTUAL_USD": 0.0000658,
+      "ERROR_CODE": null,
+      "APPLIED_ORGANISM": 15849
+    }
+  ],
+  "invoiceVerified": false,
+  "totalUsageDerivedCostUsd": 0.0002273,
+  "scope": "Two separate authorized integration trials; excluded from main paired cohort"
+}

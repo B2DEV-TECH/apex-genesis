@@ -1,6 +1,6 @@
 import {execFileSync} from 'node:child_process';
 import {readFile,readdir} from 'node:fs/promises';
-const git=(args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:40*1024*1024,windowsHide:true});
+const git=(args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:128*1024*1024,windowsHide:true});
 const paths=git(['ls-files','-z']).split('\0').filter(Boolean),failures=[];
 const secrets=[];
 for(const file of await readdir('.local').catch(()=>[]))if(/oracle.*\.json$/.test(file)){

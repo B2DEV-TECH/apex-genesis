@@ -16,3 +16,10 @@ Original experiment engine: 1.0.0 at `be49b9d`. Current engine: 1.1.0, including
 reviewed scheduler/response-processing fixes, immutable configurable fitness,
 bounded controls, run downloads, separate human comparisons, population selectors
 and organism search. No completed live Haiku experiment.
+
+- Recorded five-seed, three-condition Haiku comparison: 15 completed 100-generation
+  runs, 18,180 organisms and 100 real accepted provider proposals. Five final-score
+  ties at 98.95; usage-derived cost USD 0.0061064. Preserved original offline pilot.
+- Public replay now defaults to Darwin/Haiku, with recorded mutation operations,
+  token/cost inspection and random-control selection. Fixed inspector selection race.
+- Added an operational Claude handoff; continuous service operation is a next task.

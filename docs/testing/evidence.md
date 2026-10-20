@@ -58,3 +58,23 @@ records 333 input / 65 output tokens, USD 0.0000658 usage-derived cost. A prior
 Provider request construction now explicitly disables thinking, with two zero-cost
 contract checks. No provider invoice verification or main 100-generation AI result
 is claimed by this milestone.
+
+## Completed Haiku cohort, 2026-10-20
+
+All 15 preregistered runs completed: 1,515 generations including origins and
+18,180 organisms. The verifier checked all 1,520 files (25,693,691 bytes),
+canonical hashes, paired origins and generation distributions. Analysis checks
+exact seed/condition coverage, completion, shared settings, archived Git source
+hashes and all 100 approved operations against exact stored child genomes.
+Cost arithmetic tolerance is less than 1e-12 USD.
+
+All five final Darwin/Haiku pairs tied at 98.95. Actual usage: 33,299 input and
+5,553 output tokens, USD 0.0061064; 100 accepted proposals, 0 rejected cohort
+attempts. Separate trials bring session cost to USD 0.0063337. No invoice or
+statistical superiority claim. [Analysis](../../experiments/published-results/haiku-analysis.json).
+
+Five new actual-data browser checks passed: Haiku default, exact mutation/usage,
+run-total cost, random control and preserved offline archive. The new test caught
+an early-selection race; binding its handler before parent loading and discarding
+stale renders fixed it. Showcase 14, unit 11 and native APEX 10 checks passed.
+[Haiku browser evidence](haiku-browser.json).

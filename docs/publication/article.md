@@ -1,6 +1,6 @@
 ---
-title: "Can Oracle APEX Evolve Its Own Interface? A 100-Generation PL/SQL Experiment"
-description: "Database-owned genetic search, real dashboard genomes, five paired random-search controls, optional budgeted Haiku, and an interactive archive of actual results."
+title: "Can Oracle APEX Evolve Its Own Interface? 100 Generations with PL/SQL and Claude"
+description: "Database-owned genetic search, real dashboard genomes, five paired Haiku/random-search comparisons, budgeted AI, and an interactive archive of actual results."
 language: "en"
 publishedAt: "2026-10-20"
 category: "oracle-apex"
@@ -9,7 +9,7 @@ author: "geraldo-viana"
 github: "https://github.com/B2DEV-TECH/apex-genesis"
 canonical: "https://b2dev.tech/blog/apex-genesis-evolving-interfaces-plsql-claude"
 cover: "/images/articles/apex-genesis/evolution-arena.png"
-coverAlt: "Actual APEX Genesis exhibition comparing recorded Darwin and random-search dashboard organisms."
+coverAlt: "Actual APEX Genesis exhibition comparing recorded Darwin and Haiku-assisted dashboard organisms."
 seo:
   title: "APEX Genesis: Evolving Interfaces with Oracle PL/SQL"
   description: "A reproducible Oracle APEX laboratory: 100-generation genetic search, real rendered genomes, random-search controls and optional cost-limited Claude mutations."
@@ -49,10 +49,11 @@ interfaces than simply trying new random candidates.
 
 APEX Genesis is the result: a PL/SQL evolutionary engine, an authenticated Oracle
 APEX laboratory, and a public archive of the interfaces it actually produced.
-The archive below contains five paired seeds and 100 generations per condition.
-Its primary comparison is **Pure Darwin versus random search**. The optional
-Claude mutation integration is implemented and tested with mocked responses;
-this publication does not claim a completed paid Claude experiment.
+The archive below contains five paired seeds and 100 generations in each of
+three conditions: **Pure Darwin, Haiku-assisted Darwin and random search**.
+Oracle completed all fifteen runs. Haiku contributed 100 validated proposals,
+but both evolutionary conditions finished at the same 98.95 score in all five
+pairs. The model added cost without a final-score advantage in this experiment.
 
 <iframe src="/genesis/index.html" title="APEX Genesis: interactive recorded evolution laboratory" loading="eager" style="width:100%;height:85vh;min-height:620px;max-height:1000px;border:1px solid var(--border-subtle);border-radius:12px;background:#07090c" allow="fullscreen"></iframe>
 
@@ -226,7 +227,7 @@ for the short-prompt tier. Those are documentation observations, not permanent
 constants built into the spending logic.
 
 Before a paid run, Genesis requires owner opt-in, a fresh model lookup, reviewed
-pricing, a secure credential and run/daily limits. A reservation covers the
+pricing, a secure credential and run/daily/lifetime limits. A reservation covers the
 maximum permitted input and output before the request. Returned usage is
 reconciled using that reservation's price snapshot. Uncertain charges remain
 reserved; exhausted or uncertain budgets do not silently resume.
@@ -241,9 +242,18 @@ The corrected engine has a database-owned AI boundary. Due or in-flight proposal
 hold offspring creation, and the external call runs without retaining the run
 lock. A stale reservation becomes uncertain and stops further spending.
 
-**There is no completed live Haiku result in this article.** Mocked tests verify
-the spending and response boundaries, including two-worker races; they are not
-evidence that Claude improves interface evolution. That hypothesis remains open.
+After the owner configured the Web Credential and explicitly authorized a
+US$20 aggregate ceiling, I verified the model through Oracle and ran a bounded
+live trial. The first response reached the 256-token output cap and was rejected.
+Haiku 5.5 defaults to adaptive thinking, which shares that output budget; the
+[documented thinking setting](https://platform.claude.com/docs/en/build-with-claude/thinking)
+and runtime capability lookup let this adapter disable it explicitly. The next
+trial produced three allowed changes that Oracle rendered and evaluated. Both
+trial charges are preserved, including the rejection. No automatic retry ran.
+
+The main cohort then ran from a committed source revision and a preregistered
+protocol. Mock tests remain separate evidence for failure and concurrency paths;
+the public dataset contains real provider proposals and reported token usage.
 
 ## Experimental methodology
 
@@ -288,7 +298,7 @@ compiled preview runs in an opaque-origin iframe sandbox with scripts allowed
 for the predefined controls. Generated values never become arbitrary HTML,
 JavaScript, CSS expressions or privileged database operations.
 
-## What happened after 100 generations
+## The original offline pilot
 
 The final best-so-far comparison was:
 
@@ -315,6 +325,49 @@ The complete dataset has **12,120 candidate records and 1,010 generation
 partitions**, including generation zero. Its measurements, distributions,
 eligibility, diversity, mutation acceptance and timing summaries are available
 in the [machine-readable analysis](https://github.com/B2DEV-TECH/apex-genesis/blob/main/experiments/published-results/analysis.json).
+
+## The 100-generation Haiku comparison
+
+Before this second cohort, I registered the same five seeds and three conditions
+in [the protocol](https://github.com/B2DEV-TECH/apex-genesis/blob/main/experiments/configurations/haiku-paired.json).
+I already knew that the original objective could reach 98.95. I kept it fixed
+instead of changing the rules to make an AI advantage more likely. The new
+engine **1.1.0**, exact source commit, renderer fingerprint and weights are stored
+with this new archive; it does not reuse the old pilot as its primary baseline.
+
+Each run has the same seeded origin, 12 candidates, 100 advances and 1,212
+candidate slots. Every fifth generation, Haiku may replace one existing offspring
+with a proposal. It receives no additional evaluation slots. External inference
+and shared-cache browser work are unequal, and both are reported.
+
+| Seed | Pure Darwin | Haiku-assisted | Random control | AI cost USD |
+| --- | ---: | ---: | ---: | ---: |
+| 42 | 98.9500 | 98.9500 | 98.2846 | 0.0011829 |
+| 137 | 98.9500 | 98.9500 | 98.1500 | 0.0011860 |
+| 3107 | 98.9500 | 98.9500 | 97.3500 | 0.0012161 |
+| 7729 | 98.9500 | 98.9500 | 98.6000 | 0.0012169 |
+| 201026 | 98.9500 | 98.9500 | 97.2500 | 0.0013045 |
+
+All **five final-score pairs tied**. The mean paired Haiku-minus-Darwin difference
+was **0 points**. All 100 proposals passed the constrained validator and map to
+exact recorded child genomes, but valid mutations did not produce a higher final
+score. Incremental final-score improvement per AI dollar was zero in these pairs;
+this measures technical score, not financial ROI.
+
+The secondary trajectories were mixed. For seed 137, Haiku reached score 95 in
+generation 9 versus generation 11 for Pure Darwin. Its mean best-so-far across
+the recorded history was nevertheless slightly lower. Three seeds had lower
+Haiku mean trajectories, one slightly higher and one equal. I report these
+secondary observations without treating dependent generations as independent
+trials or declaring statistical significance.
+
+The new dataset contains **18,180 candidate records, 1,515 generation partitions
+and 100 actual provider invocation records**. It preserves approved operations,
+parent edges, reported usage, observed eligibility, diversity, distributions,
+stagnation events and timing. [Full machine-readable analysis](https://github.com/B2DEV-TECH/apex-genesis/blob/main/experiments/published-results/haiku-analysis.json)
+and [the immutable manifest](/genesis/datasets/haiku-paired/manifest.json) make
+these observations inspectable. The original offline pilot remains available
+through the exhibition's archive link.
 
 ## What the score did not prove
 
@@ -348,9 +401,17 @@ time; full CPU and memory profiling was not collected for this original suite.
 
 Direct Anthropic usage for the published offline conditions was **zero requests,
 zero tokens and US$0.00**. Improvement per API dollar is therefore not a meaningful
-metric for this comparison. A future paid run must report returned token usage,
-usage-based cost estimates, uncertain reservations and any separately verified
-billing evidence.
+metric for this comparison. The new Haiku cohort recorded **33,299 input tokens and 5,553 output
+tokens**, for **US$0.0061064** at the reserved rates. The two separate live
+validation trials add US$0.0002273, making **US$0.0063337** for this session's
+actual provider calls. These are usage-derived estimates; no provider invoice
+was independently verified. No cohort request was rejected or had uncertain
+billing. The authorized lifetime ceiling remains US$20; it does not renew daily.
+
+The seed 42 new-cohort Darwin run took 21.99 seconds and Haiku 47.52 seconds.
+These elapsed times include workflow and model latency, with unequal cache work.
+The full analysis reports per-run timing and cache counts; this is not a
+controlled hardware-speed comparison.
 
 ## Reproducing the experiment
 
@@ -375,8 +436,8 @@ node scripts/run-experiment.mjs --mode=GA_ONLY --seed=42 --size=12 --generations
 
 The recorded exhibition can also run as static assets without Oracle. Replaying
 an archived result does not execute a new experiment or reproduce a fresh model
-response. Approved AI mutation outputs must be preserved if an AI run is later
-published.
+response. Approved AI mutation outputs are preserved, so replaying this history makes no
+additional paid request.
 
 ## Demonstration and engineering lessons
 
@@ -389,7 +450,8 @@ published.
 *Real automated browser footage with planned navigation, English captions and
 installed synthetic English narration. The small live database demonstration
 uses an explicit two-second worker delay per generation for visibility. The
-100-generation exhibition is recorded playback. No paid AI result is shown.*
+100-generation exhibition is recorded playback. This original video documents the offline pilot; the later Haiku cohort is
+shown in the interactive exhibition and analysis above.*
 
 The database was a useful place to put the experimental boundary: durable state,
 transactions, constraints, ancestry and recovery were as important as the

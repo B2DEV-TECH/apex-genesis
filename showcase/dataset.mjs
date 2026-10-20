@@ -16,5 +16,5 @@ export async function openDataset(manifestUrl){
   for(const o of data.organisms){if(!validateGenome(o.genome).valid||await digest(new TextEncoder().encode(canonicalGenome(o.genome)))!==o.fingerprint)throw new Error('Genome integrity failure');}
   cache.set(key,data);if(cache.size>16)cache.delete(cache.keys().next().value);return data;
  }
- return {manifest,index,generation};
+ return {manifest,index,generation,invocations:()=>load('ai-invocations.json')};
 }

@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "checks": 5,
+  "browser": "141.0.7390.37",
+  "testedAt": "2026-10-20T21:12:01.578Z",
+  "scope": "Actual Haiku default, approved mutation/usage inspection, run-total cost, random control selection and preserved offline archive",
+  "errors": []
+}

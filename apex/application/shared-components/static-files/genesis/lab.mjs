@@ -1,10 +1,10 @@
-import {openDataset,aiEvidenceLabel} from './dataset.mjs';
-import {fitnessDescription,matchingFitness} from './fitness-context.mjs';
+import {openDataset,aiEvidenceLabel} from './dataset.mjs?v=1.1.0';
+import {fitnessDescription,matchingFitness} from './fitness-context.mjs?v=1.1.0';
 const $=s=>document.querySelector(s);
 function el(tag,text,cls){const e=document.createElement(tag);if(tag==='button')e.type='button';if(text!==undefined&&text!==null)e.textContent=text;if(cls)e.className=cls;return e;}
 function svgEl(tag,attrs={}){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);return e;}
 const params=new URLSearchParams(location.search);
-const manifestUrl=new URL(params.get('dataset')||'./datasets/pilot/manifest.json',location.href);
+const manifestUrl=new URL(params.get('dataset')||'./datasets/haiku-paired/manifest.json',location.href);
 if(manifestUrl.origin!==location.origin)throw new Error('Dataset must use the exhibition origin');
 let dataset,runs=[],gen=0,view='arena',playing=false,timer,request=0,compareOrigin=false,treeZoom=1;
 const frames=new Set();
@@ -35,11 +35,13 @@ async function tree(nonce){const run=dataset.index.runs.find(r=>r.id===$('#tree-
  for(const group of svg.querySelectorAll('g')){const method=$('#tree-method').value;if(method&&!group.getAttribute('aria-label').includes(', '+method+',')){group.setAttribute('opacity','.15');group.setAttribute('tabindex','-1');}}
 }
 function flattened(g){return {...g.layout,order:g.layout.order.join(' → '),...g.style,...g.behavior};}
-async function mutation(current,nonce){const options=$('#mutation-organism'),remember=options.value;options.replaceChildren();for(let i=0;i<current.length;i++)for(const o of current[i].organisms){const option=el('option',`${runs[i].mode} / O${o.id} / ${o.method}`);option.value=i+':'+o.id;options.append(option);}if([...options.options].some(x=>x.value===remember))options.value=remember;await mutationDetail(current,nonce);options.onchange=()=>mutationDetail(current,request);}
+async function mutation(current,nonce){const options=$('#mutation-organism'),remember=options.value;options.replaceChildren();for(let i=0;i<current.length;i++)for(const o of current[i].organisms){const option=el('option',`${runs[i].mode} / O${o.id} / ${o.method}`);option.value=i+':'+o.id;options.append(option);}if([...options.options].some(x=>x.value===remember))options.value=remember;options.onchange=()=>update();await mutationDetail(current,nonce);}
 async function mutationDetail(parts,nonce){const [index,id]=$('#mutation-organism').value.split(':').map(Number),child=parts[index].organisms.find(o=>o.id===id),root=$('#mutation-detail');if(!child.parents.length||gen===0){root.replaceChildren(el('p','This organism belongs to the seeded origin. It has no evolutionary parent.','empty-state'));return;}
  const previous=await dataset.generation(runs[index].id,gen-1),parent=previous.organisms.find(o=>o.id===child.parents[0]);if(nonce!==request)return;if(!parent){root.replaceChildren(el('p','Parent belongs to another recorded checkpoint; inspect the exported lineage.','empty-state'));return;}
  const grid=el('div',null,'mutation-grid');for(const[o,title]of [[parent,'Parent / O'+parent.id],[child,'Offspring / O'+child.id]]){const cell=el('div');cell.append(el('h3',title));const shell=el('div',null,'preview-shell'),stage=el('div',null,'frame-stage');stage.append(makePreview(o.genome));shell.append(stage);cell.append(shell);grid.append(cell);}
- const a=flattened(parent.genome),b=flattened(child.genome),changes=Object.keys(a).filter(k=>a[k]!==b[k]).map(k=>`${k}: ${a[k]} → ${b[k]}`).join('\n');const diff=el('div',null,'diff');diff.append(el('h3',child.method+' / fitness '+fmt(parent.fitness)+' → '+fmt(child.fitness)),el('pre',changes||'Phenotype preserved. This offspring carries an unchanged elite or equivalent recombination.'));root.replaceChildren(grid,diff);fitFrames();}
+ const a=flattened(parent.genome),b=flattened(child.genome),changes=Object.keys(a).filter(k=>a[k]!==b[k]).map(k=>`${k}: ${a[k]} → ${b[k]}`).join('\n');const diff=el('div',null,'diff');diff.append(el('h3',child.method+' / fitness '+fmt(parent.fitness)+' → '+fmt(child.fitness)),el('pre',changes||'Phenotype preserved. This offspring carries an unchanged elite or equivalent recombination.'));
+ if(child.method==='AI'&&dataset.invocations){const invocation=(await dataset.invocations()).find(i=>i.APPLIED_ORGANISM===child.id);if(nonce!==request)return;if(invocation){diff.append(el('h3','Approved provider mutation / '+invocation.MODEL_ID),el('pre',JSON.stringify(JSON.parse(invocation.PROPOSAL),null,2)),el('p','Reported usage: '+invocation.INPUT_TOKENS+' input / '+invocation.OUTPUT_TOKENS+' output tokens. Usage-derived cost USD '+fmt(invocation.ACTUAL_USD,7)+'; invoice not verified.'));}}
+ root.replaceChildren(grid,diff);fitFrames();}
 function table(headers,values){const t=el('table',null,'data-table'),head=el('thead'),r=el('tr');for(const h of headers){const th=el('th',h);th.scope='col';r.append(th);}head.append(r);t.append(head);const body=el('tbody');for(const row of values){const tr=el('tr');for(const value of row)tr.append(el('td',String(value)));body.append(tr);}t.append(body);return t;}
 function analytics(){
  const root=$('#analytics'),grid=el('div',null,'analytics-grid');
@@ -47,7 +49,7 @@ function analytics(){
   const g=run.generations[Math.min(gen,run.generations.length-1)],card=el('article',null,'analytics-card');
   card.append(el('h3',run.mode+' / generation '+gen),el('p','Recorded fitness weights: '+fitnessDescription(run)),table(['Observation','Recorded value'],[
    ['Best of generation',fmt(g.bestFitness)],['Best so far',fmt(g.bestSoFar)],['Mean / median',fmt(g.meanFitness)+' / '+fmt(g.medianFitness)],['Fitness variance',fmt(g.varianceFitness)],['Eligible',g.validCount+' / '+run.populationSize],['Unique phenotype ratio',fmt(g.diversity*100)+'%'],['Generation duration',fmt(g.elapsedSeconds)+' s'],['Candidate slots',run.candidateCount],['Unique browser evaluations',run.uniqueEvaluations],['Reused evaluations',run.cachedEvaluations],['Seed',run.seed]
-  ]));grid.append(card);
+  ]),table(['AI observation / entire run','Recorded value'],[['Provider attempts',run.ai?.attempts||0],['Input / output tokens',(run.ai?.inputTokens||0)+' / '+(run.ai?.outputTokens||0)],['Usage-derived cost USD',fmt(run.ai?.usageBasedCostUsd||0,7)],['Uncertain reservations USD',fmt(run.ai?.uncertainReservedUsd||0,7)],['Invoice verified',run.ai?.invoiceVerified?'Yes':'No']]));grid.append(card);
  }
  const methods=el('article',null,'analytics-card');
  methods.append(el('h3','Transparent technical fitness'),el('p','Hard constraints first: complete content, text size, contrast, focus, names and responsive geometry. Each run uses the recorded weights shown above. Performance is a DOM-size proxy; actual rendering time is measured separately.'),el('p',matchingFitness(runs)?'These runs share a scoring context.':'Scoring contexts differ. Compare objective measurements separately; the scalar scores do not use equivalent rules.'),el('h3','Population diversity'),lineChart(runs,'diversity',160));grid.append(methods);
@@ -59,6 +61,7 @@ for(const button of document.querySelectorAll('[data-view]'))button.onclick=()=>
 $('#tree-population').onchange=()=>update();$('#zoom-in').onclick=()=>{treeZoom=Math.min(2,treeZoom+.2);update();};$('#zoom-out').onclick=()=>{treeZoom=Math.max(.5,treeZoom-.2);update();};$('#close-dialog').onclick=()=>$('#organism-dialog').close();for(const b of document.querySelectorAll('[data-width]'))b.onclick=()=>$('#dialog-frame').style.width=b.dataset.width+'px';
 function refreshRunMetadata(){
  gen=Math.min(gen,maxGeneration());$('#generation-count').textContent=maxGeneration()+' generations';$('#candidate-count').textContent=runs.reduce((s,r)=>s+r.candidateCount,0).toLocaleString('en-US');$('#ai-evidence').textContent=aiEvidenceLabel(runs);$('#timeline').max=maxGeneration();$('#timeline-end').textContent='0 → '+maxGeneration();
+ const legend=$('#race-legend');if(legend)legend.replaceChildren(document.createTextNode('BEST OF GENERATION '),el('i',null,'legend-a'),document.createTextNode(runs[0].mode+' '),el('i',null,'legend-b'),document.createTextNode(runs[1].mode));
  $('#comparison-note').textContent=matchingFitness(runs)?(runs[0].seed===runs[1].seed?'Same recorded seed and scoring context.':'Different recorded seeds: this is not a paired comparison.'):'Different scoring contexts: compare objectives separately.';
 }
 $('#tree-method').onchange=()=>update();

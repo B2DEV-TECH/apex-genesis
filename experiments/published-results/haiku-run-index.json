@@ -1,0 +1,111 @@
+{
+  "experimentId": "genesis-haiku-paired-20261020",
+  "runs": [
+    {
+      "id": "84d2f615bf18488eaa0528aeaa262a42",
+      "mode": "GA_ONLY",
+      "seed": 42,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "7939d0262f0b4b14b628af9700b889bf",
+      "mode": "GA_HAIKU",
+      "seed": 42,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "d8c4695913cf4df19b150b3e1c0a6215",
+      "mode": "RANDOM_SEARCH",
+      "seed": 42,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "5af3f85ed5534936bafb9fbb43d89ea5",
+      "mode": "GA_ONLY",
+      "seed": 137,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "41aff08d0f0047c7b243d9429914c8fb",
+      "mode": "GA_HAIKU",
+      "seed": 137,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "0dfc54190cce4bff90408908a285d4cd",
+      "mode": "RANDOM_SEARCH",
+      "seed": 137,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "d8175be830604c1bba0b3434f0ddac85",
+      "mode": "GA_ONLY",
+      "seed": 3107,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "615aee59f52c46d5b49a3f43f84395bc",
+      "mode": "GA_HAIKU",
+      "seed": 3107,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "f65fb10a70dc411185e51b0b334cab6c",
+      "mode": "RANDOM_SEARCH",
+      "seed": 3107,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "60890cb898df419d90e8fd310e482d8e",
+      "mode": "GA_ONLY",
+      "seed": 7729,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "17de3a8346b04eadb5e8e7bdc9631723",
+      "mode": "GA_HAIKU",
+      "seed": 7729,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "c39e3a56a6144cf4a0ab918c42001f63",
+      "mode": "RANDOM_SEARCH",
+      "seed": 7729,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "c57ef0d742a14289ba34b73cc9b4b8a8",
+      "mode": "GA_ONLY",
+      "seed": 201026,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "825dc967bc4f49fdb4f69cc9bcc5e1da",
+      "mode": "GA_HAIKU",
+      "seed": 201026,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "6c9130c5ca05446a9c52a3b9222a5523",
+      "mode": "RANDOM_SEARCH",
+      "seed": 201026,
+      "generations": 100,
+      "candidateCount": 1212
+    }
+  ],
+  "manifest": "../../showcase/datasets/haiku-paired/manifest.json"
+}
