@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://b2dev.tech/schemas/apex-genesis/genome-1.0.json",
+  "title": "APEX Genesis constrained operations dashboard",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "layout", "style", "behavior"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "layout": {
+      "type": "object", "additionalProperties": false,
+      "required": ["columns", "navigation", "order", "chart", "table"],
+      "properties": {
+        "columns": {"type": "integer", "minimum": 1, "maximum": 4},
+        "navigation": {"enum": ["top", "left"]},
+        "order": {"type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true, "items": {"enum": ["metrics", "filters", "revenue", "orders"]}},
+        "chart": {"enum": ["bars", "line"]}, "table": {"enum": ["table", "cards"]}
+      }
+    },
+    "style": {
+      "type": "object", "additionalProperties": false,
+      "required": ["palette", "fontSize", "spacing", "radius"],
+      "properties": {
+        "palette": {"type": "integer", "minimum": 0, "maximum": 3},
+        "fontSize": {"enum": [12,14,16,18,20]}, "spacing": {"enum": [4,8,12,16,20,24]}, "radius": {"enum": [0,4,8,12,16,20]}
+      }
+    },
+    "behavior": {
+      "type": "object", "additionalProperties": false,
+      "required": ["collapseDetails", "sort"],
+      "properties": {"collapseDetails": {"type": "boolean"}, "sort": {"enum": ["name", "value"]}}
+    }
+  }
+}
