@@ -1,0 +1,22 @@
+{
+  "protocolVersion": "1.0",
+  "registeredBeforeRuns": "2026-10-20",
+  "conditions": ["GA_ONLY", "RANDOM_SEARCH"],
+  "pairedSeeds": [42, 137, 3107, 7729, 201026],
+  "populationSize": 12,
+  "generations": 100,
+  "mutationRate": 0.25,
+  "crossoverRate": 0.75,
+  "eliteCount": 2,
+  "tournamentSize": 3,
+  "viewports": [390, 768, 1440],
+  "primaryOutcome": "Final best-so-far technical fitness; descriptive paired differences",
+  "budgetUnit": "Candidate slots, including retained elites and generation zero; unique browser evaluations reported separately",
+  "ai": {"enabled": false, "reason": "Credentials and explicit paid-execution authorization pending"},
+  "hypotheses": [
+    "H1: GA_ONLY final best-so-far exceeds its generation-zero best score.",
+    "H2: GA_ONLY exceeds RANDOM_SEARCH final best-so-far at equal candidate slots.",
+    "H3: Optional authorized GA_HAIKU exceeds paired GA_ONLY; untested until real provider runs exist."
+  ],
+  "analysisLimits": "Five paired seeds support descriptive comparison only. No p-values or claims of general usability, beauty or universal superiority."
+}

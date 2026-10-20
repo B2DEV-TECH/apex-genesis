@@ -88,7 +88,7 @@ create or replace package body apxgen_evolution as
     if div_value<r.diversity_threshold then event(r.run_id,r.current_generation,'LOW_DIVERSITY','Immigrants are used after bounded duplicate retries');end if;
   end;
   procedure advance(p_run varchar2) is
-    r apxgen_runs%rowtype;pending number;gs varchar2(16);g apxgen_genome.genes;a apxgen_genome.genes;b apxgen_genome.genes;id number;parent number;second number;method varchar2(20);h varchar2(64);dups number;before_rng number;stagnant number;started timestamp with time zone;
+    r apxgen_runs%rowtype;pending number;gs varchar2(16);g apxgen_genome.genes;a apxgen_genome.genes;b apxgen_genome.genes;id number;parent number;second number;method varchar2(20);h varchar2(64);dups number;before_rng number;stagnant number;started timestamp with time zone;ai_id varchar2(32);ai_json clob;ai_parent number;child_json clob;
     type ids is table of number index by pls_integer;parents ids;scores ids;cnt pls_integer:=0;
     function tournament return number is idx pls_integer;winner pls_integer;
     begin winner:=apxgen_genome.next_random(r.rng_state,cnt)+1;
@@ -112,7 +112,7 @@ create or replace package body apxgen_evolution as
     before_rng:=r.rng_state;r.current_generation:=r.current_generation+1;
     insert into apxgen_generations(run_id,generation,rng_before,rng_after)values(p_run,r.current_generation,before_rng,before_rng);
     for i in 1..r.population_size loop
-      parent:=null;second:=null;
+      parent:=null;second:=null;ai_id:=null;
       if r.population_mode='RANDOM_SEARCH' then g:=apxgen_genome.random_genes(r.rng_state);method:='RANDOM';
       elsif i<=r.elite_count then parent:=parents(i);g:=genes_of(parent);method:='ELITE';
       else
@@ -122,7 +122,14 @@ create or replace package body apxgen_evolution as
         for attempt in 1..5 loop h:=apxgen_genome.fingerprint(apxgen_genome.from_genes(g));select count(*)into dups from apxgen_organisms where run_id=p_run and generation=r.current_generation and fingerprint=h;exit when dups=0;g:=apxgen_genetics.mutate(g,r.rng_state,greatest(r.mutation_rate,.5));end loop;
         if dups>0 then g:=apxgen_genome.random_genes(r.rng_state);method:='IMMIGRANT';parent:=null;second:=null;end if;
       end if;
+      if r.population_mode='GA_HAIKU' and i=r.elite_count+1 then
+        begin
+          select invocation_id,proposal,organism_id into ai_id,ai_json,ai_parent from apxgen_invocations where run_id=p_run and generation=r.current_generation-1 and state='RECONCILED' and proposal is not null and error_code is null and applied_organism is null order by created_at fetch first 1 row only;
+          child_json:=apxgen_genome.from_genes(genes_of(ai_parent));g:=apxgen_genome.to_genes(apxgen_ai.apply_proposal(child_json,ai_json));parent:=ai_parent;second:=null;method:='AI';
+        exception when no_data_found then null;end;
+      end if;
       id:=add_organism(p_run,r.current_generation,i,g,method,parent,second);
+      if ai_id is not null then update apxgen_invocations set applied_organism=id where invocation_id=ai_id;event(p_run,r.current_generation,'AI_OFFSPRING','Approved mutation enters unchanged fitness pipeline');end if;
     end loop;
     update apxgen_generations set rng_after=r.rng_state where run_id=p_run and generation=r.current_generation;
     update apxgen_runs set current_generation=r.current_generation,rng_state=r.rng_state,heartbeat=systimestamp where run_id=p_run;

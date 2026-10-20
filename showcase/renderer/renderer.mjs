@@ -8,6 +8,7 @@ export function renderOrganism(root,g){
   const p=PALETTES[g.style.palette];
   for(const [k,v]of Object.entries(p))root.style.setProperty('--org-'+k,v);
   root.style.setProperty('--org-font',g.style.fontSize+'px');root.style.setProperty('--org-space',g.style.spacing+'px');root.style.setProperty('--org-radius',g.style.radius+'px');root.style.setProperty('--org-columns',g.layout.columns);
+  root.style.setProperty('--org-order-span',Math.min(2,g.layout.columns));
   root.dataset.navigation=g.layout.navigation;
   const header=el('header',null,'org-header');header.append(el('strong','NORTH / OPERATIONS'),el('span','Synthetic scenario · Q3 2026','org-caption'));root.append(header);
   const shell=el('div',null,'org-shell'),nav=el('nav',null,'org-nav');nav.setAttribute('aria-label','Dashboard sections');
