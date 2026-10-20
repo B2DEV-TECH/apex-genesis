@@ -6,9 +6,12 @@ create or replace package apxgen_evolution authid definer as
   procedure advance(p_run varchar2);
   procedure control(p_run varchar2,p_action varchar2);
   procedure claim(p_run varchar2,p_organism out number,p_token out varchar2,p_genome out clob);
+  -- Autonomous runs are claimable only by the holder of the supervisor lease.
+  procedure claim(p_run varchar2,p_lease varchar2,p_organism out number,p_token out varchar2,p_genome out clob);
   procedure submit_evaluation(p_organism number,p_token varchar2,p_environment varchar2,p_metrics clob,p_cached_from number default null);
   procedure fail_evaluation(p_organism number,p_token varchar2,p_environment varchar2,p_reason varchar2);
-  function duplicate_run(p_run varchar2,p_generation number default 0) return varchar2;
+  -- p_target_generations/p_label are optional (autonomy continuations and lineage runs); defaults keep the original behaviour.
+  function duplicate_run(p_run varchar2,p_generation number default 0,p_target_generations number default null,p_label varchar2 default null) return varchar2;
   procedure schedule_run(p_run varchar2);
   procedure tick(p_run varchar2);
 end apxgen_evolution;
@@ -84,13 +87,25 @@ create or replace package body apxgen_evolution as
     update apxgen_runs set current_generation=0,rng_state=r.rng_state,state='RUNNING',started_at=systimestamp,heartbeat=systimestamp where run_id=p_run;
     event(p_run,0,'INITIALIZED','Shared seeded starting population');
   end;
-  procedure claim(p_run varchar2,p_organism out number,p_token out varchar2,p_genome out clob) is
+  procedure claim_any(p_run varchar2,p_organism out number,p_token out varchar2,p_genome out clob) is
     cursor q is select o.organism_id,o.fingerprint from apxgen_organisms o join apxgen_runs r on r.run_id=o.run_id where o.run_id=p_run and r.state='RUNNING' and (o.evaluation_state='PENDING' or (o.evaluation_state='CLAIMED' and o.lease_until<systimestamp)) order by o.ordinal for update of o.evaluation_state skip locked;
   begin
     p_organism:=null;p_token:=null;p_genome:=null;
     for x in q loop p_organism:=x.organism_id;p_token:=lower(rawtohex(sys_guid()));select canonical_json into p_genome from apxgen_genomes where fingerprint=x.fingerprint;
       update apxgen_organisms set evaluation_state='CLAIMED',claim_token=p_token,lease_until=systimestamp+numtodsinterval(120,'SECOND')where organism_id=x.organism_id;exit;
     end loop;
+  end;
+  procedure claim(p_run varchar2,p_organism out number,p_token out varchar2,p_genome out clob) is n number;
+  begin
+    -- A manual worker must never evaluate a run that the supervisor owns.
+    select count(*) into n from apxgen_autonomy_runs where run_id=p_run;
+    if n>0 then raise_application_error(-20075,'Autonomous runs are evaluated only by the lease-holding supervisor');end if;
+    claim_any(p_run,p_organism,p_token,p_genome);
+  end;
+  procedure claim(p_run varchar2,p_lease varchar2,p_organism out number,p_token out varchar2,p_genome out clob) is
+  begin
+    apxgen_autonomy.assert_lease(p_lease);
+    claim_any(p_run,p_organism,p_token,p_genome);
   end;
   procedure submit_evaluation(p_organism number,p_token varchar2,p_environment varchar2,p_metrics clob,p_cached_from number default null) is
     o apxgen_organisms%rowtype;c clob;e number;f number;a number;h number;r number;p number;cr number;env varchar2(128);weights varchar2(400);n number;metrics_data clob:=p_metrics;
@@ -202,11 +217,11 @@ create or replace package body apxgen_evolution as
     elsif p_action='STOP' and r.state in('RUNNING','PAUSED','PAUSE_REQUESTED','READY')then update apxgen_runs set state='STOP_REQUESTED' where run_id=p_run;
     else raise_application_error(-20023,'Invalid state transition');end if;event(p_run,r.current_generation,p_action,'Explicit operator request');
   end;
-  function duplicate_run(p_run varchar2,p_generation number default 0) return varchar2 is r apxgen_runs%rowtype;id varchar2(32);n number;oid number;g apxgen_genome.genes;state_rng number;
+  function duplicate_run(p_run varchar2,p_generation number default 0,p_target_generations number default null,p_label varchar2 default null) return varchar2 is r apxgen_runs%rowtype;id varchar2(32);n number;oid number;g apxgen_genome.genes;state_rng number;
   begin
     select * into r from apxgen_runs where run_id=p_run;select count(*)into n from apxgen_generations where run_id=p_run and generation=p_generation and state='COMPLETE';
     if n<>1 then raise_application_error(-20024,'Completed checkpoint required');end if;
-    id:=create_run(substr('Checkpoint of '||r.label,1,120),r.population_mode,r.seed,r.population_size,r.target_generations);
+    id:=create_run(nvl(substr(p_label,1,160),substr('Checkpoint of '||r.label,1,120)),r.population_mode,r.seed,r.population_size,nvl(p_target_generations,r.target_generations));
     select rng_after into state_rng from apxgen_generations where run_id=p_run and generation=p_generation;
     insert into apxgen_generations(run_id,generation,rng_before,rng_after) values(id,0,state_rng,state_rng);
     for x in(select o.organism_id,o.ordinal,g.canonical_json from apxgen_organisms o join apxgen_genomes g on g.fingerprint=o.fingerprint where o.run_id=p_run and o.generation=p_generation order by ordinal)loop g:=apxgen_genome.to_genes(x.canonical_json);oid:=add_organism(id,0,x.ordinal,g,'CHECKPOINT',x.organism_id);end loop;

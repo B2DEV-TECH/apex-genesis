@@ -1,0 +1,62 @@
+{
+ "test": "autonomy-resources",
+ "version": "0.1.0-alpha.1",
+ "startedAt": "2026-10-20T22:23:15.540Z",
+ "phases": [
+  {
+   "phase": "storage-budget",
+   "limit": "storageBudgetMb=10 (current use plus the 16 MiB run margin exceeds it)",
+   "observedState": "IDLE",
+   "observedDetail": "Storage budget reached (9 MiB used of 10 MiB budget)",
+   "runsBefore": 25,
+   "runsAfter": 25,
+   "supervisorExit": 0
+  },
+  {
+   "phase": "daily-generation-cap",
+   "limit": "dailyGenerationCap=1",
+   "observedDetail": "Daily generation cap: 193 used of 1; next run needs 40",
+   "runsBefore": 25,
+   "runsAfter": 25,
+   "supervisorExit": 0
+  },
+  {
+   "phase": "disk-floor-throttle",
+   "limit": "minFreeDiskMb=100000000",
+   "diskFreeMb": 568902,
+   "throttles": 5,
+   "evaluatedAtThrottle": 852,
+   "evaluatedAfter30s": 852,
+   "observedDetail": "Throttled: free disk 568902 MB < 100000000",
+   "supervisorExit": 0
+  },
+  {
+   "phase": "browser-memory-recycle",
+   "limit": "maxBrowserWorkingSetMb=40",
+   "browserWorkingSetMb": 222,
+   "treeWorkingSetMb": 379,
+   "browserRecycles": 2,
+   "databaseLogEntries": 3,
+   "firstLogged": {
+    "AT": "2026-10-20T22:24:24Z",
+    "MESSAGE": "Memory limit exceeded; browser recycled"
+   },
+   "evaluatedBefore": 852,
+   "evaluatedAfter": 884,
+   "priority": {
+    "supervisor": "BelowNormal",
+    "children": [
+     "headless_shell.exe:BelowNormal"
+    ]
+   },
+   "supervisorExit": 0
+  }
+ ],
+ "outcome": "PASSED",
+ "restored": {
+  "override": "restored",
+  "storageBudgetMb": 180,
+  "dailyGenerationCap": 200
+ },
+ "finishedAt": "2026-10-20T22:24:44.676Z"
+}

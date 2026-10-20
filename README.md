@@ -134,6 +134,29 @@ Follow the [complete installation and troubleshooting guide](docs/installation/R
 APEX scheduling does not replace the browser measurement worker. Evolution can run
 without an open tab, but the worker must supply observations.
 
+## Autonomous operation
+
+Version 0.2.0-alpha.1 adds an optional unattended mode for one Windows
+workstation. A supervisor started by Task Scheduler runs bounded, seeded
+experiments one after another: 12 × 100, GA_ONLY, paid AI fixed off. It holds an
+Oracle lease, checkpoints every generation and resumes after a crash. A 5-minute
+watchdog task restarts it after a crash, but never after a requested shutdown. Daily
+generation caps, a cooldown, a storage budget and resource limits bound the work.
+The lab never deletes evidence to make room.
+
+After each verified publication, completed generations appear at the
+[live archive](https://b2dev.tech/genesis/live.html). It is a static, hash-checked
+replay, not a database connection. The recorded experiment and the article above
+stay unchanged.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-tasks.ps1
+node runtime/genesisctl.mjs status
+```
+
+[Operations guide, commands and policy](docs/operations/autonomous-operation.md) ·
+[Release report](docs/releases/v0.2.0-alpha.1.md)
+
 ## Optional Haiku
 
 The owner supplies an APEX Web Credential, verifies the runtime model and pricing,
@@ -154,7 +177,7 @@ implemented in this alpha.
 - [Verification evidence](docs/testing/evidence.md), [maintenance](docs/installation/maintenance.md)
   and [community contribution summary](docs/publication/community-contribution.md).
 - Native lab pages: Control Center, Arena, Family Tree, Time Machine, Competition,
-  Mutation Microscope, Research Analytics and Configuration. Remaining scope is
+  Mutation Microscope, Research Analytics, Configuration and Autonomous Operations. Remaining scope is
   disclosed in the release report.
 - Real video: 1920×1080 H.264/AAC, English captions and identified local synthetic
   narration. Raw recordings and credentials are excluded from Git.
