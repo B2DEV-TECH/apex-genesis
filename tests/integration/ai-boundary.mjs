@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';import {connect,rows,createRun,oracledb} from '../../scripts/db.mjs';
+const db=await connect(),other=await connect(),original=(await rows(db,'select * from apxgen_provider_config where singleton=1'))[0];let checks=0;
+const metrics=JSON.stringify({overflow:0,overlap:0,clipped:0,missing:0,unnamed:0,focusVisible:1,domNodes:77,viewportsTested:3,axeCritical:0,errors:0,renderMs:1});
+try{
+ await db.execute("update apxgen_provider_config set enabled=1,credential_static_id='MOCK_NO_HTTP',verified_model_id='mock-boundary',model_verified_at=systimestamp,pricing_reviewed_at=systimestamp,input_usd_per_million=.1,output_usd_per_million=.5,daily_limit_usd=1,request_interval=1 where singleton=1");await db.commit();
+ const run=await createRun(db,{label:'TEST AI generation boundary, no HTTP',mode:'GA_HAIKU',size:4,generations:5});await db.execute('begin apxgen_evolution.initialize(:run);end;',{run});await db.execute('update apxgen_run_budgets set enabled=1 where run_id=:run',{run});await db.commit();let parent;
+ for(let i=0;i<4;i++){const c=await db.execute('begin apxgen_evolution.claim(:run,:id,:token,:g);end;',{run,id:{dir:oracledb.BIND_OUT,type:oracledb.NUMBER},token:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:32},g:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:2000}});await db.commit();parent??=c.outBinds.id;await db.execute('begin apxgen_evolution.submit_evaluation(:id,:token,\'mock-boundary\',:m);end;',{id:c.outBinds.id,token:c.outBinds.token,m:metrics});await db.commit();}
+ await db.execute('begin apxgen_evolution.advance(:run);end;',{run});await db.commit();assert.equal((await rows(db,'select current_generation from apxgen_runs where run_id=:run',{run}))[0].CURRENT_GENERATION,0,'AI-due generation advanced before proposal reservation');checks++;
+ const reservation=await db.execute('begin :id:=apxgen_budget.reserve(:run,0,:parent);end;',{id:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:32},run,parent});const id=reservation.outBinds.id;
+ await other.execute('begin apxgen_evolution.advance(:run);end;',{run});await other.commit();assert.equal((await rows(db,'select current_generation from apxgen_runs where run_id=:run',{run}))[0].CURRENT_GENERATION,0,'Scheduler outran in-flight AI proposal');checks++;
+ const response=JSON.stringify({id:'mock',type:'message',role:'assistant',model:'mock-boundary',content:[{type:'text',text:'{"operations":[{"gene":"spacing","value":16}]}'}],stop_reason:'end_turn',stop_sequence:null,usage:{input_tokens:100,output_tokens:20,cache_creation_input_tokens:0,cache_read_input_tokens:0}});
+ await db.execute('begin apxgen_ai.accept_response(:id,:response);end;',{id,response});await db.execute('begin apxgen_evolution.advance(:run);end;',{run});await db.commit();assert.equal((await rows(db,"select count(*) n from apxgen_organisms where run_id=:run and generation=1 and method='AI'",{run}))[0].N,1);checks++;
+ assert.ok((await rows(db,'select applied_organism from apxgen_invocations where invocation_id=:id',{id}))[0].APPLIED_ORGANISM);checks++;
+ console.log(JSON.stringify({checks,passed:true,paidRequests:0,run}));
+}finally{
+ await db.rollback();const columns=Object.keys(original).filter(k=>k!=='SINGLETON');await db.execute('update apxgen_provider_config set '+columns.map(k=>k+'=:'+k).join(',')+' where singleton=1',Object.fromEntries(columns.map(k=>[k,original[k]])));await db.commit();await db.close();await other.close();
+}

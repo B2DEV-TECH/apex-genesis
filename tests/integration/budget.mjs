@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {connect,rows,createRun,oracledb} from '../../scripts/db.mjs';
-let checks=0;const db=await connect(),other=await connect();
+let checks=0;const db=await connect(),other=await connect(),original=(await rows(db,'select * from apxgen_provider_config where singleton=1'))[0];
 const metrics=JSON.stringify({overflow:0,overlap:0,clipped:0,missing:0,unnamed:0,axeCritical:0,focusVisible:1,domNodes:77,viewportsTested:3,errors:0,renderMs:1});
 const reserve=(conn,run,parent)=>conn.execute('begin :id:=apxgen_budget.reserve(:run,0,:parent);end;',{id:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:32},run,parent});
 async function fixture(){const run=await createRun(db,{label:'TEST mocked budget; no HTTP',mode:'GA_HAIKU',size:4,generations:5});await db.execute('begin apxgen_evolution.initialize(:id);end;',{id:run});await db.commit();const c=await db.execute('begin apxgen_evolution.claim(:run,:id,:token,:g);end;',{run,id:{dir:oracledb.BIND_OUT,type:oracledb.NUMBER},token:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:32},g:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:2000}});await db.commit();await db.execute('begin apxgen_evolution.submit_evaluation(:id,:token,\'mock-budget-test\',:m);end;',{id:c.outBinds.id,token:c.outBinds.token,m:metrics});await db.commit();return {run,parent:c.outBinds.id};}
@@ -25,5 +25,5 @@ try{
  await assert.rejects(()=>db.execute('begin :out:=apxgen_ai.apply_proposal(:parent,:proposal);end;',{out:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:4000},parent,proposal:'{"operations":[{"gene":"sql","value":"drop table"}]}'}));checks++;
  console.log(JSON.stringify({checks,passed:true,paidRequests:0,scope:'Mocked responses and durable database reservations; no provider HTTP'}));
 }finally{
- await db.rollback();await db.execute('update apxgen_provider_config set enabled=0,credential_static_id=null,model_id=null,verified_model_id=null,model_verified_at=null,pricing_reviewed_at=null,input_usd_per_million=null,output_usd_per_million=null where singleton=1');await db.commit();await db.close();await other.close();
+ await db.rollback();const columns=Object.keys(original).filter(k=>k!=='SINGLETON');await db.execute('update apxgen_provider_config set '+columns.map(k=>k+'=:'+k).join(',')+' where singleton=1',Object.fromEntries(columns.map(k=>[k,original[k]])));await db.commit();await db.close();await other.close();
 }

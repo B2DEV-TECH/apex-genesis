@@ -1,0 +1,48 @@
+page 1 (
+ name: Genesis Control Center
+ alias: GENESIS-1
+ title: Genesis Control Center | APEX Genesis
+ appearance {
+ pageTemplate: @/standard
+ templateOptions: #DEFAULT#
+ }
+ navigation {
+ warnOnUnsavedChanges: false
+ }
+ security {
+ authentication: required
+ pageAccessProtection: argumentsMustHaveChecksum
+ }
+ region genesis-laboratory (
+ name: Genesis Control Center
+ type: staticContent
+ layout {
+ sequence: 10
+ slot: body
+ columnSpan: 12
+ startNewRow: true
+ }
+ appearance {
+ template: @/blank-with-attributes
+ templateOptions: #DEFAULT#
+ }
+ source {
+ htmlCode: ```html
+<div id="genesis-control"><p class="eyebrow">ORACLE-OWNED STATE / AUTHENTICATED CONTROL</p><h1>Genesis Control Center</h1><p class="lede">The database owns every generation. Pending candidates await the browser evaluation worker.</p><label for="control-run">Experiment</label><select id="control-run"></select><section id="control-metrics" class="instrument-bar"></section><div class="transport"><button type="button" data-control="PAUSE">Pause</button><button type="button" data-control="RESUME">Resume</button><button type="button" data-control="STOP">Stop</button><button type="button" data-control="STEP">Run one generation</button><button type="button" data-control="STOP_AI">Stop AI</button></div><p id="control-heartbeat" role="status"></p><h2>Evolution events</h2><ol id="control-events"></ol></div>
+```
+ }
+ )
+ process genesis-data (
+ name: GENESIS_DATA
+ type: executeCode
+ source {
+ plsqlCode: ```plsql
+apxgen_web.ajax;
+```
+ }
+ execution {
+ sequence: 10
+ point: ajaxCallback
+ }
+ )
+)

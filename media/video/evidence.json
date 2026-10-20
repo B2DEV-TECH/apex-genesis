@@ -1,0 +1,67 @@
+{
+  "programs": [],
+  "stream_groups": [],
+  "streams": [
+    {
+      "codec_name": "h264",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "codec_name": "aac"
+    }
+  ],
+  "format": {
+    "duration": "347.333333",
+    "size": "15077195"
+  },
+  "sha256": "b320cf1d6a0748f3378db178aeb42888bf550124f715227a39655388a0722216",
+  "disclosure": "Continuous real browser recording. Planned navigation, captions, synthetic English narration; the genuine five-generation worker has an explicit 2-second demonstration delay. No paid model request.",
+  "videoRun": "03446d20b16748709ef5a61786b805ab",
+  "chapters": [
+    {
+      "id": "opening",
+      "title": "Can a database evolve an interface?",
+      "start": 0,
+      "duration": 51.02508
+    },
+    {
+      "id": "database",
+      "title": "The Oracle-owned lifecycle",
+      "start": 51.02508,
+      "duration": 51.874376999999996
+    },
+    {
+      "id": "genome",
+      "title": "From genotype to a working interface",
+      "start": 102.899457,
+      "duration": 52.014831
+    },
+    {
+      "id": "replay",
+      "title": "One hundred recorded generations",
+      "start": 154.914288,
+      "duration": 47.674649
+    },
+    {
+      "id": "lineage",
+      "title": "Ancestry and mutation under the microscope",
+      "start": 202.588937,
+      "duration": 44.526032
+    },
+    {
+      "id": "ai",
+      "title": "Optional AI, with a spending boundary",
+      "start": 247.11496899999997,
+      "duration": 47.639547
+    },
+    {
+      "id": "results",
+      "title": "What the experiment actually found",
+      "start": 294.75451599999997,
+      "duration": 52.563855000000004
+    }
+  ],
+  "narration": "Installed Microsoft Zira English synthetic voice; original project script",
+  "captions": "English, burned in plus WebVTT"
+}

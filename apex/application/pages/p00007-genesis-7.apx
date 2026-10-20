@@ -1,0 +1,66 @@
+page 7 (
+ name: Research Analytics
+ alias: GENESIS-7
+ title: Research Analytics | APEX Genesis
+ appearance {
+ pageTemplate: @/standard
+ templateOptions: #DEFAULT#
+ }
+ navigation {
+ warnOnUnsavedChanges: false
+ }
+ security {
+ authentication: required
+ pageAccessProtection: argumentsMustHaveChecksum
+ }
+ region genesis-laboratory (
+ name: Research Analytics
+ type: staticContent
+ layout {
+ sequence: 10
+ slot: body
+ columnSpan: 12
+ startNewRow: true
+ }
+ appearance {
+ template: @/blank-with-attributes
+ templateOptions: #DEFAULT#
+ }
+ source {
+ htmlCode: ```html
+<div data-genesis-embedded data-initial-view="analytics">
+<a class="skip" href="#laboratory">Skip to laboratory</a>
+<header class="masthead"><a class="wordmark" href="https://github.com/B2DEV-TECH/apex-genesis" target="_blank" rel="noopener"><span class="genesis-mark" aria-hidden="true">✳</span><span>APEX <b>GENESIS</b><small>B2DEV TECH / EVOLUTION SYSTEMS</small></span></a><div class="header-meta"><span class="record-indicator"></span> RECORDED EXPERIMENT <a href="https://github.com/B2DEV-TECH/apex-genesis">SOURCE ↗</a></div></header>
+<div id="laboratory">
+<section class="intro"><div><p class="eyebrow">EXPERIMENT 001 <span>/</span> ORACLE × EVOLUTIONARY COMPUTATION</p><h1>Interfaces are born.<br><span>The database decides<br class="mobile-break"> who survives.</span></h1><p class="lede">A living archive of selection, mutation and inheritance.<br>Every interface is a genome. Every generation leaves evidence.</p></div><div class="specimen-seal" aria-hidden="true"><div class="seal-orbit orbit-a"></div><div class="seal-orbit orbit-b"></div><div class="seal-core">G<sub>0 → 100</sub></div><span>PL/SQL · SEEDED EVOLUTION</span></div></section>
+<div id="load-status" role="status" class="load-status">Verifying the recorded experiment…</div>
+<div id="lab-content" hidden>
+<section class="instrument-bar" aria-label="Recorded experiment metrics"><div><span>ENGINE</span><strong>Oracle PL/SQL</strong></div><div><span>HISTORY</span><strong id="generation-count">—</strong></div><div><span>CANDIDATE RECORDS</span><strong id="candidate-count">—</strong></div><div><span>VIEWPORTS / CANDIDATE</span><strong>390 · 768 · 1440</strong></div><div><span>AI EVIDENCE</span><strong id="ai-evidence">—</strong></div></section>
+<nav class="lab-tabs" aria-label="Laboratory views"><button type="button" data-view="arena" aria-pressed="true">01 / Evolution Arena</button><button type="button" data-view="tree" aria-pressed="false">02 / Family Tree</button><button type="button" data-view="mutation" aria-pressed="false">03 / Mutation Microscope</button><button type="button" data-view="analytics" aria-pressed="false">04 / Research Analytics</button></nav>
+<section class="time-machine" aria-label="Evolution Time Machine"><div class="transport"><button type="button" id="play" class="primary" aria-label="Play recorded evolution">▶ Play</button><button type="button" id="back" aria-label="Previous generation">←</button><button type="button" id="next" aria-label="Next generation">→</button><label class="speed">Speed <select id="speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option><option value=".5">0.5×</option></select></label></div><div class="timeline-wrap"><div class="timeline-label"><label for="timeline">GENERATION <strong id="generation-label">000</strong></label><span id="timeline-end">0 → 100</span></div><input id="timeline" type="range" min="0" max="100" value="0" step="1" aria-label="Recorded generation"><div class="timeline-ticks"><span>ORIGIN</span><span>SELECTION</span><span>INHERITANCE</span><span>RECORDED END</span></div></div><button type="button" id="origin">Compare with origin</button></section>
+<section id="arena-view" class="view"><div class="section-heading"><div><p class="eyebrow">THE EVOLUTION ARENA</p><h2>Same origin. Different search.</h2></div><p id="comparison-note">Both populations use the same seed and evaluation rules.</p></div><div class="arena-grid" id="arena-cards"></div><div class="race-panel"><div class="chart-heading"><h3>Fitness race</h3><span>BEST OF GENERATION <i class="legend-a"></i> DARWIN <i class="legend-b"></i> CONTROL</span></div><div id="race-chart"></div><p class="chart-note">Technical fitness is a declared proxy. It does not establish beauty or real-world usability. Regressions remain visible.</p></div></section>
+<section id="tree-view" class="view" hidden><div class="section-heading"><div><p class="eyebrow">INHERITANCE / SELECTION / EXTINCTION</p><h2>Every organism has a history.</h2></div><div class="tree-tools"><label>Population <select id="tree-population"></select></label><button type="button" id="zoom-in" aria-label="Zoom in family tree">+</button><button type="button" id="zoom-out" aria-label="Zoom out family tree">−</button></div></div><p id="tree-window" class="chart-note"></p><div id="tree-scroll" tabindex="0" aria-label="Scrollable ancestry graph"><svg id="tree-svg" role="img" aria-label="Organism ancestry"></svg></div><p class="chart-note">Inspect a node to open its organism. The graph loads a local three-generation window; scroll to pan and use the controls to zoom.</p><div id="tree-inspector" class="inspector"></div></section>
+<section id="mutation-view" class="view" hidden><div class="section-heading"><div><p class="eyebrow">GENOTYPE → PHENOTYPE</p><h2>Look inside a mutation.</h2></div><label>Organism <select id="mutation-organism"></select></label></div><div id="mutation-detail"></div></section>
+<section id="analytics-view" class="view" hidden><div class="section-heading"><div><p class="eyebrow">OBSERVATIONS / LIMITS / REPRODUCTION</p><h2>What the measurements say.</h2></div></div><div id="analytics"></div></section>
+<section class="research-note"><span class="note-symbol" aria-hidden="true">↗</span><div><h2>Open the experiment.</h2><p>This is recorded playback of database-owned evolution. Download the configuration, genomes, lineage and measured observations, or reproduce a run in your own Oracle laboratory.</p><a href="https://github.com/B2DEV-TECH/apex-genesis">Explore the source & evidence ↗</a> <a id="manifest-link" href="./datasets/pilot/manifest.json">Integrity manifest ↗</a></div></section>
+</div>
+</div><footer><span>APEX GENESIS / B2DEV TECH</span><span>Independent open-source research · Geraldo Viana Jr. · Apache-2.0</span></footer>
+<dialog id="organism-dialog"><div class="dialog-top"><h2 id="dialog-title">Organism</h2><button type="button" id="close-dialog" aria-label="Close organism inspector">✕</button></div><div class="viewport-controls"><button type="button" data-width="1440">Desktop</button><button type="button" data-width="768">Tablet</button><button type="button" data-width="390">Mobile</button></div><div class="dialog-preview"><iframe id="dialog-frame" title="Full-size organism" sandbox="allow-scripts"></iframe></div><pre id="dialog-metrics"></pre></dialog>
+</div>
+```
+ }
+ )
+ process genesis-data (
+ name: GENESIS_DATA
+ type: executeCode
+ source {
+ plsqlCode: ```plsql
+apxgen_web.ajax;
+```
+ }
+ execution {
+ sequence: 10
+ point: ajaxCallback
+ }
+ )
+)

@@ -7,5 +7,5 @@ connect $($config.user)/"$($config.password)"@$($config.connectString)
 $Command
 exit
 "@
-$sql | & 'C:\sqlcl-26.2.2\bin\sql.exe' -thin -nohistory -noupdates -S /nolog
+$sql | & 'C:\sqlcl\bin\sql.exe' -thin -nohistory -noupdates -S /nolog
 if ($LASTEXITCODE -ne 0) { throw 'SQLcl command failed' }

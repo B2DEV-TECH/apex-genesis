@@ -54,7 +54,8 @@ Hard gates: supported grammar, complete section permutation, text >=14px, contra
 >=4.5:1, visible controls, no overflow/clipping/overlap at 390, 768 and 1440px.
 Browser evaluation records keyboard focus, required accessible names and axe findings.
 Failures have score zero and cannot beat eligible candidates. All-invalid populations
-are reported; selection prefers least-violating candidates only to recover feasibility.
+are reported; tournament ties among invalid parents are random while variation
+continues to seek feasible offspring. No least-violation ranking is implemented.
 
 Technical fitness is a transparent weighted sum: accessibility 0.40, hierarchy 0.25,
 responsiveness 0.25, deterministic DOM-size performance proxy 0.10. Timing is measured

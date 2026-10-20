@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Genesis organism preview</title><style>*{box-sizing:border-box}body{margin:0}.organism{background:var(--org-bg);color:var(--org-text);font:var(--org-font)/1.5 system-ui,sans-serif;padding:var(--org-space);min-height:100vh}.organism button,.organism select{font:inherit}.org-header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid currentColor;padding-bottom:var(--org-space);margin-bottom:var(--org-space)}.org-header strong{letter-spacing:.08em}.org-caption{font-size:1em}.org-shell{display:flex;flex-direction:column;gap:var(--org-space)}.org-nav{display:flex;gap:var(--org-space);flex-wrap:wrap}.org-nav a{color:var(--org-accent);text-decoration:underline;text-underline-offset:4px}.org-grid{display:grid;grid-template-columns:repeat(var(--org-columns),minmax(0,1fr));gap:var(--org-space);flex:1;min-width:0}.org-section{border:1px solid var(--org-accent);border-radius:var(--org-radius);padding:var(--org-space);background:var(--org-surface);min-width:0;overflow-wrap:anywhere}.org-section h2{font-size:1.15em;margin:0 0 var(--org-space);font-weight:650}.org-section[data-section=orders]{grid-column:span var(--org-order-span)}.org-metrics{display:grid;gap:var(--org-space)}.org-metric{display:grid;border-bottom:1px solid var(--org-accent);padding-bottom:8px}.org-metric strong{font-size:1.7em}.org-filters{display:flex;flex-direction:column;gap:12px}.org-filters select,.org-filters button{width:100%;min-width:0;min-height:44px;background:var(--org-bg);color:var(--org-text);border:1px solid var(--org-accent);border-radius:4px;padding:8px}.org-filters button{cursor:pointer;color:var(--org-bg);background:var(--org-accent);font-weight:700}.organism :is(a,button,select,summary):focus-visible{outline:3px solid var(--org-text);outline-offset:4px}.org-chart{display:flex;align-items:flex-end;justify-content:space-around;gap:4px;min-height:150px;flex-wrap:wrap}.org-chart svg{width:100%;height:110px;color:var(--org-accent)}.org-bar-item{display:flex;flex-direction:column;align-items:center;font-size:1em;min-width:0}.org-bar{width:36px;max-width:100%;background:var(--org-accent);border-radius:3px}.organism table{width:100%;border-collapse:collapse;font-size:1em}.organism th,.organism td{text-align:left;border-bottom:1px solid var(--org-accent);padding:6px 3px}.organism caption{text-align:left;font-size:1em;margin-bottom:8px}.org-order-cards{padding:0;list-style:none;display:grid;gap:8px}.org-order-cards li{display:flex;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--org-accent);padding:8px 0}.organism summary{cursor:pointer;padding:8px 0}.organism[data-navigation=left] .org-shell{flex-direction:row}.organism[data-navigation=left] .org-nav{width:125px;flex-shrink:0;flex-direction:column}@media(max-width:900px){.org-grid{grid-template-columns:repeat(min(2,var(--org-columns)),minmax(0,1fr))}.organism[data-navigation=left] .org-nav{width:100px}}@media(max-width:580px){.org-grid{grid-template-columns:minmax(0,1fr)}.org-section[data-section=orders]{grid-column:auto}.organism[data-navigation=left] .org-shell{flex-direction:column}.organism[data-navigation=left] .org-nav{width:auto;flex-direction:row}}
+</style></head><body><main id="organism"></main><script>
+const SECTIONS = Object.freeze(['metrics','filters','revenue','orders']);
+const PALETTES = Object.freeze([
+  {bg:'#10151c',surface:'#1b2430',text:'#f4f4f5',accent:'#f5a640'},
+  {bg:'#f4f1eb',surface:'#ffffff',text:'#20252d',accent:'#754200'},
+  {bg:'#101b19',surface:'#1a2a25',text:'#e7f5ed',accent:'#78e1b0'},
+  {bg:'#343840',surface:'#424650',text:'#797d85',accent:'#999999'}
+]);
+const GENE_NAMES=Object.freeze(['columns','navigation','order','chart','table','palette','fontSize','spacing','radius','collapseDetails','sort']);
+const GENE_LIMITS=Object.freeze([4,2,24,2,2,4,5,6,6,2,2]);
+function permutation(index) {
+  const items=[...SECTIONS], out=[];
+  for(let n=4;n>0;n--){const f=[1,1,2,6][n-1];out.push(items.splice(Math.floor(index/f),1)[0]);index%=f;}
+  return out;
+}
+function fromGenes(genes) {
+  if(!Array.isArray(genes)||genes.length!==11||genes.some((v,i)=>!Number.isInteger(v)||v<0||v>=GENE_LIMITS[i])) throw new Error('Invalid bounded genes');
+  return {schemaVersion:'1.0',layout:{columns:genes[0]+1,navigation:['top','left'][genes[1]],order:permutation(genes[2]),chart:['bars','line'][genes[3]],table:['table','cards'][genes[4]]},style:{palette:genes[5],fontSize:12+genes[6]*2,spacing:4+genes[7]*4,radius:genes[8]*4},behavior:{collapseDetails:!!genes[9],sort:['name','value'][genes[10]]}};
+}
+function keys(obj, expected){return obj&&typeof obj==='object'&&!Array.isArray(obj)&&Object.keys(obj).length===expected.length&&expected.every(k=>Object.hasOwn(obj,k));}
+function validateGenome(g) {
+  const errors=[];
+  if(!keys(g,['schemaVersion','layout','style','behavior'])||g.schemaVersion!=='1.0')return {valid:false,errors:['Unsupported genome envelope']};
+  const l=g.layout,s=g.style,b=g.behavior;
+  if(!keys(l,['columns','navigation','order','chart','table'])||!Number.isInteger(l.columns)||l.columns<1||l.columns>4||!['top','left'].includes(l.navigation)||!['bars','line'].includes(l.chart)||!['table','cards'].includes(l.table)||!Array.isArray(l.order)||l.order.length!==4||new Set(l.order).size!==4||l.order.some(x=>!SECTIONS.includes(x)))errors.push('Invalid layout');
+  if(!keys(s,['palette','fontSize','spacing','radius'])||!Number.isInteger(s.palette)||s.palette<0||s.palette>3||![12,14,16,18,20].includes(s.fontSize)||![4,8,12,16,20,24].includes(s.spacing)||![0,4,8,12,16,20].includes(s.radius))errors.push('Invalid style');
+  if(!keys(b,['collapseDetails','sort'])||typeof b.collapseDetails!=='boolean'||!['name','value'].includes(b.sort))errors.push('Invalid behavior');
+  return {valid:errors.length===0,errors};
+}
+function canonicalGenome(g) {
+  if(!validateGenome(g).valid)throw new Error('Invalid genome');
+  const l=g.layout,s=g.style,b=g.behavior;
+  return JSON.stringify({schemaVersion:'1.0',layout:{columns:l.columns,navigation:l.navigation,order:l.order,chart:l.chart,table:l.table},style:{palette:s.palette,fontSize:s.fontSize,spacing:s.spacing,radius:s.radius},behavior:{collapseDetails:b.collapseDetails,sort:b.sort}});
+}
+function applyMutation(parent,proposal) {
+  if(!keys(proposal,['operations'])||!Array.isArray(proposal.operations)||proposal.operations.length<1||proposal.operations.length>3)throw new Error('One to three operations required');
+  const g=JSON.parse(canonicalGenome(parent));
+  const locations={columns:g.layout,navigation:g.layout,order:g.layout,chart:g.layout,table:g.layout,palette:g.style,fontSize:g.style,spacing:g.style,radius:g.style,collapseDetails:g.behavior,sort:g.behavior};
+  const seen=new Set();
+  for(const op of proposal.operations){if(!keys(op,['gene','value'])||!Object.hasOwn(locations,op.gene)||seen.has(op.gene))throw new Error('Unsupported mutation');seen.add(op.gene);locations[op.gene][op.gene]=op.value;}
+  if(!validateGenome(g).valid)throw new Error('Mutation violates schema');
+  return g;
+}
+
+const RENDERER_VERSION='1.0.0';
+const ORDERS=Object.freeze([{name:'Atlas',amount:1280,status:'Ready'},{name:'Beacon',amount:840,status:'Review'},{name:'Cedar',amount:2100,status:'Ready'},{name:'Delta',amount:560,status:'Review'}]);
+function el(tag,text,cls){const e=document.createElement(tag);if(text!==null&&text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
+function renderOrganism(root,g){
+  if(!validateGenome(g).valid)throw new Error('Renderer rejected genome');
+  root.replaceChildren();root.className='organism';
+  const p=PALETTES[g.style.palette];
+  for(const [k,v]of Object.entries(p))root.style.setProperty('--org-'+k,v);
+  root.style.setProperty('--org-font',g.style.fontSize+'px');root.style.setProperty('--org-space',g.style.spacing+'px');root.style.setProperty('--org-radius',g.style.radius+'px');root.style.setProperty('--org-columns',g.layout.columns);
+  root.style.setProperty('--org-order-span',Math.min(2,g.layout.columns));
+  root.dataset.navigation=g.layout.navigation;
+  const header=el('header',null,'org-header');header.append(el('strong','NORTH / OPERATIONS'),el('span','Synthetic scenario · Q3 2026','org-caption'));root.append(header);
+  const shell=el('div',null,'org-shell'),nav=el('nav',null,'org-nav');nav.setAttribute('aria-label','Dashboard sections');
+  const grid=el('div',null,'org-grid');
+  const sections={};
+  for(const name of g.layout.order){const link=el('a',name[0].toUpperCase()+name.slice(1));link.href='#org-'+name;nav.append(link);const section=el('section',null,'org-section');section.id='org-'+name;section.dataset.section=name;section.append(el('h2',{metrics:'Operating summary',filters:'Explore orders',revenue:'Revenue by month',orders:'Order workspace'}[name]));sections[name]=section;grid.append(section);}
+  const metrics=el('div',null,'org-metrics');for(const [label,value]of [['Revenue','$4,780'],['Orders','4'],['Ready','2']]){const card=el('div',null,'org-metric');card.append(el('span',label),el('strong',value));metrics.append(card);}sections.metrics.append(metrics);
+  const form=el('form',null,'org-filters'),label=el('label','Order status'),select=el('select');label.htmlFor='org-status';select.id='org-status';for(const value of ['All','Ready','Review']){const o=el('option',value);o.value=value;select.append(o);}const button=el('button','Apply filter');button.type='submit';form.append(label,select,button);sections.filters.append(form);
+  const chart=el('div',null,'org-chart');chart.setAttribute('role','img');chart.setAttribute('aria-label','Monthly synthetic revenue: July 1200, August 1580, September 2000 dollars');
+  if(g.layout.chart==='bars'){for(const [month,value]of [['Jul',1200],['Aug',1580],['Sep',2000]]){const item=el('div',null,'org-bar-item'),bar=el('div',null,'org-bar');bar.style.height=(value/22)+'px';item.append(el('span','$'+value),bar,el('span',month));chart.append(item);}}
+  else{const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 240 100');svg.setAttribute('aria-hidden','true');const line=document.createElementNS(svg.namespaceURI,'polyline');line.setAttribute('points','10,80 120,51 230,15');line.setAttribute('fill','none');line.setAttribute('stroke','currentColor');line.setAttribute('stroke-width','4');svg.append(line);chart.append(svg,el('p','Jul $1,200 · Aug $1,580 · Sep $2,000','org-caption'));}sections.revenue.append(chart);
+  const status=el('p','4 synthetic orders','org-caption');status.setAttribute('role','status');
+  const results=el('div',null,'org-results');
+  const draw=(filter='All')=>{results.replaceChildren();const rows=ORDERS.filter(r=>filter==='All'||r.status===filter).toSorted(g.behavior.sort==='value'?(a,b)=>b.amount-a.amount:(a,b)=>a.name.localeCompare(b.name));status.textContent=rows.length+' synthetic orders';
+    if(g.layout.table==='table'){const table=el('table');const caption=el('caption','Synthetic orders');table.append(caption);const head=el('thead'),tr=el('tr');for(const name of ['Order','Amount','Status']){const th=el('th',name);th.scope='col';tr.append(th);}head.append(tr);table.append(head);const body=el('tbody');for(const row of rows){const r=el('tr');for(const cell of [row.name,'$'+row.amount,row.status])r.append(el('td',cell));body.append(r);}table.append(body);results.append(table);}
+    else{const list=el('ul',null,'org-order-cards');for(const r of rows){const li=el('li');li.append(el('strong',r.name),el('span','$'+r.amount),el('span',r.status));list.append(li);}results.append(list);}
+  };draw();form.addEventListener('submit',e=>{e.preventDefault();draw(select.value);});sections.orders.append(status,results);
+  const details=el('details');details.open=!g.behavior.collapseDetails;details.append(el('summary','Scenario notes'),el('p','All names and transactions are synthetic. Filters affect the order workspace. Revenue shows the complete quarter.'));sections.orders.append(details);
+  shell.append(nav,grid);root.append(shell);return root;
+}
+
+window.renderGenome=g=>renderOrganism(document.querySelector('main'),g);
+window.addEventListener('message',event=>{if(event.source===parent&&event.data?.type==='genesis-genome'){try{window.renderGenome(event.data.genome);parent.postMessage({type:'genesis-rendered',nonce:event.data.nonce},'*');}catch{parent.postMessage({type:'genesis-rejected'},'*');}}});
+</script></body></html>

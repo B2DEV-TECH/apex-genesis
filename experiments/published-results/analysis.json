@@ -1,0 +1,529 @@
+{
+  "experiment": "genesis-offline-paired-20261020",
+  "source": "Oracle-authoritative export with verified file/genome hashes",
+  "runs": [
+    {
+      "id": "68f3c4931b2d46b59129219059008bf4",
+      "mode": "GA_ONLY",
+      "seed": 42,
+      "originBest": 88.6,
+      "finalBest": 98.95,
+      "finalGenerationBest": 98.95,
+      "finalMean": 84.77537133333334,
+      "finalMedian": 90.65,
+      "finalVariance": 676.3166356167729,
+      "improvement": 10.350000000000009,
+      "eligiblePercent": 85.89108910891089,
+      "finalDiversity": 1,
+      "mutationAcceptance": 0.04,
+      "slots": 1212,
+      "uniqueBrowserEvaluations": 919,
+      "cacheHits": 293,
+      "elapsedSeconds": 21.888034,
+      "meanRenderMs": 1.313130214102337,
+      "firstGenerationAt95": 2,
+      "winnerId": 373,
+      "winnerGenome": {
+        "schemaVersion": "1.0",
+        "layout": {
+          "columns": 1,
+          "navigation": "top",
+          "order": [
+            "metrics",
+            "filters",
+            "orders",
+            "revenue"
+          ],
+          "chart": "line",
+          "table": "cards"
+        },
+        "style": {
+          "palette": 2,
+          "fontSize": 20,
+          "spacing": 16,
+          "radius": 0
+        },
+        "behavior": {
+          "collapseDetails": true,
+          "sort": "value"
+        }
+      }
+    },
+    {
+      "id": "433107d154354b2182dcf98b87f20984",
+      "mode": "RANDOM_SEARCH",
+      "seed": 42,
+      "originBest": 88.6,
+      "finalBest": 98.284612,
+      "finalGenerationBest": 88.35,
+      "finalMean": 61.89812633333333,
+      "finalMedian": 82.344534,
+      "finalVariance": 1288.8932756400945,
+      "improvement": 9.684612000000001,
+      "eligiblePercent": 62.29372937293729,
+      "finalDiversity": 1,
+      "mutationAcceptance": null,
+      "slots": 1212,
+      "uniqueBrowserEvaluations": 1198,
+      "cacheHits": 14,
+      "elapsedSeconds": 26.373745,
+      "meanRenderMs": 1.3017807457436457,
+      "firstGenerationAt95": 2,
+      "winnerId": 2022,
+      "winnerGenome": {
+        "schemaVersion": "1.0",
+        "layout": {
+          "columns": 4,
+          "navigation": "top",
+          "order": [
+            "metrics",
+            "filters",
+            "revenue",
+            "orders"
+          ],
+          "chart": "line",
+          "table": "cards"
+        },
+        "style": {
+          "palette": 0,
+          "fontSize": 20,
+          "spacing": 16,
+          "radius": 12
+        },
+        "behavior": {
+          "collapseDetails": false,
+          "sort": "value"
+        }
+      }
+    },
+    {
+      "id": "cbf0a8f0cf0049b79d402ad759a489a0",
+      "mode": "GA_ONLY",
+      "seed": 137,
+      "originBest": 88.5,
+      "finalBest": 98.95,
+      "finalGenerationBest": 98.95,
+      "finalMean": 79.29198633333333,
+      "finalMedian": 95.992306,
+      "finalVariance": 1278.7593193121158,
+      "improvement": 10.450000000000003,
+      "eligiblePercent": 86.38613861386139,
+      "finalDiversity": 1,
+      "mutationAcceptance": 0.038,
+      "slots": 1212,
+      "uniqueBrowserEvaluations": 937,
+      "cacheHits": 275,
+      "elapsedSeconds": 24.548061,
+      "meanRenderMs": 1.2099964425142706,
+      "firstGenerationAt95": 11,
+      "winnerId": 2939,
+      "winnerGenome": {
+        "schemaVersion": "1.0",
+        "layout": {
+          "columns": 4,
+          "navigation": "left",
+          "order": [
+            "metrics",
+            "filters",
+            "revenue",
+            "orders"
+          ],
+          "chart": "line",
+          "table": "cards"
+        },
+        "style": {
+          "palette": 2,
+          "fontSize": 20,
+          "spacing": 16,
+          "radius": 0
+        },
+        "behavior": {
+          "collapseDetails": true,
+          "sort": "name"
+        }
+      }
+    },
+    {
+      "id": "793cb210650f4d3b8f0416d57088b0a6",
+      "mode": "RANDOM_SEARCH",
+      "seed": 137,
+      "originBest": 88.5,
+      "finalBest": 98.15,
+      "finalGenerationBest": 87.184612,
+      "finalMean": 27.804857666666667,
+      "finalMedian": 0,
+      "finalVariance": 1551.7309556553719,
+      "improvement": 9.650000000000006,
+      "eligiblePercent": 59.32343234323432,
+      "finalDiversity": 1,
+      "mutationAcceptance": null,
+      "slots": 1212,
+      "uniqueBrowserEvaluations": 1198,
+      "cacheHits": 14,
+      "elapsedSeconds": 28.397484,
+      "meanRenderMs": 1.2200055648684165,
+      "firstGenerationAt95": 1,
+      "winnerId": 3928,
+      "winnerGenome": {
+        "schemaVersion": "1.0",
+        "layout": {
+          "columns": 2,
+          "navigation": "left",
+          "order": [
+            "metrics",
+            "filters",
+            "revenue",
+            "orders"
+          ],
+          "chart": "bars",
+          "table": "table"
+        },
+        "style": {
+          "palette": 2,
+          "fontSize": 20,
+          "spacing": 16,
+          "radius": 16
+        },
+        "behavior": {
+          "collapseDetails": false,
+          "sort": "name"
+        }
+      }
+    },
+    {
+      "id": "81eeae7ed0c4432585004c2049b2aa7f",
+      "mode": "GA_ONLY",
+      "seed": 3107,
+      "originBest": 94.5,
+      "finalBest": 98.95,
+      "finalGenerationBest": 98.95,
+      "finalMean": 85.92194733333334,
+      "finalMedian": 94.525,
+      "finalVariance": 694.8835848118769,
+      "improvement": 4.450000000000003,
+      "eligiblePercent": 88.28382838283828,
+      "finalDiversity": 1,
+      "mutationAcceptance": 0.041,
+      "slots": 1212,
+      "uniqueBrowserEvaluations": 877,
+      "cacheHits": 335,
+      "elapsedSeconds": 25.589665,
+      "meanRenderMs": 1.163511972533166,
+      "firstGenerationAt95": 2,
+      "winnerId": 5277,
+      "winnerGenome": {
+        "schemaVersion": "1.0",
+        "layout": {
+          "columns": 4,
+          "navigation": "left",
+          "order": [
+            "metrics",
+            "filters",
+            "revenue",
+            "orders"
+          ],
+          "chart": "line",
+          "table": "cards"
+        },
+        "style": {
+          "palette": 2,
+          "fontSize": 20,
+          "spacing": 16,
+          "radius": 4
+        },
+        "behavior": {
+          "collapseDetails": false,
+          "sort": "value"
+        }
+      }
+    },
+    {
+      "id": "cff26128c65243c38f0641fdf8959be4",
+      "mode": "RANDOM_SEARCH",
+      "seed": 3107,
+      "originBest": 94.5,
+      "finalBest": 97.35,
+      "finalGenerationBest": 95.25,
+      "finalMean": 43.23114,
+      "finalMedian": 39.667306,
+      "finalVariance": 1886.144987020152,
+      "improvement": 2.8499999999999943,
+      "eligiblePercent": 60.23102310231023,
+      "finalDiversity": 1,
+      "mutationAcceptance": null,
+      "slots": 1212,
+      "uniqueBrowserEvaluations": 1200,
+      "cacheHits": 12,
+      "elapsedSeconds": 32.40554,
+      "meanRenderMs": 1.198472222313286,
+      "firstGenerationAt95": 5,
+      "winnerId": 7048,
+      "winnerGenome": {
+        "schemaVersion": "1.0",
+        "layout": {
+          "columns": 3,
+          "navigation": "left",
+          "order": [
+            "metrics",
+            "filters",
+            "orders",
+            "revenue"
+          ],
+          "chart": "line",
+          "table": "table"
+        },
+        "style": {
+          "palette": 2,
+          "fontSize": 20,
+          "spacing": 20,
+          "radius": 8
+        },
+        "behavior": {
+          "collapseDetails": true,
+          "sort": "name"
+        }
+      }
+    },
+    {
+      "id": "031c4fb1e161447faefe06ded6a0b132",
+      "mode": "GA_ONLY",
+      "seed": 7729,
+      "originBest": 92.284612,
+      "finalBest": 98.95,
+      "finalGenerationBest": 98.95,
+      "finalMean": 84.66447333333333,
+      "finalMedian": 91.45,
+      "finalVariance": 677.7024718423742,
+      "improvement": 6.665388000000007,
+      "eligiblePercent": 85.72607260726073,
+      "finalDiversity": 1,
+      "mutationAcceptance": 0.035,
+      "slots": 1212,
+      "uniqueBrowserEvaluations": 891,
+      "cacheHits": 321,
+      "elapsedSeconds": 31.941401,
+      "meanRenderMs": 1.179985035493764,
+      "firstGenerationAt95": 1,
+      "winnerId": 7675,
+      "winnerGenome": {
+        "schemaVersion": "1.0",
+        "layout": {
+          "columns": 2,
+          "navigation": "left",
+          "order": [
+            "metrics",
+            "filters",
+            "revenue",
+            "orders"
+          ],
+          "chart": "line",
+          "table": "cards"
+        },
+        "style": {
+          "palette": 2,
+          "fontSize": 20,
+          "spacing": 16,
+          "radius": 8
+        },
+        "behavior": {
+          "collapseDetails": true,
+          "sort": "value"
+        }
+      }
+    },
+    {
+      "id": "c76201d9529d42a28c62e1bf22dfcc9c",
+      "mode": "RANDOM_SEARCH",
+      "seed": 7729,
+      "originBest": 92.284612,
+      "finalBest": 98.6,
+      "finalGenerationBest": 87.084612,
+      "finalMean": 54.398497666666664,
+      "finalMedian": 79.252228,
+      "finalVariance": 1485.7474938483772,
+      "improvement": 6.315387999999999,
+      "eligiblePercent": 59.32343234323432,
+      "finalDiversity": 1,
+      "mutationAcceptance": null,
+      "slots": 1212,
+      "uniqueBrowserEvaluations": 1195,
+      "cacheHits": 17,
+      "elapsedSeconds": 38.645546,
+      "meanRenderMs": 1.2989400277909193,
+      "firstGenerationAt95": 4,
+      "winnerId": 9672,
+      "winnerGenome": {
+        "schemaVersion": "1.0",
+        "layout": {
+          "columns": 1,
+          "navigation": "top",
+          "order": [
+            "metrics",
+            "filters",
+            "orders",
+            "revenue"
+          ],
+          "chart": "line",
+          "table": "table"
+        },
+        "style": {
+          "palette": 2,
+          "fontSize": 20,
+          "spacing": 16,
+          "radius": 20
+        },
+        "behavior": {
+          "collapseDetails": false,
+          "sort": "name"
+        }
+      }
+    },
+    {
+      "id": "9b62923b8e15443cac10ea881d19eff0",
+      "mode": "GA_ONLY",
+      "seed": 201026,
+      "originBest": 91.834612,
+      "finalBest": 98.95,
+      "finalGenerationBest": 98.95,
+      "finalMean": 80.42083333333333,
+      "finalMedian": 96.675,
+      "finalVariance": 1304.0276909722222,
+      "improvement": 7.115387999999996,
+      "eligiblePercent": 87.54125412541254,
+      "finalDiversity": 1,
+      "mutationAcceptance": 0.042,
+      "slots": 1212,
+      "uniqueBrowserEvaluations": 820,
+      "cacheHits": 392,
+      "elapsedSeconds": 36.768589,
+      "meanRenderMs": 1.2428455285970288,
+      "firstGenerationAt95": 5,
+      "winnerId": 10149,
+      "winnerGenome": {
+        "schemaVersion": "1.0",
+        "layout": {
+          "columns": 4,
+          "navigation": "top",
+          "order": [
+            "metrics",
+            "filters",
+            "revenue",
+            "orders"
+          ],
+          "chart": "line",
+          "table": "cards"
+        },
+        "style": {
+          "palette": 2,
+          "fontSize": 20,
+          "spacing": 16,
+          "radius": 12
+        },
+        "behavior": {
+          "collapseDetails": true,
+          "sort": "name"
+        }
+      }
+    },
+    {
+      "id": "f42a8868e3cf47e197561707d6fa3628",
+      "mode": "RANDOM_SEARCH",
+      "seed": 201026,
+      "originBest": 91.834612,
+      "finalBest": 97.25,
+      "finalGenerationBest": 88.284612,
+      "finalMean": 60.08893366666667,
+      "finalMedian": 76.152228,
+      "finalVariance": 1220.8018974645531,
+      "improvement": 5.415387999999993,
+      "eligiblePercent": 62.62376237623762,
+      "finalDiversity": 1,
+      "mutationAcceptance": null,
+      "slots": 1212,
+      "uniqueBrowserEvaluations": 1194,
+      "cacheHits": 18,
+      "elapsedSeconds": 40.918855,
+      "meanRenderMs": 1.2035175880187408,
+      "firstGenerationAt95": 11,
+      "winnerId": 11795,
+      "winnerGenome": {
+        "schemaVersion": "1.0",
+        "layout": {
+          "columns": 4,
+          "navigation": "top",
+          "order": [
+            "metrics",
+            "filters",
+            "orders",
+            "revenue"
+          ],
+          "chart": "bars",
+          "table": "cards"
+        },
+        "style": {
+          "palette": 2,
+          "fontSize": 20,
+          "spacing": 12,
+          "radius": 8
+        },
+        "behavior": {
+          "collapseDetails": false,
+          "sort": "name"
+        }
+      }
+    }
+  ],
+  "pairedSeeds": [
+    {
+      "seed": 42,
+      "darwin": 98.95,
+      "random": 98.284612,
+      "pairedDifference": 0.6653880000000072,
+      "darwinImprovement": 10.350000000000009,
+      "randomImprovement": 9.684612000000001
+    },
+    {
+      "seed": 137,
+      "darwin": 98.95,
+      "random": 98.15,
+      "pairedDifference": 0.7999999999999972,
+      "darwinImprovement": 10.450000000000003,
+      "randomImprovement": 9.650000000000006
+    },
+    {
+      "seed": 3107,
+      "darwin": 98.95,
+      "random": 97.35,
+      "pairedDifference": 1.6000000000000085,
+      "darwinImprovement": 4.450000000000003,
+      "randomImprovement": 2.8499999999999943
+    },
+    {
+      "seed": 7729,
+      "darwin": 98.95,
+      "random": 98.6,
+      "pairedDifference": 0.3500000000000085,
+      "darwinImprovement": 6.665388000000007,
+      "randomImprovement": 6.315387999999999
+    },
+    {
+      "seed": 201026,
+      "darwin": 98.95,
+      "random": 97.25,
+      "pairedDifference": 1.7000000000000028,
+      "darwinImprovement": 7.115387999999996,
+      "randomImprovement": 5.415387999999993
+    }
+  ],
+  "meanPairedDifference": 1.0230776000000048,
+  "gaWins": 5,
+  "ties": 0,
+  "randomWins": 0,
+  "paidRequests": 0,
+  "inputTokens": 0,
+  "outputTokens": 0,
+  "actualApiCostUsd": 0,
+  "aiComparison": "Not run; credentials/authorization pending",
+  "inference": "Descriptive only. No p-values, significance claims, usability or aesthetic conclusions.",
+  "runtimeCaveat": "Sequential runs on one developer workstation share a cross-run evaluation cache. Runtime and unique browser workload are not equal across conditions."
+}
