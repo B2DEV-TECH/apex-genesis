@@ -23,9 +23,12 @@ reproduced failing before their fixes. A separate reviewer examined the mileston
 four P2 findings were repaired and regression-checked. No critical finding was reported.
 
 Separate APXGEN_VERIFY owner: clean portable database installation, zero invalid
-objects, nine core checks passed. This does not claim compatibility with other
-Oracle/APEX versions. Native SQL export exists; destination portability is verified
-separately when noted in the release report.
+objects, nine core checks passed. Its initial package compilation preceded the metric
+contract fix; the first rendered attempt correctly rejected missing legacy metrics.
+After compiling the current revision, the unmodified native SQL export was imported
+into a separately mapped workspace with generated app ID **121**. Two genuine
+five-generation conditions completed and all ten native browser checks passed.
+This does not claim compatibility with other Oracle/APEX versions.
 
 Representative renderer and exhibition axe runs reported zero violations with no
 excluded rules. They do not certify all organisms or complete accessibility. The
