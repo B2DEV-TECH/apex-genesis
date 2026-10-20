@@ -1,0 +1,47 @@
+{
+  "disclosure": "Real automated browser footage, with planned navigation, English captions and an installed synthetic English voice. Recorded history is labeled. No paid model result is represented.",
+  "chapters": [
+    {"id":"opening","title":"Can a database evolve an interface?","minimumSeconds":36,"captions":[
+      "Can an Oracle database evolve a user interface? APEX Genesis turns that question into a small, inspectable experiment. The database owns every generation.",
+      "These are real rendered dashboards, built from constrained JSON genomes. Metrics, filters, revenue and orders remain present while structure and presentation change.",
+      "The public exhibition replays recorded Oracle results. It does not connect to the development database, and it cannot trigger paid model requests.",
+      "This demonstration uses actual software and synthetic business data. Navigation is planned, captions are added, and the English narration uses an installed synthetic voice."
+    ]},
+    {"id":"database","title":"The Oracle-owned lifecycle","minimumSeconds":40,"captions":[
+      "Oracle APEX is the authenticated control center. A dedicated schema stores experiments, immutable genomes, evaluations, parents, events and durable generation boundaries.",
+      "Here a small real run advances through PL/SQL selection, compatible crossover and bounded mutation. A browser worker supplies measured observations at three viewport sizes.",
+      "The scheduler creates a new generation only after the current evaluations are complete. An open browser tab is not required for database orchestration.",
+      "Pause, resume and stop are explicit database transitions. Pending browser evaluations remain visible. A missing worker never becomes animated fictional progress."
+    ]},
+    {"id":"genome","title":"From genotype to a working interface","minimumSeconds":36,"captions":[
+      "An organism has eleven bounded genes. They describe section order, column count, navigation, chart and order views, palette, typography, spacing, radius and behavior.",
+      "The grammar preserves all required sections. Unknown properties, markup, executable code, URLs and unsupported substitutions are rejected before rendering.",
+      "The same canonical renderer serves evaluations, the APEX laboratory and this exhibition. Preview frames use a sandbox with an opaque origin.",
+      "Inspect the full-size organism and try its filter. Desktop, tablet and mobile views reveal real composition changes, rather than decorative rectangle arrangements."
+    ]},
+    {"id":"replay","title":"One hundred recorded generations","minimumSeconds":38,"captions":[
+      "Pure Darwin and random search begin with the same seeded population. Both receive twelve candidate slots per generation and the same technical scoring rules.",
+      "Play moves through actual stored generations. Pause, step and scrub do not invent intermediate organisms. The chart preserves best-of-generation regressions.",
+      "Best-so-far is a separate historical measure. Keeping an elite naturally makes that archive nondecreasing; it does not mean every generation improved.",
+      "Repeated phenotypes can reuse observations under the same evaluation fingerprint. The experiment reports candidate slots and unique browser evaluations separately."
+    ]},
+    {"id":"lineage","title":"Ancestry and mutation under the microscope","minimumSeconds":36,"captions":[
+      "The family tree loads a local generation window. Each stored edge points to a real parent, including both parents where crossover combined compatible traits.",
+      "Select a node to inspect its genome, eligibility, fitness objectives and ancestry. Zoom and scrolling keep a large population history manageable.",
+      "The mutation microscope places parent and offspring side by side. The changed properties come directly from their recorded genomes.",
+      "An unchanged elite is labeled honestly. It is inheritance of a successful phenotype, not a new design improvement or a model-generated mutation."
+    ]},
+    {"id":"ai","title":"Optional AI, with a spending boundary","minimumSeconds":36,"captions":[
+      "Haiku is an optional mutation operator. It cannot execute SQL, change the scoring engine or select its own candidate as a winner.",
+      "Paid execution remains disabled in this recording. There is no completed Claude comparison here, and no simulated AI result stands in for one.",
+      "The integration reserves a worst-case token budget before a request, reconciles returned usage, retains uncertain charges and stops when a limit is exhausted.",
+      "Database tests exercise concurrent reservations, invalid proposals and the scheduler boundary using mocked responses. Credentials belong in an APEX Web Credential, never in browser code."
+    ]},
+    {"id":"results","title":"What the experiment actually found","minimumSeconds":40,"captions":[
+      "Five paired seeds completed one hundred generations each. Together they produced twelve thousand, one hundred and twenty candidate records, with complete recorded provenance.",
+      "Darwin finished above random search on the declared technical score in all five pairs. The mean final best-so-far difference was about one point.",
+      "That result does not prove better usability or beauty. Winners often favored large text and a long single-column layout, exposing what this fitness function rewards.",
+      "The open-source repository includes the installer, native APEX application, exact configurations, exported history and verification evidence. Reproduce the experiment, inspect its limitations, and change the objectives."
+    ]}
+  ]
+}

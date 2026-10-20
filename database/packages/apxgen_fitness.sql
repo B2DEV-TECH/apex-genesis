@@ -28,7 +28,8 @@ create or replace package body apxgen_fitness as
     p_contrast:=least(contrast(txt,bg),contrast(txt,surface),contrast(accent,bg),contrast(bg,accent));
     nodes:=metric('domNodes');
     if nodes<1 or metric('viewportsTested')<>3 or metric('focusVisible')<>1 then hard:=1;else hard:=0;end if;
-    hard:=hard+metric('overflow')+metric('overlap')+metric('missing')+metric('unnamed')+metric('clipped')+metric('axeCritical')+metric('errors');
+    hard:=hard+metric('overflow')+metric('overlap')+metric('missing')+metric('unnamed')+metric('clipped')+metric('errors');
+    if m.has('audit') and m.get_object('audit').get_boolean('performed')then hard:=hard+nvl(m.get_object('audit').get_number('critical'),1);end if;
     p_eligible:=case when p_contrast>=4.5 and g(7)>=1 and hard=0 then 1 else 0 end;
     p_access:=least(100,60+least(20,(p_contrast-4.5)*4)+least(20,g(7)*5));
     for i in 0..3 loop if a.get_string(i)='metrics' then metrics_pos:=i;elsif a.get_string(i)='filters' then filters_pos:=i;end if;end loop;

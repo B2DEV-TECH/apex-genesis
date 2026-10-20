@@ -3,6 +3,7 @@ create or replace package apxgen_budget authid definer as
   procedure reconcile(p_id varchar2,p_input number,p_output number);
   procedure uncertain(p_id varchar2,p_error varchar2);
   procedure stop_ai(p_run varchar2);
+  procedure recover_stale;
 end apxgen_budget;
 /
 create or replace package body apxgen_budget as
@@ -51,5 +52,13 @@ create or replace package body apxgen_budget as
   exception when others then rollback;raise;end;
   procedure stop_ai(p_run varchar2) is pragma autonomous_transaction;
   begin update apxgen_run_budgets set stopped=1 where run_id=p_run;commit;end;
+  procedure recover_stale is pragma autonomous_transaction;n number;
+  begin
+    select singleton into n from apxgen_provider_config where singleton=1 for update;
+    for i in(select invocation_id,run_id from apxgen_invocations where state='RESERVED' and created_at<systimestamp-interval '120' second for update)loop
+      update apxgen_invocations set state='UNCERTAIN',error_code='STALE_RESERVATION',completed_at=systimestamp where invocation_id=i.invocation_id;
+      update apxgen_run_budgets set stopped=1 where run_id=i.run_id;
+    end loop;commit;
+  exception when others then rollback;raise;end;
 end apxgen_budget;
 /

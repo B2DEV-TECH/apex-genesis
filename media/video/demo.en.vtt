@@ -1,0 +1,85 @@
+WEBVTT
+
+00:00:01.500 --> 00:00:13.247
+Can an Oracle database evolve a user interface? APEX Genesis turns that question into a small, inspectable experiment. The database owns every generation.
+
+00:00:13.747 --> 00:00:26.260
+These are real rendered dashboards, built from constrained JSON genomes. Metrics, filters, revenue and orders remain present while structure and presentation change.
+
+00:00:26.760 --> 00:00:36.772
+The public exhibition replays recorded Oracle results. It does not connect to the development database, and it cannot trigger paid model requests.
+
+00:00:37.272 --> 00:00:49.025
+This demonstration uses actual software and synthetic business data. Navigation is planned, captions are added, and the English narration uses an installed synthetic voice.
+
+00:00:52.525 --> 00:01:04.933
+Oracle APEX is the authenticated control center. A dedicated schema stores experiments, immutable genomes, evaluations, parents, events and durable generation boundaries.
+
+00:01:05.433 --> 00:01:17.920
+Here a small real run advances through PL/SQL selection, compatible crossover and bounded mutation. A browser worker supplies measured observations at three viewport sizes.
+
+00:01:18.420 --> 00:01:28.347
+The scheduler creates a new generation only after the current evaluations are complete. An open browser tab is not required for database orchestration.
+
+00:01:28.847 --> 00:01:40.899
+Pause, resume and stop are explicit database transitions. Pending browser evaluations remain visible. A missing worker never becomes animated fictional progress.
+
+00:01:44.399 --> 00:01:58.412
+An organism has eleven bounded genes. They describe section order, column count, navigation, chart and order views, palette, typography, spacing, radius and behavior.
+
+00:01:58.912 --> 00:02:10.609
+The grammar preserves all required sections. Unknown properties, markup, executable code, URLs and unsupported substitutions are rejected before rendering.
+
+00:02:11.109 --> 00:02:21.182
+The same canonical renderer serves evaluations, the APEX laboratory and this exhibition. Preview frames use a sandbox with an opaque origin.
+
+00:02:21.682 --> 00:02:32.914
+Inspect the full-size organism and try its filter. Desktop, tablet and mobile views reveal real composition changes, rather than decorative rectangle arrangements.
+
+00:02:36.414 --> 00:02:46.597
+Pure Darwin and random search begin with the same seeded population. Both receive twelve candidate slots per generation and the same technical scoring rules.
+
+00:02:47.097 --> 00:02:58.729
+Play moves through actual stored generations. Pause, step and scrub do not invent intermediate organisms. The chart preserves best-of-generation regressions.
+
+00:02:59.229 --> 00:03:09.252
+Best-so-far is a separate historical measure. Keeping an elite naturally makes that archive nondecreasing; it does not mean every generation improved.
+
+00:03:09.752 --> 00:03:20.589
+Repeated phenotypes can reuse observations under the same evaluation fingerprint. The experiment reports candidate slots and unique browser evaluations separately.
+
+00:03:24.089 --> 00:03:34.497
+The family tree loads a local generation window. Each stored edge points to a real parent, including both parents where crossover combined compatible traits.
+
+00:03:34.997 --> 00:03:45.314
+Select a node to inspect its genome, eligibility, fitness objectives and ancestry. Zoom and scrolling keep a large population history manageable.
+
+00:03:45.814 --> 00:03:54.852
+The mutation microscope places parent and offspring side by side. The changed properties come directly from their recorded genomes.
+
+00:03:55.352 --> 00:04:05.115
+An unchanged elite is labeled honestly. It is inheritance of a successful phenotype, not a new design improvement or a model-generated mutation.
+
+00:04:08.615 --> 00:04:17.948
+Haiku is an optional mutation operator. It cannot execute SQL, change the scoring engine or select its own candidate as a winner.
+
+00:04:18.448 --> 00:04:28.455
+Paid execution remains disabled in this recording. There is no completed Claude comparison here, and no simulated AI result stands in for one.
+
+00:04:28.955 --> 00:04:39.383
+The integration reserves a worst-case token budget before a request, reconciles returned usage, retains uncertain charges and stops when a limit is exhausted.
+
+00:04:39.883 --> 00:04:52.755
+Database tests exercise concurrent reservations, invalid proposals and the scheduler boundary using mocked responses. Credentials belong in an APEX Web Credential, never in browser code.
+
+00:04:56.255 --> 00:05:07.777
+Five paired seeds completed one hundred generations each. Together they produced twelve thousand, one hundred and twenty candidate records, with complete recorded provenance.
+
+00:05:08.277 --> 00:05:17.550
+Darwin finished above random search on the declared technical score in all five pairs. The mean final best-so-far difference was about one point.
+
+00:05:18.050 --> 00:05:28.942
+That result does not prove better usability or beauty. Winners often favored large text and a long single-column layout, exposing what this fitness function rewards.
+
+00:05:29.442 --> 00:05:45.318
+The open-source repository includes the installer, native APEX application, exact configurations, exported history and verification evidence. Reproduce the experiment, inspect its limitations, and change the objectives.

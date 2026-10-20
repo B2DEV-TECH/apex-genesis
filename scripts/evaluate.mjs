@@ -3,11 +3,14 @@ import {createHash} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {oracledb,rows} from './db.mjs';
 import {validateGenome,PALETTES} from '../showcase/renderer/genome.mjs';
+import {rendererBundle,verifyBundle} from './renderer-bundle.mjs';
 export async function openEvaluator(base='http://127.0.0.1:4173'){
+ const response=await fetch(base+'/renderer/preview.html');if(!response.ok)throw new Error('Preview bundle unavailable');
+ const executedBundle=await response.text();verifyBundle(executedBundle,await rendererBundle());
  const browser=await chromium.launch({headless:true});const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'});const page=await context.newPage();
  await page.goto(base+'/renderer/preview.html');await page.waitForFunction(()=>!!window.renderGenome);
  const hash=createHash('sha256');for(const path of ['../showcase/renderer/genome.mjs','../showcase/renderer/renderer.mjs','../showcase/renderer/organism.css','./evaluate.mjs','../database/packages/apxgen_fitness.sql'])hash.update(await readFile(new URL(path,import.meta.url)));
- hash.update(browser.version());hash.update(JSON.stringify({viewports:[390,768,1440],height:1000,platform:process.platform,version:'fitness-1.0.0'}));
+ hash.update(executedBundle);hash.update(browser.version());hash.update(JSON.stringify({viewports:[390,768,1440],height:1000,platform:process.platform,version:'fitness-1.0.1'}));
  const environment=hash.digest('hex');
  async function measure(genome){
   if(!validateGenome(genome).valid)throw new Error('Evaluator rejected schema');
@@ -29,7 +32,7 @@ export async function openEvaluator(base='http://127.0.0.1:4173'){
    },genome));
   }
   page.off('pageerror',onError);
-  return {viewportsTested:3,overflow:results.reduce((s,r)=>s+r.overflow,0),overlap:results.reduce((s,r)=>s+r.overlap,0),clipped:results.reduce((s,r)=>s+r.clipped,0),missing:results.reduce((s,r)=>s+r.missing,0),unnamed:results.reduce((s,r)=>s+r.unnamed,0),focusVisible:Math.min(...results.map(r=>r.focusVisible)),domNodes:Math.max(...results.map(r=>r.domNodes)),axeCritical:0,errors,renderMs:results.reduce((s,r)=>s+r.renderMs,0)/3,viewports:results,accessibilityScope:'names,focus,contrast,font,geometry; full axe audit is release validation'};
+  return {viewportsTested:3,overflow:results.reduce((s,r)=>s+r.overflow,0),overlap:results.reduce((s,r)=>s+r.overlap,0),clipped:results.reduce((s,r)=>s+r.clipped,0),missing:results.reduce((s,r)=>s+r.missing,0),unnamed:results.reduce((s,r)=>s+r.unnamed,0),focusVisible:Math.min(...results.map(r=>r.focusVisible)),domNodes:Math.max(...results.map(r=>r.domNodes)),audit:{performed:false,critical:null},errors,renderMs:results.reduce((s,r)=>s+r.renderMs,0)/3,viewports:results,accessibilityScope:'names,focus,contrast,font,geometry; full axe audit is release validation'};
  }
  return {browser,page,environment,measure,close:()=>browser.close()};
 }

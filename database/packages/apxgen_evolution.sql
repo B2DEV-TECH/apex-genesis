@@ -17,7 +17,7 @@ create or replace package body apxgen_evolution as
   function create_run(p_label varchar2,p_mode varchar2 default 'GA_ONLY',p_seed number default 42,p_size number default 12,p_generations number default 100) return varchar2 is id varchar2(32):=lower(rawtohex(sys_guid()));
   begin
     if p_seed is null or p_seed<>trunc(p_seed) or p_seed not between 1 and 2147483646 or p_size<>trunc(p_size) or p_generations<>trunc(p_generations) then raise_application_error(-20020,'Invalid experiment parameters');end if;
-    insert into apxgen_runs(run_id,label,population_mode,seed,rng_state,population_size,target_generations,state)values(id,p_label,p_mode,p_seed,p_seed,p_size,p_generations,'READY');
+    insert into apxgen_runs(run_id,label,population_mode,seed,rng_state,population_size,target_generations,state,engine_version)values(id,p_label,p_mode,p_seed,p_seed,p_size,p_generations,'READY','1.0.1');
     insert into apxgen_run_budgets(run_id)values(id);event(id,null,'CREATED','Provider disabled; browser evaluation required');return id;
   end;
   function add_organism(p_run varchar2,p_gen number,p_ordinal number,p_g apxgen_genome.genes,p_method varchar2,p_parent number default null,p_second number default null) return number is
@@ -50,7 +50,7 @@ create or replace package body apxgen_evolution as
     end loop;
   end;
   procedure submit_evaluation(p_organism number,p_token varchar2,p_environment varchar2,p_metrics clob,p_cached_from number default null) is
-    o apxgen_organisms%rowtype;c clob;e number;f number;a number;h number;r number;p number;cr number;env varchar2(128);n number;
+    o apxgen_organisms%rowtype;c clob;e number;f number;a number;h number;r number;p number;cr number;env varchar2(128);n number;metrics_data clob:=p_metrics;
   begin
     select * into o from apxgen_organisms where organism_id=p_organism for update;
     if o.evaluation_state<>'CLAIMED' or o.claim_token<>p_token or p_token is null or o.lease_until<systimestamp then raise_application_error(-20022,'Evaluation lease rejected');end if;
@@ -60,10 +60,11 @@ create or replace package body apxgen_evolution as
     if p_cached_from is not null then
       select count(*) into n from apxgen_evaluations e join apxgen_organisms x on x.organism_id=e.organism_id where e.organism_id=p_cached_from and x.fingerprint=o.fingerprint and e.environment_hash=p_environment;
       if n<>1 then raise_application_error(-20022,'Invalid evaluation cache reference');end if;
+      select measurements into metrics_data from apxgen_evaluations where organism_id=p_cached_from;
     end if;
     select canonical_json into c from apxgen_genomes where fingerprint=o.fingerprint;
-    apxgen_fitness.score(c,p_metrics,e,f,a,h,r,p,cr);
-    insert into apxgen_evaluations(organism_id,environment_hash,eligible,fitness,accessibility,hierarchy,responsiveness,performance_proxy,contrast_ratio,measurements,cached_from)values(p_organism,p_environment,e,f,a,h,r,p,cr,p_metrics,p_cached_from);
+    apxgen_fitness.score(c,metrics_data,e,f,a,h,r,p,cr);
+    insert into apxgen_evaluations(organism_id,environment_hash,eligible,fitness,accessibility,hierarchy,responsiveness,performance_proxy,contrast_ratio,measurements,cached_from)values(p_organism,p_environment,e,f,a,h,r,p,cr,metrics_data,p_cached_from);
     update apxgen_organisms set evaluation_state='COMPLETE',claim_token=null,lease_until=null where organism_id=p_organism;
     update apxgen_runs set evaluation_context=p_environment,heartbeat=systimestamp where run_id=o.run_id;
   end;
@@ -87,8 +88,18 @@ create or replace package body apxgen_evolution as
     if validn=0 then event(r.run_id,r.current_generation,'NO_ELIGIBLE_CANDIDATES','All candidates failed hard constraints');end if;
     if div_value<r.diversity_threshold then event(r.run_id,r.current_generation,'LOW_DIVERSITY','Immigrants are used after bounded duplicate retries');end if;
   end;
+  function needs_ai(r apxgen_runs%rowtype) return boolean is n number;attempts number;
+  begin
+    if r.population_mode<>'GA_HAIKU' or r.state<>'RUNNING' or r.current_generation>=r.target_generations then return false;end if;
+    select count(*) into n from apxgen_invocations where run_id=r.run_id and generation=r.current_generation and state='RESERVED';if n>0 then return true;end if;
+    select count(*)into attempts from apxgen_invocations where run_id=r.run_id and generation=r.current_generation;if attempts>0 then return false;end if;
+    select count(*)into n from apxgen_provider_config c join apxgen_run_budgets b on b.run_id=r.run_id where c.singleton=1 and c.enabled=1 and b.enabled=1 and b.stopped=0 and c.request_interval>=1 and mod(r.current_generation+1,c.request_interval)=0;
+    if n=0 then return false;end if;
+    select count(*)into n from apxgen_generations where run_id=r.run_id and generation=r.current_generation and state='COMPLETE' and valid_count>0;
+    return n=1;
+  end;
   procedure advance(p_run varchar2) is
-    r apxgen_runs%rowtype;pending number;gs varchar2(16);g apxgen_genome.genes;a apxgen_genome.genes;b apxgen_genome.genes;id number;parent number;second number;method varchar2(20);h varchar2(64);dups number;before_rng number;stagnant number;started timestamp with time zone;
+    r apxgen_runs%rowtype;pending number;gs varchar2(16);g apxgen_genome.genes;a apxgen_genome.genes;b apxgen_genome.genes;id number;parent number;second number;method varchar2(20);h varchar2(64);dups number;before_rng number;stagnant number;started timestamp with time zone;ai_id varchar2(32);ai_json clob;ai_parent number;child_json clob;
     type ids is table of number index by pls_integer;parents ids;scores ids;cnt pls_integer:=0;
     function tournament return number is idx pls_integer;winner pls_integer;
     begin winner:=apxgen_genome.next_random(r.rng_state,cnt)+1;
@@ -106,13 +117,18 @@ create or replace package body apxgen_evolution as
     if pending>0 then return;end if;
     if gs<>'COMPLETE' then finalize_generation(r);end if;
     if r.current_generation>=r.target_generations then update apxgen_runs set state='COMPLETED',ended_at=systimestamp,heartbeat=systimestamp where run_id=p_run;event(p_run,r.current_generation,'COMPLETED','Target reached');return;end if;
+    if needs_ai(r) then
+      select count(*)into pending from apxgen_events where run_id=p_run and generation=r.current_generation and event_type='AI_BOUNDARY_WAIT';
+      if pending=0 then event(p_run,r.current_generation,'AI_BOUNDARY_WAIT','Waiting for a bounded provider attempt before offspring creation');end if;
+      return;
+    end if;
     select count(*)into stagnant from apxgen_generations where run_id=p_run and generation>r.current_generation-r.stagnation_limit and best_fitness=(select best_so_far from apxgen_generations where run_id=p_run and generation=r.current_generation);
     if stagnant>=r.stagnation_limit then event(p_run,r.current_generation,'STAGNATION','No score improvement in configured window');end if;
     for x in(select o.organism_id,e.fitness,e.eligible from apxgen_organisms o join apxgen_evaluations e on e.organism_id=o.organism_id where o.run_id=p_run and o.generation=r.current_generation order by e.eligible desc,e.fitness desc,o.ordinal)loop cnt:=cnt+1;parents(cnt):=x.organism_id;scores(cnt):=round(x.fitness*1000000)+x.eligible*1000000000;end loop;
     before_rng:=r.rng_state;r.current_generation:=r.current_generation+1;
     insert into apxgen_generations(run_id,generation,rng_before,rng_after)values(p_run,r.current_generation,before_rng,before_rng);
     for i in 1..r.population_size loop
-      parent:=null;second:=null;
+      parent:=null;second:=null;ai_id:=null;
       if r.population_mode='RANDOM_SEARCH' then g:=apxgen_genome.random_genes(r.rng_state);method:='RANDOM';
       elsif i<=r.elite_count then parent:=parents(i);g:=genes_of(parent);method:='ELITE';
       else
@@ -122,7 +138,14 @@ create or replace package body apxgen_evolution as
         for attempt in 1..5 loop h:=apxgen_genome.fingerprint(apxgen_genome.from_genes(g));select count(*)into dups from apxgen_organisms where run_id=p_run and generation=r.current_generation and fingerprint=h;exit when dups=0;g:=apxgen_genetics.mutate(g,r.rng_state,greatest(r.mutation_rate,.5));end loop;
         if dups>0 then g:=apxgen_genome.random_genes(r.rng_state);method:='IMMIGRANT';parent:=null;second:=null;end if;
       end if;
+      if r.population_mode='GA_HAIKU' and i=r.elite_count+1 then
+        begin
+          select invocation_id,proposal,organism_id into ai_id,ai_json,ai_parent from apxgen_invocations where run_id=p_run and generation=r.current_generation-1 and state='RECONCILED' and proposal is not null and error_code is null and applied_organism is null order by created_at fetch first 1 row only;
+          child_json:=apxgen_genome.from_genes(genes_of(ai_parent));g:=apxgen_genome.to_genes(apxgen_ai.apply_proposal(child_json,ai_json));parent:=ai_parent;second:=null;method:='AI';
+        exception when no_data_found then null;end;
+      end if;
       id:=add_organism(p_run,r.current_generation,i,g,method,parent,second);
+      if ai_id is not null then update apxgen_invocations set applied_organism=id where invocation_id=ai_id;event(p_run,r.current_generation,'AI_OFFSPRING','Approved mutation enters unchanged fitness pipeline');end if;
     end loop;
     update apxgen_generations set rng_after=r.rng_state where run_id=p_run and generation=r.current_generation;
     update apxgen_runs set current_generation=r.current_generation,rng_state=r.rng_state,heartbeat=systimestamp where run_id=p_run;
@@ -145,8 +168,24 @@ create or replace package body apxgen_evolution as
     for x in(select o.organism_id,o.ordinal,g.canonical_json from apxgen_organisms o join apxgen_genomes g on g.fingerprint=o.fingerprint where o.run_id=p_run and o.generation=p_generation order by ordinal)loop g:=apxgen_genome.to_genes(x.canonical_json);oid:=add_organism(id,0,x.ordinal,g,'CHECKPOINT',x.organism_id);end loop;
     update apxgen_runs set source_run=p_run,source_generation=p_generation,current_generation=0,rng_state=state_rng,state='RUNNING',started_at=systimestamp,heartbeat=systimestamp,mutation_rate=r.mutation_rate,crossover_rate=r.crossover_rate,elite_count=r.elite_count,tournament_size=r.tournament_size where run_id=id;return id;
   end;
-  procedure tick(p_run varchar2) is
-  begin advance(p_run);commit;exception when others then rollback;raise;end;
+  procedure tick(p_run varchar2) is r apxgen_runs%rowtype;n number;parent_id number;error_no number;
+  begin
+    apxgen_budget.recover_stale;advance(p_run);commit;
+    select * into r from apxgen_runs where run_id=p_run;
+    if needs_ai(r) then
+      select count(*)into n from apxgen_invocations where run_id=p_run and generation=r.current_generation;
+      if n=0 then
+        select o.organism_id into parent_id from apxgen_organisms o join apxgen_evaluations e on e.organism_id=o.organism_id where o.run_id=p_run and o.generation=r.current_generation and e.eligible=1 order by e.fitness desc,o.ordinal fetch first 1 row only;
+        begin apxgen_ai.propose(p_run,parent_id);exception when others then error_no:=sqlcode;event(p_run,r.current_generation,'AI_FALLBACK','Provider attempt rejected with code '||error_no);commit;end;
+      end if;
+    end if;
+    advance(p_run);commit;
+    select state into r.state from apxgen_runs where run_id=p_run;
+    if r.state in('COMPLETED','STOPPED','FAILED')then
+      select count(*)into n from user_scheduler_jobs where job_name='APXGEN_'||upper(substr(p_run,1,24));
+      if n=1 then dbms_scheduler.disable('APXGEN_'||substr(p_run,1,24),force=>true);end if;
+    end if;
+  exception when others then rollback;raise;end;
   procedure schedule_run(p_run varchar2) is n number;
   begin
     if not regexp_like(p_run,'^[a-f0-9]{32}$')then raise_application_error(-20025,'Invalid run');end if;

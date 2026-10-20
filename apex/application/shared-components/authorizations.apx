@@ -1,0 +1,10 @@
+authorization genesis-read (
+ name: Genesis Reader
+ type: plSqlFunctionBody
+ settings {
+ plsqlFunctionBody: return apxgen_security.allowed('READER')=1;
+ }
+ error {
+ errorMessage: A named Genesis principal is required.
+ }
+)

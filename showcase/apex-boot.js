@@ -1,0 +1,18 @@
+(function(){
+ const base=new URL('.',document.currentScript.src);
+ const api=(action,x02='',x03='',extra={})=>new Promise((resolve,reject)=>apex.server.process('GENESIS_DATA',{x01:action,x02,x03,...extra},{dataType:'json',success:data=>data.error?reject(new Error(data.error+' ('+data.code+')')):resolve(data),error:()=>reject(new Error('Laboratory request failed'))}));
+ const el=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;};
+ apex.jQuery(async function(){
+  const embedded=document.querySelector('[data-genesis-embedded]');
+  if(embedded){window.genesisDataProvider=async()=>{const index=await api('INDEX');return {manifest:{kind:'recorded-oracle-experiment'},index,generation:(run,generation)=>api('GENERATION',run,String(generation))};};await import(new URL('lab.mjs',base));const target=embedded.dataset.initialView;if(target&&target!=='arena')document.querySelector('[data-view="'+target+'"]')?.click();}
+  const control=document.querySelector('#genesis-control');
+  if(control){let refreshing=false;async function refresh(){if(refreshing||document.hidden)return;refreshing=true;try{
+   const status=await api('STATUS');const select=document.querySelector('#control-run'),selected=select.value;select.replaceChildren();for(const run of status.runs){const o=el('option',run.label+' / '+run.state);o.value=run.id;select.append(o);}if([...select.options].some(o=>o.value===selected))select.value=selected;
+   const run=status.runs.find(r=>r.id===select.value);const metrics=document.querySelector('#control-metrics');metrics.replaceChildren();for(const[name,value]of [['STATUS',run?.state||'No runs'],['GENERATION',run?run.generation+' / '+run.target:'—'],['BEST FITNESS',run?.best??'Awaiting evaluation'],['PENDING CANDIDATES',run?.pending??0],['AI PROVIDER',status.provider.enabled?'Enabled by owner':'Disabled']]){const cell=el('div');cell.append(el('span',name),el('strong',String(value)));metrics.append(cell);}const events=document.querySelector('#control-events');events.replaceChildren();for(const e of status.events){const li=el('li');li.append(el('strong','G'+e.generation+' / '+e.type),el('span',' '+e.details));events.append(li);}document.querySelector('#control-heartbeat').textContent='Database heartbeat: '+(run?.heartbeat||'Unavailable')+' · Refresh every 5 seconds';
+  }catch(error){document.querySelector('#control-heartbeat').textContent=error.message;}finally{refreshing=false;}}
+  document.querySelector('#control-run').onchange=refresh;for(const b of document.querySelectorAll('[data-control]'))b.onclick=async()=>{try{const action=b.dataset.control,run=document.querySelector('#control-run').value;if(action==='STEP')await api('STEP',run);else if(action==='STOP_AI')await api('STOP_AI',run);else await api('CONTROL',run,action);await refresh();}catch(error){document.querySelector('#control-heartbeat').textContent=error.message;}};
+  await refresh();setInterval(refresh,5000);
+  }
+  const create=document.querySelector('#create-experiment');if(create)create.onclick=async()=>{const status=document.querySelector('#create-status');try{const data={label:document.querySelector('#new-label').value,mode:document.querySelector('#new-mode').value,seed:Number(document.querySelector('#new-seed').value),size:Number(document.querySelector('#new-size').value),generations:Number(document.querySelector('#new-generations').value)};const result=await api('CREATE',data.label,data.mode,{x04:String(data.seed),x05:String(data.size),x06:String(data.generations)});status.textContent='Created '+result.runId+'. Oracle scheduler is active. Start the documented browser evaluation worker to supply observations.';}catch(error){status.textContent=error.message;}};
+ });
+})();

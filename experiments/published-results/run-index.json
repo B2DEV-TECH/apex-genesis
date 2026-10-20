@@ -1,0 +1,76 @@
+{
+  "experimentId": "genesis-offline-paired-20261020",
+  "runs": [
+    {
+      "id": "68f3c4931b2d46b59129219059008bf4",
+      "mode": "GA_ONLY",
+      "seed": 42,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "433107d154354b2182dcf98b87f20984",
+      "mode": "RANDOM_SEARCH",
+      "seed": 42,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "cbf0a8f0cf0049b79d402ad759a489a0",
+      "mode": "GA_ONLY",
+      "seed": 137,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "793cb210650f4d3b8f0416d57088b0a6",
+      "mode": "RANDOM_SEARCH",
+      "seed": 137,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "81eeae7ed0c4432585004c2049b2aa7f",
+      "mode": "GA_ONLY",
+      "seed": 3107,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "cff26128c65243c38f0641fdf8959be4",
+      "mode": "RANDOM_SEARCH",
+      "seed": 3107,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "031c4fb1e161447faefe06ded6a0b132",
+      "mode": "GA_ONLY",
+      "seed": 7729,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "c76201d9529d42a28c62e1bf22dfcc9c",
+      "mode": "RANDOM_SEARCH",
+      "seed": 7729,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "9b62923b8e15443cac10ea881d19eff0",
+      "mode": "GA_ONLY",
+      "seed": 201026,
+      "generations": 100,
+      "candidateCount": 1212
+    },
+    {
+      "id": "f42a8868e3cf47e197561707d6fa3628",
+      "mode": "RANDOM_SEARCH",
+      "seed": 201026,
+      "generations": 100,
+      "candidateCount": 1212
+    }
+  ],
+  "manifest": "../../showcase/datasets/pilot/manifest.json"
+}
