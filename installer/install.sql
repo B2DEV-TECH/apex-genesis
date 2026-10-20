@@ -3,6 +3,8 @@ set define off
 @@../database/migrations/001_core.sql
 @@../database/migrations/002_ai_offspring.sql
 @@../database/migrations/003_access.sql
+@@../database/migrations/004_controls.sql
+@@../database/migrations/005_total_budget.sql
 @@../database/packages/apxgen_security.sql
 @@../database/packages/apxgen_genome.sql
 @@../database/packages/apxgen_genetics.sql

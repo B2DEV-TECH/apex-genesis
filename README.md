@@ -84,8 +84,8 @@ These runs made **zero provider requests, used zero model tokens and incurred ze
 direct API cost**. Improvement per dollar is undefined for the offline comparison.
 
 The [dataset manifest](showcase/datasets/pilot/manifest.json), [analysis](experiments/published-results/analysis.json)
-and original engine commit `be49b9d` preserve provenance. Engine 1.0.1 includes later
-safety fixes; the original runs remain labeled 1.0.0.
+and original engine commit `be49b9d` preserve provenance. The current engine 1.1.0
+adds controls and safety fixes; the original runs remain labeled 1.0.0.
 
 ## Try the exhibition without Oracle
 

@@ -6,5 +6,6 @@ await cp('media/screenshots/evolution-arena.png',join(site,'public/images/articl
 await cp('docs/publication/article.md',join(site,'content/articles/en/apex-genesis-evolving-interfaces-plsql-claude.md'));
 await mkdir(join(site,'public/genesis/media'),{recursive:true});await cp('media/video/demo.en.vtt',join(site,'public/genesis/media/demo.en.vtt'));
 const headersPath=join(site,'public/_headers');let headers='';try{headers=await readFile(headersPath,'utf8');}catch{}
-if(!headers.includes('/genesis/*'))headers+=`\n/genesis/*\n  X-Content-Type-Options: nosniff\n  Cache-Control: public, max-age=3600\n\n/genesis/renderer/preview.html\n  Content-Security-Policy: default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; form-action 'none'; connect-src 'none'; base-uri 'none'\n`;
+headers=headers.replace('/genesis/renderer/preview.html','/genesis/renderer/preview*');
+if(!headers.includes('/genesis/*'))headers+=`\n/genesis/*\n  X-Content-Type-Options: nosniff\n  Cache-Control: public, max-age=3600\n\n/genesis/renderer/preview*\n  Content-Security-Policy: default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; form-action 'none'; connect-src 'none'; base-uri 'none'\n`;
 await writeFile(headersPath,headers);console.log('Prepared existing-site article, recorded exhibition, media captions and scoped headers.');

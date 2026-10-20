@@ -63,5 +63,11 @@
     }
   ],
   "narration": "Installed Microsoft Zira English synthetic voice; original project script",
-  "captions": "English, burned in plus WebVTT"
+  "captions": "English, burned in plus WebVTT",
+  "runData": {
+    "path": "media/video/run.json",
+    "sha256": "3513bedb4fbbf8c57545c5b753465a453c042d7280af7bba31c19d3c4726f50b",
+    "generations": 6,
+    "organisms": 72
+  }
 }

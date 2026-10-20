@@ -1,0 +1,11 @@
+{
+  "verified": true,
+  "model": "claude-haiku-5-5",
+  "verifiedAt": "2026-10-20T20:50:37.007Z",
+  "authorizedTotalUsd": 20,
+  "dailyLimitUsd": 20,
+  "inputUsdPerMillion": 0.1,
+  "outputUsdPerMillion": 0.5,
+  "pricingSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+  "scope": "Actual Oracle HTTPS model lookup using an APEX Web Credential; no Messages request or run opt-in performed"
+}

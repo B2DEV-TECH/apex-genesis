@@ -1,0 +1,4 @@
+import assert from 'node:assert/strict';import {test} from 'node:test';
+import {fitnessWeights,fitnessDescription,matchingFitness} from '../../showcase/fitness-context.mjs';
+test('legacy records retain their actual default formula',()=>{assert.deepEqual(fitnessWeights({}),{accessibility:.4,hierarchy:.25,responsiveness:.25,performance:.1});assert.ok(fitnessDescription({}).includes('40% accessibility'));});
+test('different recorded weights never receive an equal-score-context claim',()=>{const a={environmentHash:'same'},b={environmentHash:'same',fitnessWeights:{performance:.1,responsiveness:.35,hierarchy:.25,accessibility:.3}};assert.equal(matchingFitness([a,b]),false);assert.ok(fitnessDescription(b).includes('30% accessibility'));assert.equal(matchingFitness([a,{...a,environmentHash:'other'}]),false);});

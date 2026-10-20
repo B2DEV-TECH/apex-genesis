@@ -10,7 +10,7 @@ export async function openEvaluator(base='http://127.0.0.1:4173'){
  const browser=await chromium.launch({headless:true});const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'});const page=await context.newPage();
  await page.goto(base+'/renderer/preview.html');await page.waitForFunction(()=>!!window.renderGenome);
  const hash=createHash('sha256');for(const path of ['../showcase/renderer/genome.mjs','../showcase/renderer/renderer.mjs','../showcase/renderer/organism.css','./evaluate.mjs','../database/packages/apxgen_fitness.sql'])hash.update(await readFile(new URL(path,import.meta.url)));
- hash.update(executedBundle);hash.update(browser.version());hash.update(JSON.stringify({viewports:[390,768,1440],height:1000,platform:process.platform,version:'fitness-1.0.1'}));
+ hash.update(executedBundle);hash.update(browser.version());hash.update(JSON.stringify({viewports:[390,768,1440],height:1000,platform:process.platform,version:'fitness-1.1.0'}));
  const environment=hash.digest('hex');
  async function measure(genome){
   if(!validateGenome(genome).valid)throw new Error('Evaluator rejected schema');
@@ -36,10 +36,10 @@ export async function openEvaluator(base='http://127.0.0.1:4173'){
  }
  return {browser,page,environment,measure,close:()=>browser.close()};
 }
-export async function evaluatePending(db,run,evaluator){let evaluated=0,cached=0;
+export async function evaluatePending(db,run,evaluator,{useCache=true}={}){let evaluated=0,cached=0;
  while(true){const claim=await db.execute('begin apxgen_evolution.claim(:run,:id,:token,:genome);end;',{run,id:{dir:oracledb.BIND_OUT,type:oracledb.NUMBER},token:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:32},genome:{dir:oracledb.BIND_OUT,type:oracledb.CLOB}});await db.commit();const c=claim.outBinds;if(!c.id)break;
   const text=typeof c.genome==='string'?c.genome:await c.genome.getData();const g=JSON.parse(text);
-  const previous=await rows(db,'select e.organism_id,e.measurements from apxgen_evaluations e join apxgen_organisms p on p.organism_id=e.organism_id join apxgen_organisms o on o.fingerprint=p.fingerprint where o.organism_id=:id and e.environment_hash=:env and p.evaluation_state=\'COMPLETE\' order by e.organism_id fetch first 1 row only',{id:c.id,env:evaluator.environment});
+  const previous=useCache?await rows(db,'select e.organism_id,e.measurements from apxgen_evaluations e join apxgen_organisms p on p.organism_id=e.organism_id join apxgen_organisms o on o.fingerprint=p.fingerprint where o.organism_id=:id and e.environment_hash=:env and p.evaluation_state=\'COMPLETE\' order by e.organism_id fetch first 1 row only',{id:c.id,env:evaluator.environment}):[];
   try{let metrics,source=null;if(previous.length){metrics=JSON.parse(previous[0].MEASUREMENTS);source=previous[0].ORGANISM_ID;cached++;}else metrics=await evaluator.measure(g);
    await db.execute('begin apxgen_evolution.submit_evaluation(:id,:token,:env,:metrics,:source);end;',{id:c.id,token:c.token,env:evaluator.environment,metrics:JSON.stringify(metrics),source});await db.commit();evaluated++;
   }catch(error){await db.rollback();await db.execute('begin apxgen_evolution.fail_evaluation(:id,:token,:env,:reason);end;',{id:c.id,token:c.token,env:evaluator.environment,reason:error.message.slice(0,900)});await db.commit();throw error;}

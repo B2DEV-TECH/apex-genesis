@@ -1,6 +1,6 @@
 create or replace package apxgen_fitness authid definer as
   function contrast(p_hex1 varchar2,p_hex2 varchar2) return number;
-  procedure score(p_genome clob,p_metrics clob,p_eligible out number,p_fitness out number,p_access out number,p_hierarchy out number,p_responsive out number,p_performance out number,p_contrast out number);
+  procedure score(p_genome clob,p_metrics clob,p_eligible out number,p_fitness out number,p_access out number,p_hierarchy out number,p_responsive out number,p_performance out number,p_contrast out number,p_weights varchar2 default null);
 end apxgen_fitness;
 /
 create or replace package body apxgen_fitness as
@@ -13,9 +13,9 @@ create or replace package body apxgen_fitness as
   end;
   function contrast(p_hex1 varchar2,p_hex2 varchar2) return number is a number:=luminance(p_hex1);b number:=luminance(p_hex2);
   begin return (greatest(a,b)+.05)/(least(a,b)+.05);end;
-  procedure score(p_genome clob,p_metrics clob,p_eligible out number,p_fitness out number,p_access out number,p_hierarchy out number,p_responsive out number,p_performance out number,p_contrast out number) is
+  procedure score(p_genome clob,p_metrics clob,p_eligible out number,p_fitness out number,p_access out number,p_hierarchy out number,p_responsive out number,p_performance out number,p_contrast out number,p_weights varchar2 default null) is
     g apxgen_genome.genes:=apxgen_genome.to_genes(p_genome);m json_object_t:=json_object_t.parse(p_metrics);o json_object_t:=json_object_t.parse(p_genome);a json_array_t:=o.get_object('layout').get_array('order');
-    bg varchar2(7);surface varchar2(7);txt varchar2(7);accent varchar2(7);metrics_pos number;filters_pos number;hard number;nodes number;
+    bg varchar2(7);surface varchar2(7);txt varchar2(7);accent varchar2(7);metrics_pos number;filters_pos number;hard number;nodes number;w json_object_t;
     function metric(k varchar2) return number is v number;
     begin if not m.has(k) or not m.get(k).is_number then raise_application_error(-20012,'Missing numeric browser metric');end if;v:=m.get_number(k);if v<0 then raise_application_error(-20012,'Negative browser metric');end if;return v;end;
   begin
@@ -36,7 +36,8 @@ create or replace package body apxgen_fitness as
     p_hierarchy:=greatest(0,100-metrics_pos*15-greatest(0,filters_pos-1)*15-case when filters_pos=0 then 5 else 0 end-abs(g(8)-3)*5);
     p_responsive:=case when metric('overflow')+metric('overlap')+metric('clipped')=0 then 100 else 0 end;
     p_performance:=greatest(0,least(100,100-(nodes-40)*.5));
-    p_fitness:=case when p_eligible=1 then round(.4*p_access+.25*p_hierarchy+.25*p_responsive+.1*p_performance,6) else 0 end;
+    w:=json_object_t.parse(nvl(p_weights,'{"accessibility":0.4,"hierarchy":0.25,"responsiveness":0.25,"performance":0.1}'));
+    p_fitness:=case when p_eligible=1 then round(w.get_number('accessibility')*p_access+w.get_number('hierarchy')*p_hierarchy+w.get_number('responsiveness')*p_responsive+w.get_number('performance')*p_performance,6) else 0 end;
   end;
 end apxgen_fitness;
 /

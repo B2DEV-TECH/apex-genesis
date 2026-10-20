@@ -1,8 +1,10 @@
 param([Parameter(Mandatory=$true)][string]$Command)
 $ErrorActionPreference = 'Stop'
 $projectPath = Split-Path -Parent $PSScriptRoot
-$config = Get-Content -LiteralPath (Join-Path $projectPath '.local/oracle.json') -Raw | ConvertFrom-Json
+$configPath = if ($env:APXGEN_CONFIG) { $env:APXGEN_CONFIG } else { Join-Path $projectPath '.local/oracle.json' }
+$config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
 $sql = @"
+whenever sqlerror exit failure rollback
 connect $($config.user)/"$($config.password)"@$($config.connectString)
 $Command
 exit

@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "run": "52ecfdc674114f01bba651c4615b293b",
+  "engine": "1.1.0",
+  "evaluationContext": "2cdafc73212d30d343bc9cf93735b773723bcf52033d6308e39e9bc1d10da902",
+  "recordedAt": "2026-10-20T20:55:14.984Z",
+  "state": "COMPLETED",
+  "generations": 1,
+  "invocation": {
+    "INVOCATION_ID": "6ae266aba95441b1904adb5e4ee5155b",
+    "STATE": "RECONCILED",
+    "MODEL_ID": "claude-haiku-5-5",
+    "INPUT_TOKENS": 333,
+    "OUTPUT_TOKENS": 65,
+    "ACTUAL_USD": 0.0000658,
+    "PROPOSAL": "{\"operations\":[{\"gene\":\"columns\",\"value\":2},{\"gene\":\"order\",\"value\":[\"metrics\",\"filters\",\"orders\",\"revenue\"]},{\"gene\":\"fontSize\",\"value\":16}]}",
+    "ERROR_CODE": null,
+    "APPLIED_ORGANISM": 15849
+  },
+  "invoiceVerified": false,
+  "scope": "One explicitly authorized real Anthropic mutation; approved proposal inserted and independently rendered/scored by Oracle. Separate integration validation, not the main experimental condition."
+}
