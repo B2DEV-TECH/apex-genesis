@@ -10,24 +10,34 @@ import {createHash} from 'node:crypto';
 import {safeLivingPath} from '../../showcase/living-evidence.mjs';
 
 const repository=fileURLToPath(new URL('../../',import.meta.url));
-const manifestSha256='80f6c970568ee4683afe3d48b2dcf8af1066b752ff642d4ebd9242cfe5c659ac';
-const manifestPath='/media/genesis/living/v1/packages/'+manifestSha256+'/manifest.json';
-const runId='61baf73fb822430bb27310d22c0744e8';
-const expected=[{id:'ef731773b1124b1a870ebcc00c28a0ca',applicationId:133,generation:0,parentId:null,selected:true,filters:'above'},{id:'a33d0c2a65404466a10497ea9806ee40',applicationId:130,generation:1,parentId:'ef731773b1124b1a870ebcc00c28a0ca',selected:false,filters:'beside'}];
+const cohorts={
+ original:{manifestSha256:'80f6c970568ee4683afe3d48b2dcf8af1066b752ff642d4ebd9242cfe5c659ac',runId:'61baf73fb822430bb27310d22c0744e8',expected:[{id:'ef731773b1124b1a870ebcc00c28a0ca',applicationId:133,generation:0,parentId:null,selected:true,filters:'above'},{id:'a33d0c2a65404466a10497ea9806ee40',applicationId:130,generation:1,parentId:'ef731773b1124b1a870ebcc00c28a0ca',selected:false,filters:'beside'}]},
+ native:{manifestSha256:'9884a0b6070d697a828f24193647878fbce13938ba0279ad69299f3568a5427e',runId:'c46d109a8952417ea277daa0696ed698',sourceHash:'a7716f8103f05840bf201161eb6e4aa2c4ec41f99bfe39c64d2e80ec7dbfb684',evaluatorHash:'46797f474f3acfda7477a15aca3213da85df419b73e7656a459155f276ae46c0',expected:[{id:'01106ccddbf54db78e30d20b1b2dd9a2',applicationId:131,generation:0,parentId:null,selected:true,filters:'above'},{id:'6ac8b82786d94e2d88d10f4bb138d3e4',applicationId:132,generation:1,parentId:'01106ccddbf54db78e30d20b1b2dd9a2',selected:false,filters:'beside'}]}
+};
+const pathFor=hash=>'/media/genesis/living/v1/packages/'+hash+'/manifest.json';
+function knownCohort(name){assert.ok(Object.hasOwn(cohorts,name),'Only the fixed original or native cohort is allowed');return cohorts[name];}
 const tasks=['locateOrder','filterOrders','updateOrder'];
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 
-export function deployedLivingUrl(value){
+export function deployedLivingUrl(value,{cohort='original'}={}){
+ const expected=knownCohort(cohort);
  const url=new URL(value);
  assert.equal(url.username,'','Credentials are forbidden in the deployment URL');assert.equal(url.password,'','Credentials are forbidden in the deployment URL');
- assert.equal(url.search,'','The deployed check requires the default pinned dataset');assert.equal(url.hash,'','The deployed check requires the canonical page');
+ assert.equal(url.hash,'','The deployed check requires the canonical page');
  const production=url.protocol==='https:'&&url.hostname==='b2dev.tech'&&url.port===''&&/^\/genesis\/living(?:\.html)?\/?$/.test(url.pathname);
  const local=['localhost','127.0.0.1','[::1]'].includes(url.hostname)&&url.protocol==='http:'&&/^\/(?:genesis\/)?living(?:\.html)?\/?$/.test(url.pathname);
- assert.ok(production||local,'Only the production Living Applications page or a localhost static copy is allowed');return url;
+ assert.ok(production||local,'Only the production Living Applications page or a localhost static copy is allowed');
+ if(cohort==='original')assert.equal(url.search,'','The deployed check requires the default pinned dataset');
+ else{
+  if(!url.search)url.search='?dataset='+pathFor(expected.manifestSha256)+'&manifestSha256='+expected.manifestSha256;
+  assert.equal([...url.searchParams].length,2,'Only the fixed native dataset/hash override is allowed');assert.equal(url.searchParams.get('dataset'),pathFor(expected.manifestSha256),'Unreviewed native dataset forbidden');assert.equal(url.searchParams.get('manifestSha256'),expected.manifestSha256,'Unreviewed native manifest hash forbidden');
+ }
+ return url;
 }
 
-export async function checkLivingDeployment(value){
- const requested=deployedLivingUrl(value),reviewRoot=join(repository,'.local','living-deployed-review-'+new Date().toISOString().replace(/[:.]/g,'-'));
+export async function checkLivingDeployment(value,{cohort='original'}={}){
+ const configured=knownCohort(cohort),{manifestSha256,runId,expected}=configured,manifestPath=pathFor(manifestSha256);
+ const requested=deployedLivingUrl(value,{cohort}),reviewRoot=join(repository,'.local','living-deployed-review-'+new Date().toISOString().replace(/[:.]/g,'-'));
  await mkdir(reviewRoot,{recursive:false});
  const browser=await chromium.launch({channel:process.env.APXGEN_BROWSER_CHANNEL||(process.platform==='win32'?'msedge':undefined)});
  const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
@@ -47,11 +57,11 @@ export async function checkLivingDeployment(value){
  }
  async function axe(){const result=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();assert.deepEqual(result.violations.map(item=>({id:item.id,targets:item.nodes.map(node=>node.target)})),[]);checks++;}
  try{
-  const response=await page.goto(requested.href,{waitUntil:'domcontentloaded',timeout:60000});assert.equal(response.status(),200);deployedLivingUrl(page.url());assert.equal(new URL(page.url()).origin,requested.origin);checks++;
+  const response=await page.goto(requested.href,{waitUntil:'domcontentloaded',timeout:60000});assert.equal(response.status(),200);deployedLivingUrl(page.url(),{cohort});assert.equal(new URL(page.url()).origin,requested.origin);checks++;
   await page.getByRole('status').filter({hasText:/Publication verified/i}).waitFor({timeout:60000});assert.equal(await page.locator('#recorded-experience').isVisible(),true);assert.equal(await page.locator('#empty-state').isVisible(),false);checks++;
-  assert.equal(await page.locator('meta[name="genesis-evidence-manifest"]').getAttribute('content'),manifestPath);assert.equal(await page.locator('meta[name="genesis-evidence-manifest-sha256"]').getAttribute('content'),manifestSha256);checks++;
+  assert.equal(await page.locator('meta[name="genesis-evidence-manifest"]').getAttribute('content'),pathFor(cohorts.original.manifestSha256));assert.equal(await page.locator('meta[name="genesis-evidence-manifest-sha256"]').getAttribute('content'),cohorts.original.manifestSha256);assert.equal(await page.locator('#manifest-link').getAttribute('href'),new URL(manifestPath,requested).href);checks++;
   assert.match(await page.locator('.feasibility-result').textContent(),/89\.675/);assert.match(await page.locator('.feasibility-result').textContent(),/retained the parent on the tie/i);assert.match(await page.locator('.feasibility-result').textContent(),/one seed and one generation/i);checks++;
-  const manifestUrl=new URL(manifestPath,requested),manifestBytes=await actualBytes(manifestUrl);assert.equal(digest(manifestBytes),manifestSha256);const manifest=JSON.parse(manifestBytes.toString('utf8'));assert.equal(manifest.candidates.length,2);assert.equal(manifest.fitnessDefinition,'order-lab-task-proxy/2.0.0');checks++;
+  const manifestUrl=new URL(manifestPath,requested),manifestBytes=await actualBytes(manifestUrl);assert.equal(digest(manifestBytes),manifestSha256);const manifest=JSON.parse(manifestBytes.toString('utf8'));assert.equal(manifest.candidates.length,2);assert.equal(manifest.fitnessDefinition,'order-lab-task-proxy/2.0.0');if(cohort==='native'){assert.equal(manifest.sourceHash,configured.sourceHash);assert.equal(manifest.evaluatorHash,configured.evaluatorHash);}checks++;
   const entries=new Map(manifest.files.map(entry=>[entry.path,entry])),evidenceRoot=new URL('.',manifestUrl);
   async function publicJson(path){safeLivingPath(path);const entry=entries.get(path);assert.ok(entry,'Public evidence must be manifested');const bytes=await actualBytes(new URL(path,evidenceRoot));assert.equal(bytes.length,entry.bytes);assert.equal(digest(bytes),entry.sha256);return JSON.parse(bytes.toString('utf8'));}
   const candidates=await Promise.all(manifest.candidates.map(publicJson));candidates.sort((a,b)=>a.generation-b.generation);
@@ -64,7 +74,7 @@ export async function checkLivingDeployment(value){
    const fitness=await publicJson(candidate.fitnessEvidence);assert.equal(fitness.authority,'ORACLE');assert.equal(fitness.eligible,true);assert.equal(fitness.score,89.675);assert.equal(fitness.candidateId,candidate.id);checks++;
   }
   assert.equal(candidates[1].fitness,candidates[0].fitness);assert.equal(candidates[1].selected,false);assert.match(candidates[1].rejectionReason,/did not exceed the surviving parent/i);checks++;
-  assert.equal(await page.locator('#run-select').inputValue(),runId);assert.equal(await page.locator('#timeline').getAttribute('max'),'1');await page.locator('#timeline').fill('1');assert.match(await page.locator('#comparison-note').textContent(),/Selected: No/);assert.equal(await page.locator('#evidence-images .application-card h3').allTextContents().then(values=>values.join('|')),'Application 133|Application 130');await imagesReady();checks++;
+  assert.equal(await page.locator('#run-select').inputValue(),runId);assert.equal(await page.locator('#timeline').getAttribute('max'),'1');await page.locator('#timeline').fill('1');assert.match(await page.locator('#comparison-note').textContent(),/Selected: No/);assert.equal(await page.locator('#evidence-images .application-card h3').allTextContents().then(values=>values.join('|')),expected.map(candidate=>'Application '+candidate.applicationId).join('|'));await imagesReady();checks++;
   await page.locator('.ledger-details>summary').click();assert.equal(await page.locator('#candidate-ledger tr').count(),2);
   for(const candidate of candidates){await page.getByRole('button',{name:'Inspect candidate '+candidate.id,exact:true}).click();const details=JSON.parse(await page.locator('#outcome-json').textContent());assert.equal(details.applicationId,candidate.applicationId);assert.equal(details.selected,candidate.selected);assert.equal(details.fitness,89.675);assert.equal(details.eligible,true);}
   assert.equal(await page.locator('#outcome-json').getAttribute('tabindex'),'0');checks++;
@@ -82,10 +92,10 @@ export async function checkLivingDeployment(value){
    const link=page.getByRole('link',{name,exact:true});assert.equal(await link.getAttribute('href'),'./'+file);const target=new URL(await link.getAttribute('href'),page.url());assert.equal(target.origin,requested.origin);const historical=await context.request.get(target.href,{timeout:30000});assert.equal(historical.status(),200,name+' must remain available');assert.equal(new URL(historical.url()).origin,requested.origin);assert.match(await historical.text(),/Genesis exhibitions|APEX Genesis/);checks++;
   }
   assert.equal(await page.getByRole('link',{name:'Living Applications',exact:true}).getAttribute('aria-current'),'page');assert.deepEqual(errors,[]);checks++;
-  const result={suite:'living-applications-deployed',passed:true,checks,url:page.url(),browser:browser.version(),manifestSha256,runId,applications:[133,130],fitness:89.675,parentRetained:true,viewports:[390,768,1440],reviewRoot,experimentalEvidenceCreated:false,interceptedResponses:false};
+  const result={suite:'living-applications-deployed',cohort,passed:true,checks,url:page.url(),browser:browser.version(),manifestSha256,runId,applications:expected.map(candidate=>candidate.applicationId),fitness:89.675,parentRetained:true,viewports:[390,768,1440],reviewRoot,experimentalEvidenceCreated:false,interceptedResponses:false};
   await writeFile(join(reviewRoot,'deployment-review.json'),JSON.stringify(result,null,2),{flag:'wx'});return result;
  }catch(error){try{await page.screenshot({path:join(reviewRoot,'failed-deployment-review.png'),fullPage:true,animations:'disabled'});}catch{}throw error;}
  finally{await browser.close();}
 }
 
-if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){try{assert.ok(process.argv[2],'Usage: node tests/browser/living-deployed.mjs <https://b2dev.tech/genesis/living.html|localhost-static-url>');console.log(JSON.stringify(await checkLivingDeployment(process.argv[2])));}catch(error){console.error(error);process.exitCode=1;}}
+if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){try{const args=process.argv.slice(2),choice=args.filter(value=>value.startsWith('--')),urls=args.filter(value=>!value.startsWith('--'));assert.ok(choice.length<=1&&choice.every(value=>value==='--cohort=native')&&urls.length===1,'Usage: node tests/browser/living-deployed.mjs <production-or-localhost-living-url> [--cohort=native]');console.log(JSON.stringify(await checkLivingDeployment(urls[0],{cohort:choice.length?'native':'original'})));}catch(error){console.error(error);process.exitCode=1;}}

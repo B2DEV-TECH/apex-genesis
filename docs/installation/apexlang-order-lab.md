@@ -142,6 +142,55 @@ login recordings, session values, credentials or artistic image edits are saved
 with these figures. Failed trials and subsequent evaluator diagnoses remain
 distinct; historical fitness is not rewritten.
 
+## Cleanup ledger regression checks
+
+[`011_application_cleanup_attempts.sql`](../../database/migrations/011_application_cleanup_attempts.sql)
+adds the permanent one-attempt cleanup ledger. Install it separately in the
+reviewed dedicated sandbox after verifying the direct owner, workspace and
+database identity. Its preflight refuses existing objects. In that explicitly
+authorized SQLcl connection, stop on the first error:
+
+```sql
+whenever sqlerror exit failure rollback
+set define off
+@database/migrations/011_application_cleanup_attempts.sql
+```
+
+Verify both `APXGEN_APP_CLEANUP_ATTEMPTS` and
+`APXGEN_APP_CLEANUP_IMMUTABLE` are VALID and have no `USER_ERRORS` before running
+[`application-cleanup-ledger.mjs`](../../tests/integration/application-cleanup-ledger.mjs).
+The suite never installs objects or calls an application removal API. Its only
+data changes are temporary cleanup-ledger boundary probes, including attempts
+that the database must reject. They always roll back.
+
+Use the existing `APXGEN_APPLICATION_TEST_CONFIG` gate with a private JSON file
+containing the explicit owner credentials, full reviewed `sandbox` policy and
+`expectedDatabase` object with exact `databaseName` and `containerName` strings.
+Missing configuration skips before credential reads or a database connection:
+
+```powershell
+node tests/integration/application-cleanup-ledger.mjs
+
+# Run only after authorizing this existing sandbox and stopping its workers.
+$env:APXGEN_APPLICATION_TEST_CONFIG = '.local/order-lab/application-contract-config.json'
+node tests/integration/application-cleanup-ledger.mjs
+```
+
+The connected owner and workspace must match the policy. The native worker must
+be disabled, with no queued/claimed request or RUNNING application experiment.
+The suite chooses an existing terminal REJECTED nonincumbent in the approved
+130–133 pool with no prior cleanup attempt or legacy cleanup event. It creates
+no candidate or fixture when those prerequisites are absent. A legacy-history
+negative check is reported as skipped if no suitable historical row exists.
+
+The checks cover immutable identity/proof hashes, organism uniqueness,
+finalize-once behavior, invalid states, incompatible ownership and attached APEX
+context rejection. Existing ledger rows, visible app metadata, fixture and slot
+rows, experiment history and control requests/events are compared before and
+after rollback, including exact FF9 timestamp fields. `TEST_ONLY` results are
+database-boundary evidence and never runtime task or fitness evidence. Keep
+workers stopped for the whole check; this test grants no cleanup authorization.
+
 Official references: [APEXlang command reference](https://docs.oracle.com/en/database/oracle/sql-developer-command-line/26.2/sqcug/apexlang.html),
 [APEXlang 26.2 component reference](https://docs.oracle.com/en/database/oracle/apex/26.2/apxln/index.html),
 [deployment files](https://docs.oracle.com/en/database/oracle/apex/26.2/apxdc/understanding-apexlang-deployment-files.html).

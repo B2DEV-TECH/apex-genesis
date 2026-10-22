@@ -34,6 +34,12 @@ test('the published genuine feasibility run retains its original source and eval
  assert.deepEqual(deriveSmokeHashes(summary),{sourceHash:summary.sourceHash,evaluatorHash:summary.evaluatorHash});
  const protocol=await readFile(new URL('../../experiments/configurations/application-feasibility-v1.json',import.meta.url));assert.equal(digest(protocol),summary.protocolHash);
 });
+test('the genuine native result binds its separate queued protocol and recorded source fingerprints',async()=>{
+ const summary=JSON.parse(await readFile(new URL('../../experiments/published-results/living-native-feasibility/summary.json',import.meta.url),'utf8'));
+ assert.deepEqual(deriveSmokeHashes(summary),{sourceHash:summary.sourceHash,evaluatorHash:summary.evaluatorHash});
+ const protocol=await readFile(new URL('../../experiments/configurations/application-queued-feasibility-v1.json',import.meta.url));assert.equal(digest(protocol),summary.protocolHash);
+ assert.equal(summary.nativeControl.queueState,'COMPLETED');assert.equal(summary.nativeControl.successfulStartCount,1);
+});
 test('cached Oracle decisions, DNA, parent and source identities must match readonly records',()=>{
  const {run,snapshot}=fixture();assert.equal(assertSmokeReconciliation(run,snapshot),true);
  for(const mutate of [s=>{s.organisms[0].fitness=1;},s=>{s.organisms[0].parentId='d'.repeat(32);},s=>{s.organisms[0].genomeHash='d'.repeat(64);},s=>{s.organisms[0].applicationId=131;},s=>{s.organisms=[];}]){const bad=structuredClone(snapshot);mutate(bad);assert.throws(()=>assertSmokeReconciliation(run,bad),/Oracle|candidate|genome|identity|missing/i);}

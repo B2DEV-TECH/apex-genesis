@@ -38,10 +38,11 @@ usability improvement is established**. Earlier failed attempts remain recorded.
 
 The proposed `v0.3.0-alpha.1` release is **not tagged or complete**. Application
 evolution is currently GA_ONLY; no new paid model calls were made. Native
-control application 134 is imported: authentication, reader/operator permissions
-and creation of one genuine bounded draft passed. Its execution worker remains
-disabled; the native Start-to-completion path is still an acceptance gate.
-Wider controlled trials, AI ledger integration,
+control application 134 now has a verified Start-to-completion path: its operator
+started a bounded request, Oracle linked a fresh run, and real apps 131 and 132
+passed the same tasks and gates. They also tied at 89.675, retaining their parent.
+The request completed and the worker was disabled and unbound afterward.
+Native visual comparisons, wider controlled trials, AI ledger integration,
 unattended application evolution, article and video remain
 separate acceptance gates. [Live engineering record](docs/testing/living-applications-progress.md)
 and [implementation plan](docs/superpowers/plans/2026-10-22-living-applications.md).
@@ -53,6 +54,8 @@ historical links and zero browser errors. The immutable R2 package contains
 49 verified objects. Progress is reviewable in [draft PR #8](https://github.com/B2DEV-TECH/apex-genesis/pull/8).
 [Recorded feasibility results and source fingerprints](experiments/published-results/living-feasibility/README.md)
 are available independently of the replay.
+[Native request results and provenance](experiments/published-results/living-native-feasibility/README.md)
+record the separate authenticated Start-to-completion verification.
 
 ## Historical interface experiment
 

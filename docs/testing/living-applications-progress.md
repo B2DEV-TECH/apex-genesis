@@ -146,6 +146,58 @@ An independent filesystem read reverified 92 preserved file hashes across both
 operations. Slots 131 and 132 are now available for a fresh bounded native run;
 successful feasibility applications 130 and 133 remain installed.
 
+## First native Start-to-completion loop
+
+The authenticated operator used Start Evolution in application 134 to enqueue
+request `7bcff90329154f549db36272a84dc707`. The bounded worker claimed it, committed
+the fresh Oracle run link and materialized two real descendants under the separate
+registered queued protocol. Run `c46d109a8952417ea277daa0696ed698` completed with
+two of two materializations and generation 1.
+
+| Actual organism | App | Result |
+| --- | ---: | --- |
+| `01106ccddbf54db78e30d20b1b2dd9a2` | 131 | Baseline selected; eligible, 89.675. |
+| `6ac8b82786d94e2d88d10f4bb138d3e4` | 132 | Filters moved above to beside; eligible, 89.675; parent retained on the tie. |
+
+Both applications passed real compiler validation, import, authentication, all
+three tasks, independent database update/version/audit checks, denial/isolation
+probes and the 390/768/1,440-pixel accessibility/responsive gates. Actions remained
+3/3/6 and navigation steps 1/1/3. Warm-load medians were 145 ms and 142 ms; these
+timings establish no human usability claim. The native Watch page displayed the
+actual run, organisms, scores and phase chronology. The request reached COMPLETED,
+the owning CLI exited with Oracle COMPLETE, and its coordinator lock was released.
+The wrapper disabled the worker and cleared binding and heartbeat. Paid requests: zero.
+
+The earlier pre-Start harness failure remains preserved. Login succeeded but
+returned to Create, while the harness assumed Evolve and dereferenced an absent
+Start button. The request never queued, no run existed and its worker exited idle.
+An explicit manual recovery retained that attempt, verified the unchanged DRAFT
+and stopped worker, navigated to authenticated Evolve page 2, and performed the
+single successful Start. No claim, import or paid request was retried. A separate
+Git ownership preflight refusal happened before any database access. These are
+operator-harness observations, not fabricated failed application evaluations.
+
+An independent filesystem read reverified all 50 recorded source hashes and ten
+compiler/import/screenshot artifact hashes. Original definitions, both raw compiler
+and import outputs, actual screenshots and the native control capture remain
+preserved privately. The original public feasibility package stays unchanged.
+
+Its separate native-run package was published through the existing R2 transport:
+49 objects, independently verified by public readback. Manifest SHA256:
+`9884a0b6070d697a828f24193647878fbce13938ba0279ad69299f3568a5427e`.
+The compatible Living pointer advanced after complete verification. The earlier
+immutable package, continuous-evolution pointer and website's default pin remained
+unchanged. [Native cohort evidence](../../experiments/published-results/living-native-feasibility/README.md).
+The explicit native-cohort production URL passed 22 real Edge checks without
+response interception. The unchanged original default passed its 22 checks again.
+The deployed check accepts only those two fixed cohort identities and manifest
+hashes; seven local URL-boundary assertions also passed.
+
+The portable cleanup-ledger integration script also reproduced all 39
+Oracle checks with no skips and complete rollback. Before/after owner-state hashes
+were identical, including fixtures, slots, histories and the native request. Source:
+[`tests/integration/application-cleanup-ledger.mjs`](../../tests/integration/application-cleanup-ledger.mjs).
+
 ## Remaining acceptance gates
 
 The top-navigation compiler variants report template-option warnings despite
@@ -154,8 +206,8 @@ successful parent and child both use side navigation. The retained compiler logs
 expose these warnings for review before broader trials.
 
 Broader controlled experiments,
-native Start-to-completion execution and visual parent comparison, safe slot
-recycling beyond the first preserved slot, autonomous integration,
+native visual parent comparison, active-run slot reuse for longer experiments,
+autonomous integration,
 freshly authorized AI integration with the original ledger,
 paired research, article and video require their own evidence. No release tag has
 been assigned. No paid model request has been made by the new mode.

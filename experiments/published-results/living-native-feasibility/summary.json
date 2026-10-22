@@ -1,0 +1,472 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "APEX_NATIVE_QUEUED_FEASIBILITY",
+  "runId": "c46d109a8952417ea277daa0696ed698",
+  "protocol": "order-lab-queued-feasibility/1.0",
+  "protocolHash": "67f7593b271d33cf1d4190858c961ff1cd312155b8371978f27cd2678c5038d4",
+  "sourceImplementationCommit": "0c9c42ba9ec89386157d6b5181c6de770b773e50",
+  "seed": 50000,
+  "advances": 1,
+  "mode": "GA_ONLY",
+  "paidRequests": 0,
+  "fitnessDefinition": "order-lab-task-proxy/2.0.0",
+  "sourceHash": "a7716f8103f05840bf201161eb6e4aa2c4ec41f99bfe39c64d2e80ec7dbfb684",
+  "evaluatorHash": "46797f474f3acfda7477a15aca3213da85df419b73e7656a459155f276ae46c0",
+  "browserVersion": "141.0.7390.37",
+  "sourceHashes": [
+    {
+      "path": "apex/living-control/sql/010_control_queue.sql",
+      "sha256": "f4a7a0a329fa94bed8d8d195672c3816bc385a069b37268c2432c1727ca46e2d"
+    },
+    {
+      "path": "apex/living-control/sql/apxgen_app_control.sql",
+      "sha256": "763933745b68f826a737443c44e9a2cfb1d600aa16510cae813c9f78da7902c9"
+    },
+    {
+      "path": "apex/living-control/template/.apex/apexlang.json",
+      "sha256": "1e4d481e2b249e9579fb0e21ec7534b535573b7534e53ec8d8f7b204d841a101"
+    },
+    {
+      "path": "apex/living-control/template/application.apx",
+      "sha256": "8b0ce4a9f553f2c443b9256571bcb636790df51b035950c7230cf2d4e2cb44b7"
+    },
+    {
+      "path": "apex/living-control/template/pages/p00000-global-page.apx",
+      "sha256": "00df156b213512f9c44abe57d9358324a2b043c891b94905065e8157d006f7ee"
+    },
+    {
+      "path": "apex/living-control/template/pages/p00001-create.apx",
+      "sha256": "19ff9b5d3010d81de61433ad5d93d214d55910564a2be67fd8bcd9748e0cfdb0"
+    },
+    {
+      "path": "apex/living-control/template/pages/p00002-evolve.apx",
+      "sha256": "3e1252dde16a2e72044e05d5f7e823966a0617f48c14d867811ecced1acefdca"
+    },
+    {
+      "path": "apex/living-control/template/pages/p00003-watch.apx",
+      "sha256": "decad92f1d30890f326fb2a31a424f7456ac6eddc8947e22b337633e6ce57b24"
+    },
+    {
+      "path": "apex/living-control/template/pages/p09999-login.apx",
+      "sha256": "296920a7b66213b228e3a7e35e46647bfee19f193e5d3ea3cf9c6c95153d527a"
+    },
+    {
+      "path": "apex/living-control/template/shared-components/authentications.apx",
+      "sha256": "4b525f3023225c4f91b53c58fabec81ef146d5dfabd1c677cb7c71866d179382"
+    },
+    {
+      "path": "apex/living-control/template/shared-components/lists/navigation-bar.apx",
+      "sha256": "28855cec6e6b434d7f8497d4e0609497641c019392aeb76705c08089d57b765c"
+    },
+    {
+      "path": "apex/living-control/template/shared-components/lists/navigation-menu.apx",
+      "sha256": "c74d33389c04b5cf0000bb0868862bc7f9617b1bc4abf0d4b3599e974da270c0"
+    },
+    {
+      "path": "apex/living-control/template/shared-components/static-files.apx",
+      "sha256": "5a7cce1f92535a01dea566e45af15c88502f55e93b2fd53495f5c65735dcc490"
+    },
+    {
+      "path": "apex/living-control/template/shared-components/static-files/control-boot.js",
+      "sha256": "49a2a960f2d3fe3f4e361b2fc2a2e5ca7e883879bd7b32c8ec359aeb211e9c75"
+    },
+    {
+      "path": "apex/living-control/template/shared-components/static-files/control-contract.mjs",
+      "sha256": "16741707980dde99b45bc08f1ca77264610c96c083439c0cd7765d5cef29fb87"
+    },
+    {
+      "path": "apex/living-control/template/shared-components/themes/universal-theme/theme.apx",
+      "sha256": "d78b66cd4330e69c24ff87e0d68d722e497347a593ce719e3f52883b9c7af3d1"
+    },
+    {
+      "path": "apex/order-lab/parent-source.json",
+      "sha256": "dbc2c20f829a877dc1abb5e5022921e6af1c0f43c5c37f537106736092a2bae6"
+    },
+    {
+      "path": "apex/order-lab/template/.apex/apexlang.json",
+      "sha256": "1e4d481e2b249e9579fb0e21ec7534b535573b7534e53ec8d8f7b204d841a101"
+    },
+    {
+      "path": "apex/order-lab/template/application.apx",
+      "sha256": "da10164805d480f66732cd9d0630cbd45e8fcc3352f23317ec93eee493822afe"
+    },
+    {
+      "path": "apex/order-lab/template/deployments/default.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "apex/order-lab/template/pages/p00000-global-page.apx",
+      "sha256": "00df156b213512f9c44abe57d9358324a2b043c891b94905065e8157d006f7ee"
+    },
+    {
+      "path": "apex/order-lab/template/pages/p00001-orders.apx",
+      "sha256": "bf6ee9aeff4322bfe009136eafc3d1c6b9a182a14cbe4275851eccc494fc0e88"
+    },
+    {
+      "path": "apex/order-lab/template/pages/p00002-edit-order.apx",
+      "sha256": "9c616e53075407fa3941fae263b7a0ba7f2e83165a2648f4fe0d9def64c6ef9f"
+    },
+    {
+      "path": "apex/order-lab/template/pages/p09999-login.apx",
+      "sha256": "296920a7b66213b228e3a7e35e46647bfee19f193e5d3ea3cf9c6c95153d527a"
+    },
+    {
+      "path": "apex/order-lab/template/shared-components/authentications.apx",
+      "sha256": "4b525f3023225c4f91b53c58fabec81ef146d5dfabd1c677cb7c71866d179382"
+    },
+    {
+      "path": "apex/order-lab/template/shared-components/lists/navigation-bar.apx",
+      "sha256": "28855cec6e6b434d7f8497d4e0609497641c019392aeb76705c08089d57b765c"
+    },
+    {
+      "path": "apex/order-lab/template/shared-components/lists/navigation-menu.apx",
+      "sha256": "01981e1642d9ba9263d535a5aaa31557c7b7c9ee2678fb67e7bb7d3d6cd87351"
+    },
+    {
+      "path": "apex/order-lab/template/shared-components/static-files.apx",
+      "sha256": "6024a74143b05fbff2c4d6a2cec76aea5bc08d152b76d6cbc873d8a1c35b8d19"
+    },
+    {
+      "path": "apex/order-lab/template/shared-components/static-files/order-lab.css",
+      "sha256": "17e0d96a7f5c16c37c6a933ec2b8431de19a10c681ea1381cf8041585f8482e3"
+    },
+    {
+      "path": "apex/order-lab/template/shared-components/themes/universal-theme/theme.apx",
+      "sha256": "5fed6368bbd8726f2ff66c90c9063711dff69cd635b7f5b5203888e6e40ea95a"
+    },
+    {
+      "path": "database/migrations/007_order_lab_fixture.sql",
+      "sha256": "68fb82c35fad4f9dc41fd69abe9da6a4c9add447a65e7d97e9f14799e4ed9e24"
+    },
+    {
+      "path": "database/migrations/008_application_evolution.sql",
+      "sha256": "f476c903d844090d8a0ff96b7bbb590186b4706e098138317908cf979597d055"
+    },
+    {
+      "path": "database/migrations/009_application_import_attempts.sql",
+      "sha256": "ca119310a88c3f9246b71d692a016c1cfe96893177c6fdb8514fd7a9af98890f"
+    },
+    {
+      "path": "database/packages/apxgen_app_evolution.sql",
+      "sha256": "289f56507c873067543c46eeb19925cc521737e4c575c03eb049ca88daebae52"
+    },
+    {
+      "path": "database/packages/apxgen_app_fitness.sql",
+      "sha256": "f4b497916ebe8289e464ae39f79d9dedd97d4ba7970d24b58cfb91e6b72aa5e0"
+    },
+    {
+      "path": "database/packages/apxgen_app_genome.sql",
+      "sha256": "68c34c73e64892594bc714ae22d1d2a3f9dc036f793e9ce9e6820a703208ad2e"
+    },
+    {
+      "path": "database/packages/genesis_order_lab.sql",
+      "sha256": "878e80a5af3753174a931f06dc7b57eac5f035bd70a8278f3f5863c2d9c80190"
+    },
+    {
+      "path": "evolution/application/genome.mjs",
+      "sha256": "b67e3d166a39d56851842c3095d69a9ae16ae3b7a912fbc5d58c4451a24d6a3e"
+    },
+    {
+      "path": "evolution/genome-schema/application-genome.schema.json",
+      "sha256": "5ea5a54b0f9a79fde529c921dc27c609433d580995a5ff0bae4ce956bd48c31a"
+    },
+    {
+      "path": "experiments/configurations/application-queued-feasibility-v1.json",
+      "sha256": "67f7593b271d33cf1d4190858c961ff1cd312155b8371978f27cd2678c5038d4"
+    },
+    {
+      "path": "runtime/application/control-worker.mjs",
+      "sha256": "5e3546e62671b514ebba6f99e121f480c800785db6f995ced90ba8578bc1aeba"
+    },
+    {
+      "path": "runtime/application/coordinator-lock.mjs",
+      "sha256": "1c478b9a20d3ff50b1f8d049723c9da47d476845607b8e4fedb47511e1ce7e01"
+    },
+    {
+      "path": "runtime/application/queue-import-guard.mjs",
+      "sha256": "3b8442503479ec8c132a5207169cf2eb4afac4a4fc63319450cc643296f1efe9"
+    },
+    {
+      "path": "runtime/application/resources.mjs",
+      "sha256": "b4a6dde328ff6fbe356fcdad974bbff7c18a2cc1a19bf7d546779458f060046e"
+    },
+    {
+      "path": "runtime/application/tasks.mjs",
+      "sha256": "a77653fbc99cb94218c5b013bc8963a77769b84ddc6e1af543fd14f6ea92e440"
+    },
+    {
+      "path": "scripts/application/build-definition.mjs",
+      "sha256": "5798893df0aae41413db054d76f79c350f263c6e63897ab9d1d3b1c5cebcb823"
+    },
+    {
+      "path": "scripts/application/import-definition.mjs",
+      "sha256": "fd51315cacfcef160b4a0c54a38a365f0ba93ffc7ebf2434b5b8e9cf92d90618"
+    },
+    {
+      "path": "scripts/application/run-control-once.mjs",
+      "sha256": "0823594eb6b6a21b75f9c4013319bb3d1bc50207701f72422b74db5858adc397"
+    },
+    {
+      "path": "scripts/application/run-smoke.mjs",
+      "sha256": "9c7718293899f73442bd9b7f2b1a3cefd55242730e2060f7a375043a00cc0f04"
+    },
+    {
+      "path": "scripts/application/validate-definition.mjs",
+      "sha256": "a7309e42f1d2cd26b467df930aeb2a83754fb9b40eaae9f7854f142900fb6e6b"
+    }
+  ],
+  "nativeControl": {
+    "applicationId": 134,
+    "requestId": "7bcff90329154f549db36272a84dc707",
+    "queueState": "COMPLETED",
+    "audit": [
+      {
+        "state": "DRAFT",
+        "recordedAt": "2026-10-22T15:48:12.897774000Z"
+      },
+      {
+        "state": "QUEUED",
+        "recordedAt": "2026-10-22T16:27:16.787703000Z"
+      },
+      {
+        "state": "CLAIMED",
+        "recordedAt": "2026-10-22T16:27:20.108759000Z"
+      },
+      {
+        "state": "RUN_LINKED",
+        "recordedAt": "2026-10-22T16:27:20.273924000Z"
+      },
+      {
+        "state": "COMPLETED",
+        "recordedAt": "2026-10-22T16:28:17.829687000Z"
+      }
+    ],
+    "runLinkedBeforeMaterialization": true,
+    "originalPreStartAttemptPreserved": true,
+    "manualPreStartRecovery": true,
+    "successfulStartCount": 1,
+    "workerDisabledAfterCompletion": true,
+    "bindingAndHeartbeatCleared": true,
+    "coordinatorLockReleased": true,
+    "independentOracleVerificationSha256": "84771776999245c6d9f1f3f9499531438fce4b9a185cbc2d4b55de8777069f56"
+  },
+  "oracleRun": {
+    "STATE": "COMPLETE",
+    "MATERIALIZATIONS": 2,
+    "MATERIALIZATION_BUDGET": 2,
+    "CURRENT_GENERATION": 1,
+    "BEST_ORGANISM_ID": "01106ccddbf54db78e30d20b1b2dd9a2"
+  },
+  "candidates": [
+    {
+      "id": "01106ccddbf54db78e30d20b1b2dd9a2",
+      "parentId": null,
+      "generation": 0,
+      "applicationId": 131,
+      "genomeHash": "6df8f3e711099b4f51f463e192638683d59d629a096578d22ec15b556a634853",
+      "originalDefinitionHash": "a3fcadef1911fd2c00aeff8109b2a924a5ae533640b56a7cb5a18aebe415bfae",
+      "genome": {
+        "schemaVersion": "2.0",
+        "application": "GENESIS_ORDER_LAB",
+        "dataSource": "GENESIS_ORDERS_SAFE_V",
+        "tasks": [
+          "locateOrder",
+          "filterOrders",
+          "updateOrder"
+        ],
+        "traits": {
+          "report": "classicReport",
+          "edit": "page",
+          "filters": "above",
+          "summary": "before",
+          "navigation": "side",
+          "density": "comfortable"
+        }
+      },
+      "oracleDecision": {
+        "STATE": "SELECTED",
+        "ELIGIBLE": 1,
+        "FITNESS": 89.675,
+        "SELECTED": 1,
+        "REASON": "Eligible improvement selected by Oracle"
+      },
+      "tasks": {
+        "locateOrder": {
+          "success": true,
+          "actions": 3,
+          "navigationSteps": 1,
+          "elapsedMs": 247,
+          "completedAt": "2026-10-22T16:27:42.599Z"
+        },
+        "filterOrders": {
+          "success": true,
+          "actions": 3,
+          "navigationSteps": 1,
+          "elapsedMs": 222,
+          "completedAt": "2026-10-22T16:27:42.958Z"
+        },
+        "updateOrder": {
+          "success": true,
+          "actions": 6,
+          "navigationSteps": 3,
+          "elapsedMs": 499,
+          "completedAt": "2026-10-22T16:27:43.597Z"
+        }
+      },
+      "databaseChangeVerified": true,
+      "security": {
+        "anonymousBlocked": true,
+        "directWorkerRejected": true,
+        "wrongPrincipalReadDenied": true,
+        "wrongPrincipalWriteDenied": true,
+        "crossOwnedReadDenied": true,
+        "crossOwnedWriteDenied": true
+      },
+      "browser": {
+        "viewportsTested": 3,
+        "criticalViolations": 0,
+        "seriousViolations": 0,
+        "unnamedControls": 0,
+        "focusFailures": 0,
+        "horizontalOverflow": 0,
+        "warmLoadMedianMs": 145,
+        "runtimeErrors": 0,
+        "screenshots": [
+          {
+            "width": 390,
+            "sha256": "0423bdf40775e9ac54513ad1e41b98e83b5884a23cd6af10837095207e32eb3c",
+            "captureMethod": "Playwright browser screenshot with viewport clip; no image editing",
+            "crop": "visible content below header"
+          },
+          {
+            "width": 768,
+            "sha256": "b95988ba0a63026aa224bf8a31fdf1031681ff309e05be4a6d436cf9f4cb005a",
+            "captureMethod": "Playwright browser screenshot with viewport clip; no image editing",
+            "crop": "visible content below header"
+          },
+          {
+            "width": 1440,
+            "sha256": "e5067543464d82bd13d39b30dbe2ccf4807fa89c6b8690f82c4fc08d55587552",
+            "captureMethod": "Playwright browser screenshot with viewport clip; no image editing",
+            "crop": "visible content below header"
+          }
+        ]
+      }
+    },
+    {
+      "id": "6ac8b82786d94e2d88d10f4bb138d3e4",
+      "parentId": "01106ccddbf54db78e30d20b1b2dd9a2",
+      "generation": 1,
+      "applicationId": 132,
+      "genomeHash": "bcb287dc667a3a6be5b6d68530bab256f969ca256bdd1200b16755892eae3a2d",
+      "originalDefinitionHash": "62970bc4c49eafef2e4be2bb1ad39d742ed099502d8136b131bd271965551fcd",
+      "genome": {
+        "schemaVersion": "2.0",
+        "application": "GENESIS_ORDER_LAB",
+        "dataSource": "GENESIS_ORDERS_SAFE_V",
+        "tasks": [
+          "locateOrder",
+          "filterOrders",
+          "updateOrder"
+        ],
+        "traits": {
+          "report": "classicReport",
+          "edit": "page",
+          "filters": "beside",
+          "summary": "before",
+          "navigation": "side",
+          "density": "comfortable"
+        }
+      },
+      "oracleDecision": {
+        "STATE": "REJECTED",
+        "ELIGIBLE": 1,
+        "FITNESS": 89.675,
+        "SELECTED": 0,
+        "REASON": "Failed eligibility or did not exceed the surviving parent"
+      },
+      "tasks": {
+        "locateOrder": {
+          "success": true,
+          "actions": 3,
+          "navigationSteps": 1,
+          "elapsedMs": 228,
+          "completedAt": "2026-10-22T16:28:10.722Z"
+        },
+        "filterOrders": {
+          "success": true,
+          "actions": 3,
+          "navigationSteps": 1,
+          "elapsedMs": 215,
+          "completedAt": "2026-10-22T16:28:11.072Z"
+        },
+        "updateOrder": {
+          "success": true,
+          "actions": 6,
+          "navigationSteps": 3,
+          "elapsedMs": 497,
+          "completedAt": "2026-10-22T16:28:11.709Z"
+        }
+      },
+      "databaseChangeVerified": true,
+      "security": {
+        "anonymousBlocked": true,
+        "directWorkerRejected": true,
+        "wrongPrincipalReadDenied": true,
+        "wrongPrincipalWriteDenied": true,
+        "crossOwnedReadDenied": true,
+        "crossOwnedWriteDenied": true
+      },
+      "browser": {
+        "viewportsTested": 3,
+        "criticalViolations": 0,
+        "seriousViolations": 0,
+        "unnamedControls": 0,
+        "focusFailures": 0,
+        "horizontalOverflow": 0,
+        "warmLoadMedianMs": 142,
+        "runtimeErrors": 0,
+        "screenshots": [
+          {
+            "width": 390,
+            "sha256": "0423bdf40775e9ac54513ad1e41b98e83b5884a23cd6af10837095207e32eb3c",
+            "captureMethod": "Playwright browser screenshot with viewport clip; no image editing",
+            "crop": "visible content below header"
+          },
+          {
+            "width": 768,
+            "sha256": "67f63531184406084431b93c29c284c15b53c89d5a588f4e4f6f3661b1556fc5",
+            "captureMethod": "Playwright browser screenshot with viewport clip; no image editing",
+            "crop": "visible content below header"
+          },
+          {
+            "width": 1440,
+            "sha256": "620a62d810a115c3c883e47078ca3cd21517e3464390e49b4158bdf31a7518f6",
+            "captureMethod": "Playwright browser screenshot with viewport clip; no image editing",
+            "crop": "visible content below header"
+          }
+        ]
+      }
+    }
+  ],
+  "package": {
+    "manifestSha256": "9884a0b6070d697a828f24193647878fbce13938ba0279ad69299f3568a5427e",
+    "objects": 49,
+    "referencedBytes": 266890,
+    "publication": "verified R2 public readback",
+    "manifestUrl": "https://b2dev.tech/media/genesis/living/v1/packages/9884a0b6070d697a828f24193647878fbce13938ba0279ad69299f3568a5427e/manifest.json",
+    "publicObjectsVerified": 49,
+    "publicBytesIncludingManifest": 275656,
+    "originalPublicPackageUnchanged": true,
+    "legacyContinuousPointerUnchanged": true,
+    "defaultWebsitePinUnchanged": true
+  },
+  "limitations": [
+    "This repeats the same seed and one advance through the native queue; it is not another independent seed or a paired algorithm comparison.",
+    "No AI request or human usability study was performed.",
+    "Native Watch currently displays real state and chronology; richer native parent/offspring visual comparisons remain incomplete.",
+    "Every screenshot was captured for its own organism. Equal hashes identify naturally identical rendering: both mobile candidates stack the controls, and the fixed baseline matches the earlier baseline desktop capture.",
+    "The sanitized public source bundle has its own hash, distinct from the original compiler definition hash."
+  ],
+  "protocolSourcePath": "experiments/configurations/application-queued-feasibility-v1.json"
+}
