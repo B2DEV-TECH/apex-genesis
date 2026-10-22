@@ -1,0 +1,9 @@
+.order-lab-compact .t-Report-cell,
+.order-lab-compact .t-Report-colHead { padding-block: .35rem; }
+.order-lab-comfortable .t-Report-cell,
+.order-lab-comfortable .t-Report-colHead { padding-block: .75rem; }
+
+:focus-visible {
+  outline: 3px solid #005fcc !important;
+  outline-offset: 3px !important;
+}

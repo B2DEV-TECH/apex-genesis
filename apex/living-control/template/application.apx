@@ -1,0 +1,50 @@
+app GENESIS-LIVING-CONTROL (
+    name: Genesis Living Control
+    version: "0.3 development"
+    logo {
+        type: text
+        text: &APP_TITLE.
+    }
+    navigation {
+        homeUrl: {
+            page: 1
+        }
+        loginUrl: {
+            page: LOGIN
+        }
+    }
+    navigationMenu {
+        listTemplate: @/side-navigation-menu
+        templateOptions: #DEFAULT#
+        list: @navigation-menu
+    }
+    navigationBar {
+        list: @navigation-bar
+        listTemplate: @/navigation-bar
+        templateOptions: #DEFAULT#
+    }
+    userInterface {
+        currentTheme: @universal-theme
+        globalPage: 0
+        addBuiltWithApexToFooter: false
+    }
+    authentication {
+        scheme: @oracle-apex-accounts
+    }
+    javaScript {
+        fileUrls: #APP_FILES#control-boot.js
+    }
+    css {
+        fileUrls: #APP_FILES#control.css
+    }
+    security {
+        allowBotAccess: false
+    }
+    runtime {
+        allowFeedback: false
+        compatibilityMode: 24.2
+    }
+    advanced {
+        modernizeApp: true
+    }
+)

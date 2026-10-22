@@ -1,0 +1,58 @@
+page 1 (
+    name: Create experiment
+    alias: CREATE
+    title: Create | Genesis Living Control
+    appearance {
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    region create-request (
+        name: Create bounded experiment
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+            columnSpan: 12
+            startNewRow: true
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        source {
+            htmlCode: ```html
+<section id="living-control" class="lc" data-control-page="create">
+ <nav class="lc-steps" aria-label="Application evolution"><a href="f?p=&APP_ID.:1:&APP_SESSION." aria-current="page"><span>01</span> Create</a><a href="f?p=&APP_ID.:2:&APP_SESSION."><span>02</span> Evolve</a><a href="f?p=&APP_ID.:3:&APP_SESSION."><span>03</span> Watch</a></nav>
+ <header class="lc-intro"><p class="lc-eyebrow">APEX GENESIS / LIVING APPLICATIONS</p><h1>Every application<br><span>starts with a question.</span></h1><p>Name a bounded Order Lab experiment. Genesis will create a parent, test a structural variation, and let Oracle decide what survives.</p></header>
+ <p data-status class="lc-status" role="status">Control is disabled or not configured.</p>
+ <div class="lc-create-grid"><div class="lc-panel"><h2>Create your experiment</h2><p class="lc-muted">Create saves an immutable draft. Start Evolution queues that draft for an authorized worker.</p>
+ <label class="lc-field">Experiment label <input name="label" maxlength="120" required disabled placeholder="What would you like to explore?"></label>
+ <p class="lc-capability">One generation <span>·</span> Two applications <span>·</span> No AI requests</p>
+ <button class="lc-primary" type="button" data-action="CREATE" disabled>Create draft</button>
+ <details class="lc-details"><summary>Experiment limits</summary><p>These fixed limits keep the first feasibility protocol reproducible. They cannot be expanded from this screen.</p><div class="lc-limits"><label>Random seed <input name="seed" type="number" min="50000" max="50000" value="50000" readonly required disabled></label><label>Challenger generations <input name="generations" type="number" min="1" max="1" value="1" readonly required disabled></label><label>Application materialization budget <input name="materializationBudget" type="number" min="2" max="2" value="2" readonly required disabled></label></div><p>GA_ONLY · fixed synthetic tasks · engineering proxy fitness.</p></details></div>
+ <aside class="lc-method"><p class="lc-eyebrow">WHAT WILL BE TESTED</p><ol><li><strong>Locate</strong><span>Find the intended order.</span></li><li><strong>Filter</strong><span>Narrow the report to the requested records.</span></li><li><strong>Update</strong><span>Change the intended record and verify persistence.</span></li></ol><p>Task success needs observed evidence. A generated application has not yet passed a test.</p></aside></div>
+ <div class="lc-request-bar"><label>Existing requests <select data-requests disabled></select></label></div>
+ <div data-observation></div>
+ <footer class="lc-footer">B2DEV TECH / INDEPENDENT RESEARCH <span>0.3 development</span></footer>
+</section>
+            ```
+        }
+    )
+    process living-control (
+        name: LIVING_CONTROL
+        type: executeCode
+        source {
+            plsqlCode: ```plsql
+apxgen_app_control.ajax;
+            ```
+        }
+        execution {
+            sequence: 10
+            point: ajaxCallback
+        }
+    )
+)

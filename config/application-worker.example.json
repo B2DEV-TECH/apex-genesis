@@ -1,0 +1,5 @@
+{
+  "oracleConfigPath": "oracle.json",
+  "sandboxPolicyPath": "application-sandbox.json",
+  "sqlclPath": "C:/sqlcl-26.2.2/bin/sql.exe"
+}

@@ -1,0 +1,20 @@
+{
+  "kind": "subsequent-evaluator-diagnostic",
+  "affectedRunId": "50b8863fae56453182bbc4c2cbcb16d4",
+  "applicationId": 132,
+  "originalOracleDecision": "REJECTED",
+  "originalFitness": 0,
+  "originalEvidenceAndDecisionChanged": false,
+  "diagnosticModifiedApplicationMetadata": false,
+  "diagnosticInjectedCss": false,
+  "diagnosticSubmittedScore": false,
+  "control": "#t_Footer_topButton",
+  "actualNativeTransition": "0.1s",
+  "cause": "Immediate computed-style observation sampled the animated outline at zero width before its transition completed.",
+  "observedAfter200ms": [
+    {"viewportWidth":390,"focusVisible":true,"outline":"rgb(0, 95, 204) solid 3px"},
+    {"viewportWidth":768,"focusVisible":true,"outline":"rgb(0, 95, 204) solid 3px"},
+    {"viewportWidth":1440,"focusVisible":true,"outline":"rgb(0, 95, 204) solid 3px"}
+  ],
+  "instrumentationRepair": "Wait up to 500ms for an actual keyboard-visible outline or shadow before observing the same hard focus gate. Record the observation wait. New runs retain a new evaluator source fingerprint."
+}

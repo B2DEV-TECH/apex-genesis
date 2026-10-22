@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased — Living Applications
+
+- Publish the genuine two-application feasibility replay through the existing R2
+  transport, with an immutable root hash and 22 passing production browser checks.
+- Add read-only Oracle evidence reconciliation, referenced-file publication,
+  binary hash verification, isolated pointer handling and public provenance.
+- Preserve compiler-only interactive-report, modal-edit and clean top-navigation
+  prototypes; these capabilities remain outside the imported production builder.
+- Separate application genome 2.0 with six bounded structural/presentation traits;
+  immutable proposal validation and Oracle-owned deterministic mutation/crossover.
+- Trusted Order Lab APEXlang templates; sixteen layout combinations verified by
+  the installed SQLcl 26.3 compiler. Unsupported report/modal mappings fail closed.
+- Dedicated sandbox policy, protected application IDs, explicit ownership/leases,
+  a synthetic fixture API and parameterized server-side status updates.
+- Separate Oracle task-proxy fitness and bounded application lifecycle/history.
+- Read-only Living Applications replay and immutable evidence packaging, with
+  explicit empty, failed and ambiguous states and independent artifact hashes.
+- Windows HTML checkout normalization preserves canonical renderer bytes.
+
+This is not a tagged 0.3 release. Runtime, experiment, publication and release
+acceptance gates must be verified independently of compilation and unit tests.
+
 ## 0.2.0-alpha.1 — 2026-10-20
 
 - Autonomous operation: lease-holding Node supervisor, Oracle policy and admission

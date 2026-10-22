@@ -1,0 +1,3 @@
+
+APEXlang version 26.2.0+3479 is not supported by this SQLcl version. Upgrade SQLcl to a version compatible with your APEX version.
+

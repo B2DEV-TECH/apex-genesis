@@ -1,0 +1,51 @@
+page 3 (
+    name: Watch evidence
+    alias: WATCH
+    title: Watch | Genesis Living Control
+    appearance {
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    region watch-request (
+        name: Recorded evolution evidence
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+            columnSpan: 12
+            startNewRow: true
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        source {
+            htmlCode: ```html
+<section id="living-control">
+ <p data-status role="status">Control is disabled or not configured.</p>
+ <label>Recorded request <select data-requests disabled></select></label>
+ <button type="button" data-action="REFRESH" disabled>Refresh actual evidence</button>
+ <p>Fitness is an engineering proxy. Pending evidence has no score. Queued work has not started.</p>
+ <div data-observation aria-live="polite"></div>
+</section>
+            ```
+        }
+    )
+    process living-control (
+        name: LIVING_CONTROL
+        type: executeCode
+        source {
+            plsqlCode: ```plsql
+apxgen_app_control.ajax;
+            ```
+        }
+        execution {
+            sequence: 10
+            point: ajaxCallback
+        }
+    )
+)

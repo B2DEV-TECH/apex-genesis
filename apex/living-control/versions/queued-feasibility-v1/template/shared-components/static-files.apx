@@ -1,0 +1,8 @@
+file control-boot.js (
+ mimeType: text/javascript
+ charSet: utf-8
+)
+file control-contract.mjs (
+ mimeType: text/javascript
+ charSet: utf-8
+)

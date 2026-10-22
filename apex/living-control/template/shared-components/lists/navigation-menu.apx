@@ -1,0 +1,36 @@
+list navigation-menu (
+    name: Navigation Menu
+    entry create (
+        label: Create
+        link {
+            target: {
+                page: 1
+            }
+        }
+        layout {
+            sequence: 10
+        }
+    )
+    entry evolve (
+        label: Evolve
+        link {
+            target: {
+                page: 2
+            }
+        }
+        layout {
+            sequence: 20
+        }
+    )
+    entry watch (
+        label: Watch
+        link {
+            target: {
+                page: 3
+            }
+        }
+        layout {
+            sequence: 30
+        }
+    )
+)

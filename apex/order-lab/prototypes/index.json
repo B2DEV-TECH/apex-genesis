@@ -1,0 +1,118 @@
+{
+  "formatVersion": "1.0",
+  "kind": "offline-apexlang-capability-prototypes",
+  "runtimeVerified": false,
+  "imports": 0,
+  "databaseMutations": 0,
+  "sourceSnapshot": "snapshots/feasibility-v1/snapshot.json",
+  "knownGood": [
+    "top-navigation-v1",
+    "interactive-report-v3",
+    "modal-edit-v4",
+    "combined-v2"
+  ],
+  "documentation": [
+    {
+      "url": "https://docs.oracle.com/en/database/oracle/apex/26.2/apxln/apexlang.ebnf",
+      "buildID": "26.2.0+3479"
+    },
+    {
+      "url": "https://docs.oracle.com/en/database/oracle/apex/26.2/apxdc/working-apexlang.html"
+    },
+    {
+      "url": "https://docs.oracle.com/en/database/oracle/sql-developer-command-line/26.2/sqcug/apexlang.html"
+    }
+  ],
+  "cases": [
+    {
+      "name": "top-navigation-v1",
+      "definitionHash": "5475ddc3ff45ca6a02d8554181c0d1291302766ba7e0ea2ab9d9fe7129b2efb8",
+      "evidence": "top-navigation-v1/evidence-attempt-01/compiler-validation.json",
+      "compilerValid": true,
+      "warningCount": 0,
+      "errorCount": 0,
+      "runtimeVerified": false
+    },
+    {
+      "name": "interactive-report-v1",
+      "definitionHash": "816f29334c1dc82d670ac5d5b29193831434233d5c33a8dc5518657cc457ff03",
+      "evidence": "interactive-report-v1/evidence-attempt-01/compiler-validation.json",
+      "compilerValid": false,
+      "warningCount": 0,
+      "errorCount": 6,
+      "runtimeVerified": false
+    },
+    {
+      "name": "interactive-report-v2",
+      "definitionHash": "0cd501abe32b203abb9714bdef00d70ae13330cb26d70a0f44288cec1ffcce66",
+      "evidence": "interactive-report-v2/evidence/compiler-validation.json",
+      "compilerValid": false,
+      "warningCount": 0,
+      "errorCount": 5,
+      "runtimeVerified": false
+    },
+    {
+      "name": "interactive-report-v3",
+      "definitionHash": "cbee177c046238d07f7d59166647946a7d66b2d37966238227c9ab7ee305a455",
+      "evidence": "interactive-report-v3/evidence/compiler-validation.json",
+      "compilerValid": true,
+      "warningCount": 0,
+      "errorCount": 0,
+      "runtimeVerified": false
+    },
+    {
+      "name": "modal-edit-v1",
+      "definitionHash": "a8e630fc6253e3199900c899a27e1e90fd2e5ada46ccd29ac8aa827f2d6ca623",
+      "evidence": "modal-edit-v1/evidence-attempt-01/compiler-validation.json",
+      "compilerValid": true,
+      "warningCount": 1,
+      "errorCount": 0,
+      "runtimeVerified": false
+    },
+    {
+      "name": "modal-edit-v2",
+      "definitionHash": "c9f8ab2291f54248c8f13bac59b900774b9566077429ae338b1047b424be6c4e",
+      "evidence": "modal-edit-v2/evidence/compiler-validation.json",
+      "compilerValid": true,
+      "warningCount": 0,
+      "errorCount": 0,
+      "runtimeVerified": false
+    },
+    {
+      "name": "modal-edit-v3",
+      "definitionHash": "6dda9fa136cb1d99b92265ce7d6860a476ddbc0aebd2427c700368303c0e1324",
+      "evidence": "modal-edit-v3/evidence/compiler-validation.json",
+      "compilerValid": false,
+      "warningCount": 0,
+      "errorCount": 1,
+      "runtimeVerified": false
+    },
+    {
+      "name": "modal-edit-v4",
+      "definitionHash": "731437c9f87ae6f522676db2e38f306b50249eb254de5d523de526ecafeb8c33",
+      "evidence": "modal-edit-v4/evidence/compiler-validation.json",
+      "compilerValid": true,
+      "warningCount": 0,
+      "errorCount": 0,
+      "runtimeVerified": false
+    },
+    {
+      "name": "combined-v1",
+      "definitionHash": "1103ee9e27c3714dba7e1ed2f4846a4235fb4fc9abd2d241b3985e576c5c4e25",
+      "evidence": "combined-v1/evidence/compiler-validation.json",
+      "compilerValid": false,
+      "warningCount": 0,
+      "errorCount": 1,
+      "runtimeVerified": false
+    },
+    {
+      "name": "combined-v2",
+      "definitionHash": "1799d46e42ce11c13edc2f55ee694280751c10dfa6814b876ddd164bff300b1b",
+      "evidence": "combined-v2/evidence/compiler-validation.json",
+      "compilerValid": true,
+      "warningCount": 0,
+      "errorCount": 0,
+      "runtimeVerified": false
+    }
+  ]
+}

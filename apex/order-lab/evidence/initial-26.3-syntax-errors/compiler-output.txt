@@ -1,0 +1,70 @@
+
+APEXlang Compile Errors:
+File: pages/p00002-edit-order.apx
+Line: 26
+Column: 4
+Type: MISSING_REQUIRED_PROPERTY
+Error: Missing required parameter (191): layout - slot (string)
+
+File: pages/p00002-edit-order.apx
+Line: 26
+Column: 4
+Type: MISSING_REQUIRED_PROPERTY
+Error: Missing required parameter (97): layout - sequence (number)
+
+File: pages/p00001-orders.apx
+Line: 13
+Column: 4
+Type: MISSING_REQUIRED_PROPERTY
+Error: Missing required parameter (411): componentAppearance - template (string)
+
+File: pages/p00001-orders.apx
+Line: 127
+Column: 4
+Type: MISSING_REQUIRED_PROPERTY
+Error: Missing required parameter (411): componentAppearance - template (string)
+
+File: pages/p00002-edit-order.apx
+Line: 109
+Column: 4
+Type: DUPLICATED_COMPONENT
+Error: Duplicated component within parent scope. For properties: 
+advanced.executionMappingIdentifier: null
+
+File: pages/p00002-edit-order.apx
+Line: 124
+Column: 4
+Type: DUPLICATED_COMPONENT
+Error: Duplicated component within parent scope. For properties: 
+advanced.executionMappingIdentifier: null
+
+File: pages/p09999-login.apx
+Line: 131
+Column: 4
+Type: DUPLICATED_COMPONENT
+Error: Duplicated component within parent scope. For properties: 
+advanced.executionMappingIdentifier: null
+
+File: pages/p09999-login.apx
+Line: 139
+Column: 4
+Type: DUPLICATED_COMPONENT
+Error: Duplicated component within parent scope. For properties: 
+advanced.executionMappingIdentifier: null
+
+File: pages/p09999-login.apx
+Line: 155
+Column: 4
+Type: DUPLICATED_COMPONENT
+Error: Duplicated component within parent scope. For properties: 
+advanced.executionMappingIdentifier: null
+
+File: pages/p09999-login.apx
+Line: 201
+Column: 4
+Type: DUPLICATED_COMPONENT
+Error: Duplicated component within parent scope. For properties: 
+advanced.executionMappingIdentifier: null
+
+
+

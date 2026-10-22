@@ -1,0 +1,34 @@
+
+APEXlang Compile Errors:
+File: pages/p00001-orders.apx
+Line: 237
+Column: 12
+Type: INVALID_PROPERTY
+Error: Invalid property: staticId
+
+File: pages/p00001-orders.apx
+Line: 249
+Column: 20
+Type: INVALID_PROPERTY
+Error: Invalid property: column
+
+File: pages/p00001-orders.apx
+Line: 255
+Column: 20
+Type: INVALID_PROPERTY
+Error: Invalid property: column
+
+File: pages/p00001-orders.apx
+Line: 261
+Column: 20
+Type: INVALID_PROPERTY
+Error: Invalid property: column
+
+File: pages/p00001-orders.apx
+Line: 267
+Column: 20
+Type: INVALID_PROPERTY
+Error: Invalid property: column
+
+
+

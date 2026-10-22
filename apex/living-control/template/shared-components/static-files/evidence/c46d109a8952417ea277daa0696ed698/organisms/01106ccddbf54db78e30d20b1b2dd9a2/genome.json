@@ -1,0 +1,1 @@
+{"schemaVersion":"2.0","application":"GENESIS_ORDER_LAB","dataSource":"GENESIS_ORDERS_SAFE_V","tasks":["locateOrder","filterOrders","updateOrder"],"traits":{"report":"classicReport","edit":"page","filters":"above","summary":"before","navigation":"side","density":"comfortable"}}

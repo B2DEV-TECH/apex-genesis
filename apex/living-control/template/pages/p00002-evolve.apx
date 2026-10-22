@@ -1,0 +1,55 @@
+page 2 (
+    name: Start evolution
+    alias: EVOLVE
+    title: Evolve | Genesis Living Control
+    appearance {
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    region evolve-request (
+        name: Start evolution
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+            columnSpan: 12
+            startNewRow: true
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        source {
+            htmlCode: ```html
+<section id="living-control" class="lc" data-control-page="evolve">
+ <nav class="lc-steps" aria-label="Application evolution"><a href="f?p=&APP_ID.:1:&APP_SESSION."><span>01</span> Create</a><a href="f?p=&APP_ID.:2:&APP_SESSION." aria-current="page"><span>02</span> Evolve</a><a href="f?p=&APP_ID.:3:&APP_SESSION."><span>03</span> Watch</a></nav>
+ <header class="lc-intro"><p class="lc-eyebrow">CREATE A VARIATION / PRESERVE THE EVIDENCE</p><h1>Let the application<br><span>earn its next generation.</span></h1><p>Start a saved draft when an authorized worker is available. Oracle records the lineage and makes the selection.</p></header>
+ <p data-status class="lc-status" role="status">Control is disabled or not configured.</p>
+ <div class="lc-panel"><label class="lc-field">Bounded experiment <select data-requests disabled></select></label><p class="lc-capability">Seed 50000 <span>·</span> One challenger <span>·</span> Two materializations</p>
+ <div class="lc-actions"><button class="lc-primary" type="button" data-action="START" disabled>Start Evolution</button><button type="button" data-action="REFRESH" disabled>Refresh actual status</button><button class="lc-quiet" type="button" data-action="CANCEL" disabled>Cancel unclaimed request</button></div>
+ <p class="lc-muted">Start queues one GA_ONLY request. Queueing is separate from execution: the worker must claim it, create a fresh Oracle run and record actual compiler, import and task evidence.</p></div>
+ <ol class="lc-verification-path" aria-label="Evidence required for selection"><li>Generate<span>Bounded structure</span></li><li>Materialize<span>Validate · Import · Run</span></li><li>Test<span>Locate · Filter · Update</span></li><li>Select<span>Oracle decision</span></li></ol>
+ <div data-observation></div>
+ <footer class="lc-footer">B2DEV TECH / INDEPENDENT RESEARCH <span>0.3 development</span></footer>
+</section>
+            ```
+        }
+    )
+    process living-control (
+        name: LIVING_CONTROL
+        type: executeCode
+        source {
+            plsqlCode: ```plsql
+apxgen_app_control.ajax;
+            ```
+        }
+        execution {
+            sequence: 10
+            point: ajaxCallback
+        }
+    )
+)

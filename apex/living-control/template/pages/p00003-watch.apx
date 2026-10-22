@@ -1,0 +1,53 @@
+page 3 (
+    name: Watch evidence
+    alias: WATCH
+    title: Watch | Genesis Living Control
+    appearance {
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    region watch-request (
+        name: Recorded evolution evidence
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+            columnSpan: 12
+            startNewRow: true
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        source {
+            htmlCode: ```html
+<section id="living-control" class="lc" data-control-page="watch">
+ <nav class="lc-steps" aria-label="Application evolution"><a href="f?p=&APP_ID.:1:&APP_SESSION."><span>01</span> Create</a><a href="f?p=&APP_ID.:2:&APP_SESSION."><span>02</span> Evolve</a><a href="f?p=&APP_ID.:3:&APP_SESSION." aria-current="page"><span>03</span> Watch</a></nav>
+ <header class="lc-intro"><p class="lc-eyebrow">REAL APPLICATIONS / RECORDED OUTCOMES</p><h1>A parent. A descendant.<br><span>A traceable change.</span></h1><p>See what changed, what passed and what Oracle selected. Every displayed screenshot comes from verified application evidence.</p></header>
+ <p data-status class="lc-status" role="status">Control is disabled or not configured.</p>
+ <div class="lc-request-bar"><label>Recorded request <select data-requests disabled></select></label><button type="button" data-action="REFRESH" disabled>Refresh actual evidence</button></div>
+ <div data-observation></div>
+ <p class="lc-footnote">Fitness is an engineering proxy. Pending evidence has no score. Queued work has not started. These bounded results do not establish human usability or algorithmic superiority.</p>
+ <footer class="lc-footer">B2DEV TECH / INDEPENDENT RESEARCH <span>0.3 development</span></footer>
+</section>
+            ```
+        }
+    )
+    process living-control (
+        name: LIVING_CONTROL
+        type: executeCode
+        source {
+            plsqlCode: ```plsql
+apxgen_app_control.ajax;
+            ```
+        }
+        execution {
+            sequence: 10
+            point: ajaxCallback
+        }
+    )
+)
