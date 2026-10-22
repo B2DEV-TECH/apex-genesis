@@ -136,6 +136,16 @@ DRAFT remained unchanged. No resource cleanup error was recorded. Archive manife
 This was a sequential operator-coordinated cleanup with positive worker/browser
 quiescence; a shared CLI/recycler concurrency boundary remains under verification.
 
+The corresponding cleanup for failed application 132 also passed, with attempt
+`5df60e88948344e781ba78cf8035d50c` VERIFIED and exactly 40 owned fixture rows and
+one owned registry row removed. Application 131 remained absent; the five remaining
+applications, the previous cleanup ledger, fixtures, original history and DRAFT
+remained unchanged. Archive manifest:
+`aa5b754577e4941ba701b8e0ab7da6c012b9bc3d560388c4a480b07d3351068d`.
+An independent filesystem read reverified 92 preserved file hashes across both
+operations. Slots 131 and 132 are now available for a fresh bounded native run;
+successful feasibility applications 130 and 133 remain installed.
+
 ## Remaining acceptance gates
 
 The top-navigation compiler variants report template-option warnings despite

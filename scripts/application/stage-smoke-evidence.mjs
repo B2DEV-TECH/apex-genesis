@@ -21,7 +21,7 @@ const parse=bytes=>parseLivingJson(bytes.toString('utf8').replace(/^\uFEFF/,''))
 const timestamp=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)&&Number.isFinite(Date.parse(value));
 const defaultProtocolPath='experiments/configurations/application-feasibility-v1.json';
 const queuedProtocolPath='experiments/configurations/application-queued-feasibility-v1.json';
-const evaluatorPaths=new Set(['scripts/application/run-smoke.mjs','runtime/application/tasks.mjs','database/packages/apxgen_app_fitness.sql',defaultProtocolPath,'database/packages/genesis_order_lab.sql','database/migrations/007_order_lab_fixture.sql',queuedProtocolPath,'runtime/application/resources.mjs','runtime/application/queue-import-guard.mjs','runtime/application/control-worker.mjs','scripts/application/run-control-once.mjs']);
+const evaluatorPaths=new Set(['scripts/application/run-smoke.mjs','runtime/application/tasks.mjs','database/packages/apxgen_app_fitness.sql',defaultProtocolPath,'database/packages/genesis_order_lab.sql','database/migrations/007_order_lab_fixture.sql',queuedProtocolPath,'runtime/application/resources.mjs','runtime/application/queue-import-guard.mjs','runtime/application/control-worker.mjs','runtime/application/coordinator-lock.mjs','scripts/application/run-control-once.mjs']);
 const requiredEvaluatorPaths=[...evaluatorPaths].slice(0,3);
 
 /** Digests bind recorded identities, never a fresh checkout relabelled as history. */

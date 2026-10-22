@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, writeFile, access, unlink } from 'node:fs/promises';
+import { readFile, writeFile, access, unlink, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fixture as recyclingFixture, sha, otherId } from './application-recycling-fixture.mjs';
 import { createRecyclingAuthorization, recyclingAuthorizationHash } from '../../scripts/application/recycle-policy.mjs';
 import { preserveOriginalCandidateEvidence, assertTerminalRecycleApproval, assertRecycleQuiescence, executeTerminalRecycle, prepareTerminalApplicationRecycle, recycleTerminalApplication } from '../../scripts/application/recycle-application.mjs';
+import {acquireCoordinatorLock,releaseCoordinatorLock} from '../../runtime/application/coordinator-lock.mjs';
 const fixture=fn=>recyclingFixture(fn,{bestOrganismId:otherId});
 
 async function setup(options) {
@@ -121,18 +122,18 @@ test('legacy disposal events still block cleanup when the new ledger is empty',a
   await assert.rejects(access(join(args.cleanupDir,'cleanup-result.json')),{code:'ENOENT'});
 }));
 
-test('production preparation verifies full inventory and FF9 snapshots before release, and disposal holds its connection/lock until finished',async()=>fixture(async options=>{
+test('production preparation preserves FF9 data and the canonical shared lock survives uncertain resource cleanup',async()=>{for(const scenario of ['none','resource','api'])await fixture(async options=>{
   const {args}=await setup(options),p=options.policy,r=options.request,root=options.root;
   const snapshot=options.snapshotManifest,canaryFile=snapshot.files.find(file=>file.path==='canaries.json'),canaries=Buffer.from(JSON.stringify({applications:[],registry:[],orders:[]}));
   await writeFile(join(options.preservation.snapshotDir,canaryFile.path),canaries);Object.assign(canaryFile,{sha256:sha(canaries),bytes:canaries.length});const snapshotBytes=Buffer.from(JSON.stringify(snapshot));await writeFile(join(options.preservation.snapshotDir,'snapshot-manifest.json'),snapshotBytes);options.preservation.snapshotManifestSha256=sha(snapshotBytes);
   const runBytes=Buffer.from(JSON.stringify({runId:r.runId,oracleRun:{STATE:'COMPLETE'},candidates:[{organismId:r.organismId,applicationId:r.applicationId}]}));await writeFile(join(root,'run-evidence.json'),runBytes);
-  await writeFile(join(root,'policy.json'),JSON.stringify(p));await writeFile(join(root,'oracle.json'),JSON.stringify({user:p.schema,workspace:p.workspace,password:'TEST_ONLY_NOT_A_REAL_CREDENTIAL',connectString:'TEST_ONLY'}));await writeFile(join(root,'worker.json'),JSON.stringify({oracleConfigPath:'oracle.json',sandboxPolicyPath:'policy.json',sqlclPath:'TEST_ONLY_SQLCL_NOT_EXECUTED'}));
+  await mkdir(join(root,'policies'));await writeFile(join(root,'policies/policy.json'),JSON.stringify(p));await writeFile(join(root,'oracle.json'),JSON.stringify({user:p.schema,workspace:p.workspace,password:'TEST_ONLY_NOT_A_REAL_CREDENTIAL',connectString:'TEST_ONLY'}));await writeFile(join(root,'worker.json'),JSON.stringify({oracleConfigPath:'oracle.json',sandboxPolicyPath:'policies/policy.json',sqlclPath:'TEST_ONLY_SQLCL_NOT_EXECUTED'}));
   const now=Date.now(),quiescenceAttestation={kind:'operator-owned-worker-stop-1',applicationId:r.applicationId,runId:r.runId,organismId:r.organismId,runEvidenceSha256:sha(runBytes),workerStopped:true,browserStopped:true,activeWorkerCount:0,activeEvaluationLeases:0,activeBrowserLeases:0,observedAt:new Date(now).toISOString(),expiresAt:new Date(now+60000).toISOString()};
-  const rawRun=JSON.parse(await readFile(join(options.preservation.snapshotDir,'run.json'),'utf8'))[0],rawOrganism=JSON.parse(await readFile(join(options.preservation.snapshotDir,'organism.json'),'utf8'))[0],rawImport=JSON.parse(await readFile(join(options.preservation.snapshotDir,'import-attempts.json'),'utf8'))[0];let orders=JSON.parse(await readFile(join(options.preservation.snapshotDir,'orders.json'),'utf8')).map(row=>({...row,UPDATED_AT:new Date('2026-10-22T18:00:00.123Z'),UPDATED_AT_EXACT:'2026-10-22T18:00:00.123456789Z'})),appExists=true,slotExists=true,slotState='ACTIVE',closed=false,ledger=null,resourceFaults=false;const trace=[],workerLockPath=join(root,'shared-worker.lock'),actualPreparation=join(root,'actual-preparation');
+  const rawRun=JSON.parse(await readFile(join(options.preservation.snapshotDir,'run.json'),'utf8'))[0],rawOrganism=JSON.parse(await readFile(join(options.preservation.snapshotDir,'organism.json'),'utf8'))[0],rawImport=JSON.parse(await readFile(join(options.preservation.snapshotDir,'import-attempts.json'),'utf8'))[0];let orders=JSON.parse(await readFile(join(options.preservation.snapshotDir,'orders.json'),'utf8')).map(row=>({...row,UPDATED_AT:new Date('2026-10-22T18:00:00.123Z'),UPDATED_AT_EXACT:'2026-10-22T18:00:00.123456789Z'})),appExists=true,slotExists=true,slotState='ACTIVE',closed=false,ledger=null,resourceFaults=false;const trace=[],workerLockPath=join(root,'owned-worker.lock'),actualPreparation=join(root,'actual-preparation');
   const db={
     async execute(sql,binds={}){
       assert.equal(closed,false,'production connection closed before executor completion');
-      if(sql.includes('remove_application')){await access(workerLockPath);trace.push('API');assert.equal(binds.app,r.applicationId);assert.equal(binds.workspace,p.workspace);appExists=false;return {};}
+      if(sql.includes('remove_application')){await access(workerLockPath);trace.push('API');assert.equal(binds.app,r.applicationId);assert.equal(binds.workspace,p.workspace);appExists=false;if(scenario==='api')throw new Error('Synthetic ambiguous API response');return {};}
       if(sql.startsWith('insert into apxgen_app_cleanup_attempts')){ledger={ATTEMPT_ID:binds.attempt,ORGANISM_ID:binds.organism,RUN_ID:binds.run,APPLICATION_ID:binds.app,GENOME_HASH:binds.genome,ARTIFACT_HASH:binds.artifact,POLICY_HASH:binds.policy,ARCHIVE_HASH:binds.archive,SNAPSHOT_HASH:binds.snapshot,EVIDENCE_HASH:binds.evidence,AUTHORIZATION_HASH:binds.authorization,STATE:'STARTED',COMPLETED:0};return {rowsAffected:1};}
       if(sql.startsWith('update apxgen_app_cleanup_attempts')){assert.equal(ledger.STATE,'STARTED');ledger.STATE=binds.state;ledger.COMPLETED=1;return {rowsAffected:1};}
       if(sql.startsWith('update genesis_order_lab_slots')){await access(join(actualPreparation,'evidence/evidence-manifest.json'));await access(join(actualPreparation,'preparation-manifest.json'));const saved=JSON.parse(await readFile(join(actualPreparation,'snapshot/orders.json'),'utf8'));assert.equal(saved.length,40);assert.equal(saved[0].UPDATED_AT_EXACT,'2026-10-22T18:00:00.123456789Z');assert.equal(trace.includes('API'),false);slotState='RELEASED';trace.push('release-slot');return {rowsAffected:1};}
@@ -151,14 +152,26 @@ test('production preparation verifies full inventory and FF9 snapshots before re
       return {rows:[]};
     },async commit(){assert.equal(closed,false);trace.push('commit');},async rollback(){assert.equal(closed,false);if(resourceFaults&&ledger?.STATE==='VERIFIED')throw new Error('Synthetic rollback failure');},async close(){closed=true;trace.push('close');if(resourceFaults&&ledger?.STATE==='VERIFIED')throw new Error('Synthetic close failure');}
   };
-  const prepared=await prepareTerminalApplicationRecycle({configPath:join(root,'worker.json'),approval:args.approval,request:r,originalCandidateDir:options.preservation.evidenceDir,quiescenceAttestation,workerLockPath,preparationDir:actualPreparation},{connect:async()=>db});
+  const prepareOptions={configPath:join(root,'worker.json'),approval:args.approval,request:r,originalCandidateDir:options.preservation.evidenceDir,quiescenceAttestation,workerLockPath,preparationDir:actualPreparation};let bypassConnected=false;
+  await assert.rejects(prepareTerminalApplicationRecycle({...prepareOptions,workerLockPath:join(root,'bypass.lock')},{connect:async()=>{bypassConnected=true;return db;}}),/canonical|shared.*lock|coordinator/i);
+  assert.equal(bypassConnected,false);await assert.rejects(access(join(root,'bypass.lock')),{code:'ENOENT'});await assert.rejects(access(workerLockPath),{code:'ENOENT'});
+  const cliLease=await acquireCoordinatorLock(join(root,'worker.json')),cliMarker=await readFile(workerLockPath,'utf8');let contentionConnected=false;
+  try{await assert.rejects(prepareTerminalApplicationRecycle(prepareOptions,{connect:async()=>{contentionConnected=true;return db;}}),{code:'COORDINATOR_LOCKED'});assert.equal(contentionConnected,false);assert.equal(await readFile(workerLockPath,'utf8'),cliMarker);await assert.rejects(access(join(root,'policies/owned-worker.lock')),{code:'ENOENT'});}
+  finally{await releaseCoordinatorLock(cliLease);}
+  const prepared=await prepareTerminalApplicationRecycle(prepareOptions,{connect:async()=>db});
   assert.equal(prepared.released,true);assert.equal(slotState,'RELEASED');assert.equal(appExists,true);assert.equal(orders.length,40);assert.equal(closed,true);await assert.rejects(access(workerLockPath),{code:'ENOENT'});closed=false;
   const disposeOptions={configPath:join(root,'worker.json'),approval:args.approval,request:r,preparationDir:actualPreparation,preparationManifestSha256:prepared.preparationManifestSha256,originalCandidateDir:options.preservation.evidenceDir,quiescenceAttestation,workerLockPath,archiveDir:options.preservation.archiveDir,cleanupDir:join(root,'wrapper-cleanup')};
   const foreignLock=JSON.stringify({pid:99999999,nonce:'foreign-test-lock'});await writeFile(workerLockPath,foreignLock);let connected=false;
-  await assert.rejects(recycleTerminalApplication(disposeOptions,{connect:async()=>{connected=true;return db;}}),{code:'EEXIST'});
+  await assert.rejects(recycleTerminalApplication(disposeOptions,{connect:async()=>{connected=true;return db;}}),{code:'COORDINATOR_LOCKED'});
   assert.equal(connected,false);assert.equal(await readFile(workerLockPath,'utf8'),foreignLock);await unlink(workerLockPath);
-  resourceFaults=true;
+  resourceFaults=scenario==='resource';
+  if(scenario==='api'){
+    await assert.rejects(recycleTerminalApplication(disposeOptions,{connect:async()=>db,archive:async()=>({archiveVerified:true,manifestSha256:options.preservation.archiveManifestSha256})}),/incomplete or uncertain/i);
+    assert.equal(ledger.STATE,'UNCERTAIN');assert.equal(orders.length,40);assert.equal(slotExists,true);assert.equal(closed,true);await access(workerLockPath);
+    const audit=JSON.parse(await readFile(join(disposeOptions.cleanupDir,'resource-cleanup.json'),'utf8'));assert.ok(audit.resourceCleanupErrors.includes('LOCK_RETAINED'));return;
+  }
   const result=await recycleTerminalApplication(disposeOptions,{connect:async()=>db,archive:async()=>({archiveVerified:true,manifestSha256:options.preservation.archiveManifestSha256})});
-  assert.equal(result.disposalVerified,true);assert.equal(ledger.STATE,'VERIFIED');assert.ok(trace.indexOf('API')<trace.lastIndexOf('close'));assert.equal(trace.at(-1),'close');await assert.rejects(access(workerLockPath),{code:'ENOENT'});
-  assert.ok(result.resourceCleanupErrors.includes('ROLLBACK_FAILED'));assert.ok(result.resourceCleanupErrors.includes('CLOSE_FAILED'));
-}));
+  assert.equal(result.disposalVerified,true);assert.equal(ledger.STATE,'VERIFIED');assert.ok(trace.indexOf('API')<trace.lastIndexOf('close'));assert.equal(trace.at(-1),'close');
+  if(scenario==='resource'){await access(workerLockPath);assert.ok(result.resourceCleanupErrors.includes('ROLLBACK_FAILED'));assert.ok(result.resourceCleanupErrors.includes('CLOSE_FAILED'));assert.ok(result.resourceCleanupErrors.includes('LOCK_RETAINED'));}
+  else{await assert.rejects(access(workerLockPath),{code:'ENOENT'});assert.equal(result.resourceCleanupErrors,undefined);}
+});});

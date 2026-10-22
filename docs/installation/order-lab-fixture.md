@@ -276,3 +276,11 @@ again. Its unique permanent cleanup attempt commits before the workspace removal
 API; a crash or uncertain outcome blocks automatic retries. The current executor
 refuses every RUNNING owner run and pins the incumbent even in a completed run.
 Active-run slot reuse for longer experiments remains a separate acceptance gate.
+
+The native worker and recycler share a cooperative lock derived from the canonical
+sandbox worker configuration location: `owned-worker.lock` in the same directory
+as `worker.json`. Keep one canonical private worker configuration. Contention
+refuses admission; no process reclaims a stale-looking marker automatically.
+Uncertain work or resource closure retains it for operator investigation. This
+local coordinator complements Oracle's import/ownership guards and is not a
+distributed lock across development machines.

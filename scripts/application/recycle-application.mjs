@@ -2,7 +2,7 @@
 // disposable slots. No operation runs on import of this module. Migration 011
 // must be reviewed/installed separately; neither this module nor its CLI does so.
 // STARTED after a crash is uncertain and permanently blocks automatic retries.
-import { readFile, writeFile, mkdir, lstat, realpath, readdir, open, unlink } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, lstat, realpath, readdir } from 'node:fs/promises';
 import { resolve, join, dirname, sep, isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createHash, randomUUID } from 'node:crypto';
@@ -13,6 +13,7 @@ import { hashApplicationDefinition } from './build-definition.mjs';
 import { archiveApplication } from './archive-application.mjs';
 import { assertArchivePreparationObservation } from './archive-application.mjs';
 import { createRecyclingAuthorization, assertRecyclingAuthorization, createOwnedCleanupAttempt, recyclingAuthorizationHash, recyclingPolicyHash } from './recycle-policy.mjs';
+import { coordinatorLockPath, acquireCoordinatorLock, releaseCoordinatorLock } from '../../runtime/application/coordinator-lock.mjs';
 
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const fail=message=>{throw new TypeError(message);};
@@ -30,8 +31,10 @@ async function json(path){try{return JSON.parse((await readFile(path,'utf8')).re
 async function save(path,value){await writeFile(path,JSON.stringify(value,null,2)+'\n',{flag:'wx'});}
 function resourceError(report,code){if(report){report.resourceCleanupErrors??=[];if(!report.resourceCleanupErrors.includes(code))report.resourceCleanupErrors.push(code);}}
 async function settleResources(operations,report){for(const [code,operation]of operations){try{await operation();}catch{resourceError(report,code);}}}
-async function closeContext(ctx,report,evidenceDir){
-  await settleResources([['ROLLBACK_FAILED',()=>ctx.db?.rollback()],['CLOSE_FAILED',()=>ctx.db?.close()],['LOCK_RELEASE_FAILED',()=>ctx.release()]],report);
+async function closeContext(ctx,report,evidenceDir,completed=false){
+  await settleResources([['ROLLBACK_FAILED',()=>ctx.db?.rollback()],['CLOSE_FAILED',()=>ctx.db?.close()]],report);
+  if(completed&&!report?.resourceCleanupErrors?.length)await settleResources([['LOCK_RELEASE_FAILED',()=>ctx.release()]],report);
+  else resourceError(report,'LOCK_RETAINED');
   if(report?.resourceCleanupErrors?.length&&evidenceDir){try{await save(join(evidenceDir,'resource-cleanup.json'),{kind:'recycling-resource-cleanup-1',resourceCleanupErrors:report.resourceCleanupErrors});}catch{resourceError(report,'RESOURCE_AUDIT_WRITE_FAILED');}}
 }
 async function realDirectory(path){check(typeof path==='string'&&path.trim()&&!/[\x00-\x1f"]/.test(path),'Explicit safe private directory required');const info=await lstat(resolve(path));check(info.isDirectory()&&!info.isSymbolicLink(),'Recycling evidence directories cannot be symbolic links');return realpath(resolve(path));}
@@ -181,12 +184,13 @@ async function context({configPath,approval,request,originalCandidateDir,quiesce
   const privateRoot=await realDirectory(dirname(path)),original=await realDirectory(originalCandidateDir),runEvidencePath=join(dirname(original),'run-evidence.json'),runBytes=await readFile(runEvidencePath),run=JSON.parse(runBytes.toString('utf8'));
   check(inside(privateRoot,original)&&run.runId===request.runId&&['COMPLETE','FAILED','CANCELLED'].includes(run.oracleRun?.STATE)&&run.candidates?.some(candidate=>candidate.organismId===request.organismId&&candidate.applicationId===request.applicationId),'Original terminal run evidence and exact private candidate required');
   assertRecycleQuiescence(quiescenceAttestation,request,{runEvidenceSha256:sha(runBytes)});
-  check(typeof workerLockPath==='string'&&isAbsolute(workerLockPath),'An explicit shared absolute owned-worker lock path is required');const lockPath=await privateDestination(privateRoot,workerLockPath),nonce=randomUUID(),lock=await open(lockPath,'wx');
-  await lock.writeFile(JSON.stringify({pid:process.pid,nonce,runId:request.runId,organismId:request.organismId}));await lock.close();
+  check(typeof workerLockPath==='string'&&isAbsolute(workerLockPath),'An explicit shared absolute owned-worker lock path is required');
+  const lockPath=await coordinatorLockPath(path);check(resolve(workerLockPath)===lockPath&&inside(privateRoot,lockPath),'The canonical shared coordinator lock path is required');
+  const lease=await acquireCoordinatorLock(path);
   let db;
-  const release=async()=>{let current;try{current=JSON.parse(await readFile(lockPath,'utf8'));}catch(error){if(error.code==='ENOENT')return;throw error;}check(current.nonce===nonce,'Owned worker lock changed; never release another lock');await unlink(lockPath);};
+  const release=()=>releaseCoordinatorLock(lease);
   try{db=await connect({user:oracle.user,password:oracle.password,connectString:oracle.connectString});db.callTimeout=30000;await assertWorkerContext(db,policy,approval.expectedDatabase);}
-  catch(error){await closeContext({db,release},error);throw error;}
+  catch(error){await closeContext({db,release},error,undefined,true);throw error;}
   return {db,policy,policyPath,privateRoot,original,runBytes,quiescence:copy(quiescenceAttestation),release,configPath:path};
 }
 
@@ -244,7 +248,7 @@ export async function prepareTerminalApplicationRecycle(options,{connect}={}){
     await oracleBackend(ctx,request,approval).recordEvent('SLOT_RELEASED',{applicationId:request.applicationId,snapshotSha256:snapshotManifestSha256});await ctx.db.commit();
     const released=await observeLocked(ctx.db,ctx.policy,request,approval,ctx.quiescence);check(released.slot.state==='RELEASED'&&released.slot.leaseCurrent===false,'Durable terminal slot release was not verified');
     result={released:true,applicationId:request.applicationId,preparationDir,preparationManifestSha256};await save(join(preparationDir,'release-result.json'),result);return result;
-  }catch(error){failure=error;throw error;}finally{await closeContext(ctx,result||failure,evidenceDir);}
+  }catch(error){failure=error;throw error;}finally{await closeContext(ctx,result||failure,evidenceDir,result?.released===true);}
 }
 
 /** Phase 2: archiveApplication performs a genuine SQLcl export; this wrapper
@@ -268,7 +272,7 @@ export async function recycleTerminalApplication(options,{connect,archive=archiv
     }catch{fail('Actual immutable SQL archive failed; retain its evidence and do not remove the application');}
     const preservation={archiveDir,archiveManifestSha256:archived.manifestSha256,snapshotDir:preparation.snapshotDir,snapshotManifestSha256:preparation.snapshotManifestSha256,originalDefinitionPath:preparation.originalDefinitionPath,evidenceDir:preparation.evidenceDir,evidenceManifestSha256:preparation.evidenceManifestSha256};
     result=await executeTerminalRecycle({policy:ctx.policy,request,approval,preservation,cleanupDir,backend:oracleBackend(ctx,request,approval)});return result;
-  }catch(error){failure=error;throw error;}finally{await closeContext(ctx,result||failure,evidenceDir);}
+  }catch(error){failure=error;throw error;}finally{await closeContext(ctx,result||failure,evidenceDir,result?.disposalVerified===true);}
 }
 
 if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){

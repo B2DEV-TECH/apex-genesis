@@ -10,6 +10,7 @@ import {runApplicationSmoke} from './run-smoke.mjs';
 import {runControlWorker,validateControlWorkerConfig,CONTROL_WORKER_CAPABILITY_VERSION} from '../../runtime/application/control-worker.mjs';
 import {validateSandboxPolicy} from '../../runtime/application/sandbox.mjs';
 import {parseLivingJson} from '../../showcase/living-evidence.mjs';
+import {acquireCoordinatorLock,releaseCoordinatorLock} from '../../runtime/application/coordinator-lock.mjs';
 
 const OWNER='APXGEN_ORDER_LAB',CALL_TIMEOUT_MS=10000,RESOURCE_TIMEOUT_MS=5000;
 const identifier=/^[a-f0-9]{32}$/;
@@ -62,27 +63,31 @@ async function serverSnapshot(db,config,policy,previous){
  check(previous===null||isDeepStrictEqual(previous,row),'Reviewed server control configuration changed during bounded waiting');return row;
 }
 
-const safeReasons=new Set(['CONFIGURATION_UNAVAILABLE','CONNECTION_UNAVAILABLE','CONTROL_BINDING_UNAVAILABLE','CONTROL_WORKER_UNAVAILABLE','CLAIM_COMMIT_UNCERTAIN','INVALID_REQUEST','RUN_ATTACHMENT_FAILED','LEASE_RENEWAL_FAILED','LEASE_EXPIRED','DATABASE_DRAIN_UNCERTAIN','ENGINE_FAILED','MISSING_RUN_ATTACHMENT','RUN_IDENTITY_MISMATCH','ORACLE_FINISH_UNCERTAIN','RESOURCE_CLEANUP_UNCERTAIN']);
+const safeReasons=new Set(['CONFIGURATION_UNAVAILABLE','CONNECTION_UNAVAILABLE','CONTROL_BINDING_UNAVAILABLE','CONTROL_WORKER_UNAVAILABLE','CLAIM_COMMIT_UNCERTAIN','INVALID_REQUEST','RUN_ATTACHMENT_FAILED','LEASE_RENEWAL_FAILED','LEASE_EXPIRED','DATABASE_DRAIN_UNCERTAIN','ENGINE_FAILED','MISSING_RUN_ATTACHMENT','RUN_IDENTITY_MISMATCH','ORACLE_FINISH_UNCERTAIN','RESOURCE_CLEANUP_UNCERTAIN','COORDINATOR_LOCKED','COORDINATOR_LOCK_UNCERTAIN']);
 export function controlOnceOutput(result){
  const output={status:['disabled','idle','finished','uncertain'].includes(result?.status)?result.status:'uncertain'};
  for(const key of ['requestId','runId'])if(typeof result?.[key]==='string'&&identifier.test(result[key]))output[key]=result[key];
  if(output.status==='uncertain')output.reason=safeReasons.has(result?.reason)?result.reason:'CONTROL_WORKER_UNAVAILABLE';
  if(['COMPLETED','FAILED'].includes(result?.queueState))output.queueState=result.queueState;
  if(['COMPLETE','FAILED','CANCELLED'].includes(result?.oracleState))output.oracleState=result.oracleState;
- if(result?.cleanupPending===true)output.cleanupPending=true;return output;
+ if(result?.cleanupPending===true)output.cleanupPending=true;if(result?.coordinatorLockRetained===true)output.coordinatorLockRetained=true;return output;
 }
 
 /**
- * Test services replace only configuration I/O, owner connections and time.
+ * Test services replace only configuration/primitive lock I/O, connections and time.
  * The engine binding is always the reviewed runApplicationSmoke import above.
  */
 export async function runControlOnce(argv,services={}){
- check(services&&typeof services==='object'&&Object.keys(services).every(key=>['readJson','connect','sleep','now'].includes(key)),'Unknown test service or alternate engine injection is forbidden');
+ check(services&&typeof services==='object'&&Object.keys(services).every(key=>['readJson','connect','sleep','now','lockIo'].includes(key)),'Unknown test service or alternate engine injection is forbidden');
  const parsed=parseControlOnceArgs(argv),readJson=services.readJson||jsonFile,connect=services.connect||(credentials=>oracledb.getConnection(credentials)),sleep=services.sleep||(ms=>new Promise(resolve=>setTimeout(resolve,ms))),now=services.now||(()=>performance.now());
  let native,sandbox,policy,oracle;
  try{native=validateControlWorkerConfig(await readJson(parsed.nativeConfigPath));if(!native.enabled)return {status:'disabled'};sandbox=await readJson(parsed.sandboxConfigPath);exact(sandbox,['oracleConfigPath','sandboxPolicyPath','sqlclPath'],'Explicit three-path sandbox worker configuration is required');check(Object.values(sandbox).every(pathString),'Safe explicit sandbox configuration paths are required');policy=await readJson(resolve(dirname(parsed.sandboxConfigPath),sandbox.sandboxPolicyPath));oracle=await readJson(resolve(dirname(parsed.sandboxConfigPath),sandbox.oracleConfigPath));}
  catch(error){if(error.code==='ENOENT')return {status:'disabled'};throw error instanceof TypeError?error:new TypeError('Explicit native and sandbox configuration is unavailable');}
  ({native,sandbox,policy,oracle}=validateControlOnceConfiguration({native,sandbox,policy,oracle}));
+ // Atomic fixed path derives from the real sandbox config file location. It
+ // spans both Oracle clients, idle waiting, engine work and resource retirement.
+ let coordinator;try{coordinator=await acquireCoordinatorLock(parsed.sandboxConfigPath,{io:services.lockIo});}
+ catch(error){return controlOnceOutput({status:'uncertain',reason:error.code==='COORDINATOR_LOCKED'?'COORDINATOR_LOCKED':'COORDINATOR_LOCK_UNCERTAIN',coordinatorLockRetained:error.lockRetained===true});}
  const clients=[];let result=null,force=false;
  try{
   const credentials={user:oracle.user,password:oracle.password,connectString:oracle.connectString};
@@ -97,7 +102,13 @@ export async function runControlOnce(argv,services={}){
   }
   force=result.status==='uncertain'||result.cleanupPending===true;
  }catch{force=true;result={status:'uncertain',reason:clients.length<2?'CONNECTION_UNAVAILABLE':'CONTROL_BINDING_UNAVAILABLE'};}
- finally{const complete=await retireControlConnections(clients,{force});if(!complete)result={...controlOnceOutput(result),status:'uncertain',reason:'RESOURCE_CLEANUP_UNCERTAIN',cleanupPending:true};}
+ finally{
+  const complete=await retireControlConnections(clients,{force});if(!complete)result={...controlOnceOutput(result),status:'uncertain',reason:'RESOURCE_CLEANUP_UNCERTAIN',cleanupPending:true};
+  // Disabled server admission made no claim; idle/finished are Oracle-verified.
+  // Every uncertainty retains the marker, even after connections appear closed.
+  if(complete&&['disabled','idle','finished'].includes(result?.status)&&result?.cleanupPending!==true){try{await releaseCoordinatorLock(coordinator);}catch{result={...controlOnceOutput(result),status:'uncertain',reason:'COORDINATOR_LOCK_UNCERTAIN',coordinatorLockRetained:true};}}
+  else result={...controlOnceOutput(result),coordinatorLockRetained:true};
+ }
  return controlOnceOutput(result);
 }
 
