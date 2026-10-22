@@ -4,6 +4,28 @@ This is an implementation record for the proposed 0.3 milestone, not a release
 certificate or an algorithm-comparison result. All observations are from the
 separate Order Lab sandbox. Existing dashboard experiments remain independent.
 
+## Work-package status
+
+The first real end-to-end loop is verified. The full 0.3 milestone remains incomplete;
+the table distinguishes feasibility evidence from the larger research and release gates.
+
+| Package | Current evidence | Work remaining |
+| --- | --- | --- |
+| WP0: baseline | Repository, toolchain, historical tests and both datasets inspected and verified. | Preserve regressions through subsequent changes. |
+| WP1: application DNA | Versioned bounded schema, validation and permitted proposals implemented. | Expand the vocabulary only with verified mappings. |
+| WP2: materialization | Genuine SQLcl validation/import and runtime verification for parent/child applications. | Broader structures and safe reuse during active multi-generation runs. |
+| WP3: task arena | Locate, Filter and Update pass against actual authenticated APEX and isolated synthetic records. | Exercise additional supported layouts without weakening fixed tasks. |
+| WP4: fitness | Oracle owns versioned scoring, eligibility and tie decisions from recorded task evidence. | Freeze a separate broader comparison cohort before running it. |
+| WP5: genetics | PL/SQL generation, mutation, crossover and immutable lineage implemented and tested. | Observe more structural descendants across multiple generations. |
+| WP6: Claude | Existing spending ledger inspected; application proposals already have an Oracle validation boundary. | Add application identities to that same ledger, then obtain fresh per-run paid authorization. No new calls made. |
+| WP7: visual laboratory | Native authenticated Create, Start, Watch and request completion verified. | Native visual parent/offspring comparison is being implemented. |
+| WP8: first experiment | Two one-generation GA_ONLY operational checks completed with genuine applications. | The ten-generation, multiple-seed comparison and any AI condition remain unexecuted. |
+| WP9: autonomous operation | Existing dashboard supervisor preserved; new mode stays independently disabled. | Integrate bounded application runs, recovery and publication without changing legacy scheduling. |
+| WP10: exhibition | Both genuine recordings published as immutable evidence; read-only replay verified in production. | Extend the replay as new completed evidence becomes available. |
+| WP11: research | Feasibility findings, ties and failures recorded without superiority claims. | Preregister and execute paired trials; assess uncertainty and limitations. |
+| WP12: documentation/release | Installation, security, protocols, provenance and development checkpoints documented. | Final reproducibility review and acceptance gates; no 0.3 release tag assigned. |
+| WP13: article/video | Historical publications preserved. | Record genuine footage and write the follow-up after the new experiment is verified. |
+
 ## Verified foundation
 
 - Historical unit baseline: 11 tests passed.
@@ -193,6 +215,23 @@ response interception. The unchanged original default passed its 22 checks again
 The deployed check accepts only those two fixed cohort identities and manifest
 hashes; seven local URL-boundary assertions also passed.
 
+Website commit `be59af6` adds direct links to both recordings while keeping the
+original manifest as the default. It explicitly explains that these are two
+execution-path checks using the same seed, not independent research trials.
+The production Webpack build generated 96 pages and all 46 website tests passed.
+Worker version `d3e04a62-e0fc-4c5c-b4bb-3c8df248d928` was deployed through the
+existing publication infrastructure. Both original and native recordings then
+passed 23 real production browser checks each, including the new cohort links.
+
+A subsequent visible-label regression reproduced the cards' two-decimal display
+(`89.67`) despite the recorded Oracle score `89.675`. The replay now displays the
+recorded numeric value in both cards and candidate ledger. Website commit `b5e2ec9`
+and Worker version `b14f3259-96de-47c9-9ca5-2479b20bfce7` contain this correction.
+Both cohorts passed the expanded 23 checks locally and in production, including
+exact visible scores. Local evidence-boundary browser checks also passed 20 checks;
+33 focused provenance and public-evidence unit checks passed. No dataset, score,
+selection decision or historical fitness definition changed.
+
 The portable cleanup-ledger integration script also reproduced all 39
 Oracle checks with no skips and complete rollback. Before/after owner-state hashes
 were identical, including fixtures, slots, histories and the native request. Source:
@@ -200,10 +239,11 @@ were identical, including fixtures, slots, histories and the native request. Sou
 
 ## Remaining acceptance gates
 
-The top-navigation compiler variants report template-option warnings despite
-successful validation. Those variants have not passed runtime evaluation; the
-successful parent and child both use side navigation. The retained compiler logs
-expose these warnings for review before broader trials.
+Earlier top-navigation variants reported template-option warnings despite
+successful validation; those original logs remain preserved. Corrected
+compiler-only prototypes validate without warnings, but neither those prototypes
+nor interactive-report/modal-edit prototypes are enabled runtime mappings.
+The successful parent and child both use side navigation.
 
 Broader controlled experiments,
 native visual parent comparison, active-run slot reuse for longer experiments,

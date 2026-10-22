@@ -45,13 +45,16 @@ The request completed and the worker was disabled and unbound afterward.
 Native visual comparisons, wider controlled trials, AI ledger integration,
 unattended application evolution, article and video remain
 separate acceptance gates. [Live engineering record](docs/testing/living-applications-progress.md)
+includes a [work-package checklist](docs/testing/living-applications-progress.md#work-package-status)
 and [implementation plan](docs/superpowers/plans/2026-10-22-living-applications.md).
 
 **[Watch the genuine application replay](https://b2dev.tech/genesis/living).**
-The deployed exhibition passed 22 real browser checks, including its pinned
+Both recorded cohorts passed 23 real browser checks each, including their pinned
 evidence hashes, both applications, playback, three viewports, accessibility,
 historical links and zero browser errors. The immutable R2 package contains
-49 verified objects. Progress is reviewable in [draft PR #8](https://github.com/B2DEV-TECH/apex-genesis/pull/8).
+49 verified objects per cohort. Choose **First recorded loop** or **Started inside APEX**
+in the exhibition. These use the same seed and are not independent research trials.
+Progress is reviewable in [draft PR #8](https://github.com/B2DEV-TECH/apex-genesis/pull/8).
 [Recorded feasibility results and source fingerprints](experiments/published-results/living-feasibility/README.md)
 are available independently of the replay.
 [Native request results and provenance](experiments/published-results/living-native-feasibility/README.md)

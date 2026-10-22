@@ -13,3 +13,6 @@ apex/order-lab/template/** whitespace=-blank-at-eof
 apex/living-control/evidence/** -text -whitespace
 apex/living-control/template/** whitespace=-blank-at-eof
 apex/living-control/template/shared-components/static-files/*.js text eol=lf
+# Embedded recorded artifacts and the original imported definition retain their hashes.
+apex/living-control/template/shared-components/static-files/evidence/** -text -whitespace
+apex/living-control/versions/queued-feasibility-v1/template/** -text -whitespace
