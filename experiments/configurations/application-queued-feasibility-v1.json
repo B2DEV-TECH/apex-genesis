@@ -1,0 +1,31 @@
+{
+  "protocol": "order-lab-queued-feasibility/1.0",
+  "status": "registered before the first native-queue materialization",
+  "purpose": "Verify an authenticated native APEX request, durable Oracle worker claim and real two-candidate execution. This is not an algorithm comparison.",
+  "experimentType": "APEX_APPLICATION",
+  "mode": "GA_ONLY",
+  "seed": 50000,
+  "genomeSchemaVersion": "2.0",
+  "fitnessDefinition": "order-lab-task-proxy/2.0.0",
+  "fitnessProtocol": "application-fitness-2.0",
+  "fixtureVersion": "order-lab/1.0",
+  "advances": 1,
+  "candidateBudget": 2,
+  "materializationBudget": 2,
+  "automaticImportRetries": 0,
+  "paidRequests": 0,
+  "taskOrder": ["locateOrder", "filterOrders", "updateOrder"],
+  "taskTargetOrder": 1002,
+  "taskFilterStatus": "DELAYED",
+  "taskUpdateStatus": "SHIPPED",
+  "viewports": [{"width":390,"height":1000},{"width":768,"height":1000},{"width":1440,"height":1000}],
+  "selection": "An eligible challenger survives only if its measured Oracle score strictly exceeds the incumbent. Ties retain the incumbent.",
+  "request": "Label is metadata only. Seed, generations and materialization budget must exactly match the immutable authenticated Oracle request. Attach the fresh run to its worker claim before generating any application definition.",
+  "recovery": "An expired or uncertain worker claim is never automatically requeued. A committed import attempt is never automatically retried.",
+  "limitations": [
+    "One seed and one advance cannot establish evolutionary or AI superiority.",
+    "Automated task effort and timing are engineering proxies, not a human usability study.",
+    "The same classic-report and separate-page trusted mappings and fitness policy are used as in the original feasibility test.",
+    "This protocol does not enable unattended scheduling or paid provider requests."
+  ]
+}
