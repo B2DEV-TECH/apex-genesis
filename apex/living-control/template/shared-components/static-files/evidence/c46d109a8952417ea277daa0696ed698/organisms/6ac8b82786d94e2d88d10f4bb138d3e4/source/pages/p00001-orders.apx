@@ -1,0 +1,209 @@
+page 1 (
+    name: Orders
+    alias: ORDERS
+    title: Orders | Genesis Order Lab
+    appearance {
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    region order-summary (
+        name: Order summary
+        type: classicReport
+        componentAppearance {
+            template: @/standard
+        }
+        layout {
+            sequence: 5
+            slot: body
+            columnSpan: 12
+            startNewRow: true
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: ```sql
+select count(*) as ORDER_COUNT, sum(order_total) as ORDER_TOTAL
+  from GENESIS_ORDERS_SAFE_V
+```
+        }
+        column ORDER_COUNT (
+            type: plainText
+            heading {
+                heading: Orders
+            }
+            layout {
+                sequence: 10
+            }
+        )
+        column ORDER_TOTAL (
+            type: plainText
+            heading {
+                heading: Total value
+            }
+            layout {
+                sequence: 20
+            }
+        )
+    )
+    region order-filters (
+        name: Find orders
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+            columnSpan: 3
+            startNewRow: true
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P1_ORDER_ID (
+        type: textField
+        label {
+            label: Order ID
+        }
+        layout {
+            sequence: 10
+            region: @order-filters
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        validation {
+            maxLength: 20
+        }
+    )
+    pageItem P1_STATUS (
+        type: selectList
+        label {
+            label: Status
+        }
+        layout {
+            sequence: 20
+            region: @order-filters
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: staticValues
+            staticValues: ```
+STATIC:New;NEW,Processing;PROCESSING,Delayed;DELAYED,Shipped;SHIPPED,Completed;COMPLETED
+```
+            displayNullValue: true
+            nullDisplayValue: All statuses
+            displayExtraValues: false
+        }
+    )
+    button apply-filters (
+        buttonName: APPLY_FILTERS
+        label: Apply filters
+        layout {
+            sequence: 30
+            region: @order-filters
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+        }
+    )
+    region orders (
+        name: Orders
+        type: classicReport
+        componentAppearance {
+            template: @/standard
+        }
+        layout {
+            sequence: 20
+            slot: body
+            columnSpan: 9
+            startNewRow: false
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+            cssClasses: order-lab-comfortable
+        }
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: ```sql
+select order_id, customer_name, status, order_total,
+       apex_page.get_url(p_page => 2, p_items => 'P2_ORDER_ID', p_values => to_char(order_id)) as EDIT_URL
+  from GENESIS_ORDERS_SAFE_V
+ where (:P1_ORDER_ID is null or to_char(order_id) = trim(:P1_ORDER_ID))
+   and (:P1_STATUS is null or status = :P1_STATUS)
+ order by order_id
+```
+        }
+        column ORDER_ID (
+            type: link
+            heading {
+                heading: Order ID
+            }
+            layout {
+                sequence: 10
+            }
+            link {
+                target: {
+                    type: url
+                    url: #EDIT_URL#
+                }
+                linkText: #ORDER_ID#
+            }
+        )
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer
+            }
+            layout {
+                sequence: 20
+            }
+        )
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 30
+            }
+        )
+        column ORDER_TOTAL (
+            type: plainText
+            heading {
+                heading: Total
+            }
+            layout {
+                sequence: 40
+            }
+        )
+        column EDIT_URL (
+            type: hidden
+            layout {
+                sequence: 50
+            }
+        )
+    )
+)

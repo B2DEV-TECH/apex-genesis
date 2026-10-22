@@ -1,6 +1,6 @@
 app GENESIS-LIVING-CONTROL (
     name: Genesis Living Control
-    version: 0.3.0-alpha.1
+    version: "0.3 development"
     logo {
         type: text
         text: &APP_TITLE.
@@ -33,6 +33,9 @@ app GENESIS-LIVING-CONTROL (
     }
     javaScript {
         fileUrls: #APP_FILES#control-boot.js
+    }
+    css {
+        fileUrls: #APP_FILES#control.css
     }
     security {
         allowBotAccess: false
