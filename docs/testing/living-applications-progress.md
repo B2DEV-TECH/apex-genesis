@@ -91,6 +91,51 @@ and 1,520 Haiku files. The original supervisor remains RUNNING with its original
 lease, process and GA_ONLY configuration; application evolution has not changed
 its scheduling or historical ledger.
 
+## Native control and queued execution boundary
+
+The protected infrastructure application 134 was genuinely validated, imported
+and authenticated in the dedicated Order Lab workspace. It is outside the
+disposable descendant pool. Its Create, Evolve and Watch pages reuse native APEX
+Accounts and Universal Theme. The definition hash is
+`7351764d60ec6556adb764aff945922e757d1325032dbe7ca3ed89ad716f7eb5`.
+All six earlier applications and existing fixture/history hashes remained equal
+before and after the install, import and permission checks.
+
+The actual Oracle control contract passed 31 rollback-only checks, and queued
+import admission passed 17 separate rollback-only checks. Real APEX verification
+then proved that the synthetic READER could view status and Watch, while server
+CREATE and START actions were refused. As the sole approved OPERATOR, the same
+account used Create to record one genuine immutable DRAFT:
+`7bcff90329154f549db36272a84dc707`. It has no linked run or measured score.
+Start remains refused because the worker is disabled and unbound.
+
+The independently registered queued feasibility protocol fixes seed 50000, one
+challenger generation, two materializations and zero paid requests. Its bounded
+worker must commit an Oracle claim and attach a fresh Oracle run before any
+definition or import. Expired or uncertain claims cannot be retried automatically.
+Source and unit contracts do not establish an authenticated worker result; that
+complete native path remains pending. See the
+[native control verification record](../../apex/living-control/README.md).
+
+The additive cleanup audit migration 011 is installed in the dedicated owner.
+Its table and immutable trigger are VALID, with zero Oracle compiler errors.
+All 39 actual Oracle boundary checks rolled back, leaving an empty cleanup
+ledger and identical before/after hashes for all seven applications and existing
+fixture, experiment and control state. This establishes the ledger contract;
+actual use of the generic recycler is recorded separately after its checks pass.
+
+The first generic terminal-run cleanup completed for the failed application 131.
+It preserved 22 original candidate files (194,052 bytes), all three real viewport
+screenshots, the full 40-row fixture and registry/history snapshots, and a genuine
+33,006-byte SQLcl export before removal. The unique cleanup attempt
+`00fc2921f30e450ca7f88b753a1df77a` is VERIFIED. Exactly 40 owned rows and one owned
+registry row were removed after application absence was checked. The six other
+applications, their fixtures/registries, original immutable history and native
+DRAFT remained unchanged. No resource cleanup error was recorded. Archive manifest:
+`2badfb5e299fc75e65ef605ebee1874d2ad86ef8b0fa3c870620e01a9402d90d`.
+This was a sequential operator-coordinated cleanup with positive worker/browser
+quiescence; a shared CLI/recycler concurrency boundary remains under verification.
+
 ## Remaining acceptance gates
 
 The top-navigation compiler variants report template-option warnings despite
@@ -99,7 +144,8 @@ successful parent and child both use side navigation. The retained compiler logs
 expose these warnings for review before broader trials.
 
 Broader controlled experiments,
-native Create/Evolve/Watch controls, safe slot recycling, autonomous integration,
+native Start-to-completion execution and visual parent comparison, safe slot
+recycling beyond the first preserved slot, autonomous integration,
 freshly authorized AI integration with the original ledger,
 paired research, article and video require their own evidence. No release tag has
 been assigned. No paid model request has been made by the new mode.

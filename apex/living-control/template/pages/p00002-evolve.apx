@@ -1,0 +1,53 @@
+page 2 (
+    name: Start evolution
+    alias: EVOLVE
+    title: Evolve | Genesis Living Control
+    appearance {
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    region evolve-request (
+        name: Start evolution
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+            columnSpan: 12
+            startNewRow: true
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        source {
+            htmlCode: ```html
+<section id="living-control">
+ <p data-status role="status">Control is disabled or not configured.</p>
+ <label>Bounded experiment <select data-requests disabled></select></label>
+ <p>Start Evolution queues one GA_ONLY request. The worker must claim it and record real compiler, import, browser and Oracle evidence.</p>
+ <button type="button" data-action="START" disabled>Start Evolution</button>
+ <button type="button" data-action="CANCEL" disabled>Cancel unclaimed request</button>
+ <button type="button" data-action="REFRESH" disabled>Refresh actual status</button>
+ <div data-observation aria-live="polite"></div>
+</section>
+            ```
+        }
+    )
+    process living-control (
+        name: LIVING_CONTROL
+        type: executeCode
+        source {
+            plsqlCode: ```plsql
+apxgen_app_control.ajax;
+            ```
+        }
+        execution {
+            sequence: 10
+            point: ajaxCallback
+        }
+    )
+)

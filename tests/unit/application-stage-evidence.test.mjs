@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdir,mkdtemp,writeFile,rm,access} from 'node:fs/promises';
+import {mkdir,mkdtemp,writeFile,readFile,rm,access} from 'node:fs/promises';
 import {resolve,join,sep} from 'node:path';
 import {deriveSmokeHashes,assertSmokeReconciliation,isPrivacySafeCapture,oracleFitnessFromEvidence,stageSmokeEvidence} from '../../scripts/application/stage-smoke-evidence.mjs';
 import {APPLICATION_BASELINE,canonicalApplicationGenome} from '../../evolution/application/genome.mjs';
@@ -23,6 +23,16 @@ test('recorded source identity is order-independent and never hashes fresh worki
  const {run}=fixture(),first=deriveSmokeHashes(run);assert.deepEqual(deriveSmokeHashes({...run,sourceHashes:[...run.sourceHashes].reverse()}),first);
  const changed=structuredClone(run);changed.sourceHashes[0].sha256='d'.repeat(64);assert.notEqual(deriveSmokeHashes(changed).sourceHash,first.sourceHash);assert.notEqual(deriveSmokeHashes(changed).evaluatorHash,first.evaluatorHash);
  const duplicate=structuredClone(run);duplicate.sourceHashes.push(duplicate.sourceHashes[0]);assert.throws(()=>deriveSmokeHashes(duplicate),/duplicate/i);
+});
+test('the native queue protocol is independently bound without changing historical fingerprints',()=>{
+ const {run}=fixture(),queued=structuredClone(run);queued.protocolSourcePath='experiments/configurations/application-queued-feasibility-v1.json';queued.sourceHashes.find(source=>source.path==='experiments/configurations/application-feasibility-v1.json').path=queued.protocolSourcePath;
+ const result=deriveSmokeHashes(queued);assert.notEqual(result.sourceHash,deriveSmokeHashes(run).sourceHash);assert.notEqual(result.evaluatorHash,deriveSmokeHashes(run).evaluatorHash);
+ queued.protocolSourcePath='private/unsupported-protocol.json';assert.throws(()=>deriveSmokeHashes(queued),/protocol|source/i);
+});
+test('the published genuine feasibility run retains its original source and evaluator fingerprints',async()=>{
+ const summary=JSON.parse(await readFile(new URL('../../experiments/published-results/living-feasibility/summary.json',import.meta.url),'utf8'));
+ assert.deepEqual(deriveSmokeHashes(summary),{sourceHash:summary.sourceHash,evaluatorHash:summary.evaluatorHash});
+ const protocol=await readFile(new URL('../../experiments/configurations/application-feasibility-v1.json',import.meta.url));assert.equal(digest(protocol),summary.protocolHash);
 });
 test('cached Oracle decisions, DNA, parent and source identities must match readonly records',()=>{
  const {run,snapshot}=fixture();assert.equal(assertSmokeReconciliation(run,snapshot),true);

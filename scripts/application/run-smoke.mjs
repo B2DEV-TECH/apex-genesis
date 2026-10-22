@@ -12,12 +12,22 @@ import { importApplicationDefinition } from './import-definition.mjs';
 import { validateSandboxPolicy, assertSandboxIdentity } from '../../runtime/application/sandbox.mjs';
 import { canonicalApplicationGenome } from '../../evolution/application/genome.mjs';
 import { runOrderLabTasks } from '../../runtime/application/tasks.mjs';
+import {closeApplicationResources,withRestoredFixture} from '../../runtime/application/resources.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 const json = async path => JSON.parse((await readFile(path, 'utf8')).replace(/^\uFEFF/, ''));
 const booleans = ['compilerValidated','importVerified','authenticationVerified','runtimeVerified','fixtureVerified','databaseChangeVerified','securityVerified'];
 const counters = ['viewportsTested','criticalViolations','seriousViolations','unnamedControls','focusFailures','horizontalOverflow','runtimeErrors','loadMs','componentCount'];
+
+export function assertQueuedSmokeRequest(request) {
+  const keys=['id','label','seed','generations','materializationBudget'];
+  assert.ok(request&&Object.getPrototypeOf(request)===Object.prototype&&Object.keys(request).length===keys.length&&keys.every(key=>Object.hasOwn(request,key)),'Exact queued feasibility request required');
+  assert.match(request.id,/^[a-f0-9]{32}$/);assert.equal(typeof request.label,'string');
+  assert.ok(request.label.trim().length>0&&Buffer.byteLength(request.label,'utf8')<=120&&!/[\x00-\x1f\x7f-\x9f]/.test(request.label),'Bounded single-line request label required');
+  assert.equal(request.seed,50000);assert.equal(request.generations,1);assert.equal(request.materializationBudget,2);
+  return Object.freeze({...request});
+}
 
 export function oracleMetricsFromObservations(genomeFingerprint, observations) {
   assert.match(genomeFingerprint, /^[a-f0-9]{64}$/);
@@ -111,8 +121,12 @@ async function browserMeasurements({page, home, fixture, directory}) {
   return {...counters,loadMs:[...samples].sort((a,b)=>a-b)[1],warmLoadSamplesMs:samples,scans,screenshots};
 }
 
-export async function runApplicationSmoke(configPath, { applicationIds,canaryApplicationId }={}) {
+export async function runApplicationSmoke(configPath, { applicationIds,canaryApplicationId,queuedRequest,onRunCreated,signal }={}) {
   if (!configPath) throw new TypeError('Explicit application sandbox worker configuration required');
+  const request=queuedRequest===undefined?null:assertQueuedSmokeRequest(queuedRequest);
+  assert.equal(typeof onRunCreated,request?'function':'undefined','A queued run must attach its fresh Oracle identity before materialization');
+  assert.ok(signal===undefined||signal instanceof AbortSignal,'A native AbortSignal is required');
+  const ensureActive=()=>signal?.throwIfAborted();ensureActive();
   oracledb.fetchAsString = [oracledb.CLOB];
   const configurationPath=resolve(configPath),configuration=await json(configurationPath);
   const policy=await json(resolve(dirname(configurationPath),configuration.sandboxPolicyPath)); validateSandboxPolicy(policy);
@@ -126,7 +140,10 @@ export async function runApplicationSmoke(configPath, { applicationIds,canaryApp
   const options={outFormat:oracledb.OUT_FORMAT_OBJECT};
   let browser, runId, runDirectory, activeOrganism;
   const result={kind:'real-apex-feasibility',releaseReady:false,algorithmComparison:false,paidRequests:0,applicationIds,candidates:[]};
+  const closeOnAbort=()=>{if(browser)void browser.close().catch(()=>{});};
+  signal?.addEventListener('abort',closeOnAbort,{once:true});
   try {
+    db.callTimeout=10000;
     const identity=(await db.execute("select sys_context('USERENV','CURRENT_SCHEMA') schema_name,sys_context('USERENV','SESSION_USER') session_user,sys_context('USERENV','DB_NAME') database_name,sys_context('USERENV','CON_NAME') container_name from dual",{},options)).rows[0];
     const mapping=(await db.execute('select workspace,workspace_id from apex_workspaces where workspace=:workspace',{workspace:policy.workspace},options)).rows;
     assert.equal(identity.SESSION_USER,policy.schema);assert.equal(mapping.length,1);
@@ -140,16 +157,22 @@ export async function runApplicationSmoke(configPath, { applicationIds,canaryApp
       assert.equal((await db.execute('select application_id from apex_applications where application_id=:id',{id:applicationId})).rows.length,0,'Fresh target application required');
       assert.equal((await db.execute('select application_id from genesis_order_lab_slots where application_id=:id',{id:applicationId})).rows.length,0,'Fresh unregistered slot required');
     }
-    const protocolPath=join(root,'experiments/configurations/application-feasibility-v1.json');
+    const protocolSourcePath=request?'experiments/configurations/application-queued-feasibility-v1.json':'experiments/configurations/application-feasibility-v1.json';
+    const protocolPath=join(root,protocolSourcePath);
     const protocolBytes=await readFile(protocolPath); result.protocolHash=digest(protocolBytes);
-    assert.equal(result.protocolHash,'7bd821284d54a7740a7d1b8f79b672960f4dc9ca98387179fdd481ab0479ccc3','Preregistered protocol changed');
-    const created=await db.execute("begin :run_id:=apxgen_app_evolution.create_run(50000,1,2,'Order Lab first real materialization loop');end;",{run_id:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:32}});
+    assert.equal(result.protocolHash,request?'67f7593b271d33cf1d4190858c961ff1cd312155b8371978f27cd2678c5038d4':'7bd821284d54a7740a7d1b8f79b672960f4dc9ca98387179fdd481ab0479ccc3','Preregistered protocol changed');
+    if(request){result.protocolSourcePath=protocolSourcePath;result.queueRequestId=request.id;}
+    ensureActive();
+    const created=await db.execute('begin :run_id:=apxgen_app_evolution.create_run(50000,1,2,:label);end;',{run_id:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:32},label:request?.label??'Order Lab first real materialization loop'});
     runId=created.outBinds.run_id;await db.commit();result.runId=runId;
     runDirectory=join(root,'.local/order-lab/runs',runId);await mkdir(runDirectory,{recursive:true});
-    const sources=['scripts/application/run-smoke.mjs','scripts/application/build-definition.mjs','scripts/application/validate-definition.mjs','scripts/application/import-definition.mjs','runtime/application/tasks.mjs','evolution/application/genome.mjs','evolution/genome-schema/application-genome.schema.json','apex/order-lab/parent-source.json','database/packages/apxgen_app_fitness.sql','database/packages/apxgen_app_genome.sql','database/packages/apxgen_app_evolution.sql','database/packages/genesis_order_lab.sql','database/migrations/007_order_lab_fixture.sql','database/migrations/008_application_evolution.sql','database/migrations/009_application_import_attempts.sql','experiments/configurations/application-feasibility-v1.json',...(await sourceFiles(join(root,'apex/order-lab/template'))).map(path=>'apex/order-lab/template/'+path)];
+    activeOrganism=(await db.execute('select organism_id from apxgen_app_organisms where run_id=:id and generation=0',{id:runId},options)).rows[0].ORGANISM_ID;
+    const sources=['scripts/application/run-smoke.mjs','scripts/application/build-definition.mjs','scripts/application/validate-definition.mjs','scripts/application/import-definition.mjs','runtime/application/tasks.mjs','runtime/application/resources.mjs','runtime/application/queue-import-guard.mjs','evolution/application/genome.mjs','evolution/genome-schema/application-genome.schema.json','apex/order-lab/parent-source.json','database/packages/apxgen_app_fitness.sql','database/packages/apxgen_app_genome.sql','database/packages/apxgen_app_evolution.sql','database/packages/genesis_order_lab.sql','database/migrations/007_order_lab_fixture.sql','database/migrations/008_application_evolution.sql','database/migrations/009_application_import_attempts.sql',protocolSourcePath,...(request?['runtime/application/control-worker.mjs','scripts/application/run-control-once.mjs','apex/living-control/sql/010_control_queue.sql','apex/living-control/sql/apxgen_app_control.sql',...(await sourceFiles(join(root,'apex/living-control/template'))).map(path=>'apex/living-control/template/'+path)]:[]),...(await sourceFiles(join(root,'apex/order-lab/template'))).map(path=>'apex/order-lab/template/'+path)];
     result.sourceHashes=await Promise.all(sources.map(async path=>({path,sha256:digest(await readFile(join(root,path)))})));
+    if(request){ensureActive();await onRunCreated(runId);ensureActive();}
     browser=await chromium.launch();result.browserVersion=browser.version();
     for(let generation=0;generation<=1;generation++) {
+      ensureActive();
       let organism;
       if(generation===0) organism=(await db.execute('select organism_id,genome_json,genome_hash,parent_id from apxgen_app_organisms where run_id=:run_id and generation=0',{run_id:runId},options)).rows[0];
       else {
@@ -162,19 +185,20 @@ export async function runApplicationSmoke(configPath, { applicationIds,canaryApp
       result.candidates.push(candidate);console.log(JSON.stringify({runId,generation,applicationId,stage:'GENOME_CREATED'}));
       assert.equal(digest(canonicalApplicationGenome(candidate.genome)),candidate.genomeHash,'Oracle and boundary genome hashes differ');
       const directory=join(runDirectory,activeOrganism);await mkdir(directory);
-      const phase=async(state,artifactHash=null,appId=null)=>{await db.execute('begin apxgen_app_evolution.record_phase(:organism_id,:state,:artifact_hash,:application_id);end;',{organism_id:activeOrganism,state,artifact_hash:artifactHash,application_id:appId});await db.commit();candidate.stages.push(state);};
+      const phase=async(state,artifactHash=null,appId=null)=>{ensureActive();await db.execute('begin apxgen_app_evolution.record_phase(:organism_id,:state,:artifact_hash,:application_id);end;',{organism_id:activeOrganism,state,artifact_hash:artifactHash,application_id:appId});await db.commit();candidate.stages.push(state);};
       const parentHash=generation===0?null:result.candidates[0].definitionHash;
-      const built=await buildApplicationDefinition(candidate.genome,{outputDir:join(directory,'definition'),parentDefinitionHash:parentHash});candidate.definitionHash=built.definitionHash;candidate.definitionManifest=relative(root,built.manifestPath).replaceAll('\\','/');
+      ensureActive();const built=await buildApplicationDefinition(candidate.genome,{outputDir:join(directory,'definition'),parentDefinitionHash:parentHash});candidate.definitionHash=built.definitionHash;candidate.definitionManifest=relative(root,built.manifestPath).replaceAll('\\','/');
       await phase('DEFINITION_GENERATED',built.definitionHash);await phase('VALIDATION_STARTED');
-      const compiler=await validateApplicationDefinition({appPath:built.appPath,evidenceDir:join(directory,'compiler'),sqlclPath});
+      ensureActive();const compiler=await validateApplicationDefinition({appPath:built.appPath,evidenceDir:join(directory,'compiler'),sqlclPath});
       candidate.compilerEvidence=relative(root,compiler.evidencePath).replaceAll('\\','/');assert.equal(compiler.compilerValid,true,'Real compiler validation failed');await phase('VALIDATED');
-      await db.execute("insert into genesis_order_lab_slots(application_id,workspace_id,approved_username,owner_run_id,owner_organism_id,lease_token,lease_until,slot_state) values(:application_id,:workspace_id,:username,:run_id,:organism_id,:token,systimestamp+numtodsinterval(4,'HOUR'),'ACTIVE')",{application_id:applicationId,workspace_id:policy.workspaceId,username:oracle.apexUser.toUpperCase(),run_id:runId,organism_id:activeOrganism,token:leaseToken});await db.commit();
+      ensureActive();await db.execute("insert into genesis_order_lab_slots(application_id,workspace_id,approved_username,owner_run_id,owner_organism_id,lease_token,lease_until,slot_state) values(:application_id,:workspace_id,:username,:run_id,:organism_id,:token,systimestamp+numtodsinterval(4,'HOUR'),'ACTIVE')",{application_id:applicationId,workspace_id:policy.workspaceId,username:oracle.apexUser.toUpperCase(),run_id:runId,organism_id:activeOrganism,token:leaseToken});await db.commit();
       await phase('IMPORT_STARTED',null,applicationId);
-      const imported=await importApplicationDefinition({configPath:configurationPath,appPath:built.appPath,compilerEvidencePath:compiler.evidencePath,applicationId,runId,organismId:activeOrganism,leaseToken,alias,expectedDatabase,evidenceDir:join(directory,'import')});
+      ensureActive();const imported=await importApplicationDefinition({configPath:configurationPath,appPath:built.appPath,compilerEvidencePath:compiler.evidencePath,applicationId,runId,organismId:activeOrganism,leaseToken,alias,expectedDatabase,evidenceDir:join(directory,'import'),queueRequestId:request?.id});
       candidate.importEvidence=relative(root,imported.evidencePath).replaceAll('\\','/');assert.equal(imported.importVerified,true,'Guarded import did not verify');await phase('IMPORTED');
       console.log(JSON.stringify({runId,generation,applicationId,stage:'IMPORTED'}));
       const fixture={
-        reset:async()=>{
+        reset:async({forCleanup=false}={})=>{
+          if(!forCleanup)ensureActive();
           const reset=await db.execute('begin genesis_order_lab.reset_fixture(:application_id,:token);:fixture_hash:=genesis_order_lab.fixture_hash(:application_id,:token);end;',{application_id:applicationId,token:leaseToken,fixture_hash:{dir:oracledb.BIND_OUT,type:oracledb.STRING,maxSize:64}});await db.commit();
           const observedHash=reset.outBinds.fixture_hash;assert.match(observedHash,/^[a-f0-9]{64}$/);
           if(result.initialFixtureHash)assert.equal(observedHash,result.initialFixtureHash,'Fixture hash changed across equivalent resets/candidates');else result.initialFixtureHash=observedHash;
@@ -197,40 +221,44 @@ export async function runApplicationSmoke(configPath, { applicationIds,canaryApp
       await page.getByRole('button',{name:'Apply filters',exact:true}).waitFor();assert.equal(Number(await page.evaluate(()=>apex.env.APP_ID)),applicationId);
       candidate.authenticationVerified=true;candidate.runtimeVerified=true;await phase('RUNTIME_VERIFIED');
       const session=String(await page.evaluate(()=>apex.env.APP_SESSION));
-      const home=async()=>{await page.goto(startUrl+'?session='+session,{waitUntil:'domcontentloaded'});await page.getByRole('button',{name:'Apply filters',exact:true}).waitFor();assert.equal(Number(await page.evaluate(()=>apex.env.APP_ID)),applicationId);};
+      const home=async()=>{ensureActive();await page.goto(startUrl+'?session='+session,{waitUntil:'domcontentloaded'});await page.getByRole('button',{name:'Apply filters',exact:true}).waitFor();assert.equal(Number(await page.evaluate(()=>apex.env.APP_ID)),applicationId);};
       const security={anonymousBlocked:true,directWorkerRejected:false,wrongPrincipalReadDenied:false,wrongPrincipalWriteDenied:false};
       const original=await fixture.auditSnapshot();
       try{await db.execute("begin genesis_order_lab.update_status(1002,'SHIPPED');end;");}catch(error){security.directWorkerRejected=error.errorNum===20131;}await db.rollback();assert.deepEqual(await fixture.auditSnapshot(),original);
       const denied=await oracledb.getConnection({user:oracle.user,password:oracle.password,connectString:oracle.connectString});let deniedSession;
       try {
+        denied.callTimeout=10000;
         const attached=await denied.execute("begin apex_util.set_security_group_id(:workspace_id);apex_session.create_session(p_app_id=>:application_id,p_page_id=>1,p_username=>'GENESIS_DENIED');:session_id:=apex_application.g_instance;end;",{workspace_id:policy.workspaceId,application_id:applicationId,session_id:{dir:oracledb.BIND_OUT,type:oracledb.NUMBER}});deniedSession=attached.outBinds.session_id;
         security.wrongPrincipalReadDenied=(await denied.execute('select count(*) from GENESIS_ORDERS_SAFE_V')).rows[0][0]===0;
         try{await denied.execute("begin genesis_order_lab.update_status(1002,'SHIPPED');end;");}catch(error){security.wrongPrincipalWriteDenied=error.errorNum===20131;}
-      }finally{if(deniedSession)await denied.execute('begin apex_session.delete_session(:session_id);end;',{session_id:deniedSession});await denied.rollback();await denied.close();}
+      }finally{try{if(deniedSession)await denied.execute('begin apex_session.delete_session(:session_id);end;',{session_id:deniedSession});await denied.rollback();}finally{await closeApplicationResources({database:denied});}}
       assert.deepEqual(await fixture.auditSnapshot(),original);candidate.security=security;
       const isolationId=canaryApplicationId;
       assert.notEqual(applicationId,isolationId,'The preserved failed application is the read-only isolation partition');
       const isolationSnapshot=async()=>(await db.execute("select order_id,customer_name,status,order_total,row_version,updated_by,to_char(sys_extract_utc(updated_at),'YYYY-MM-DD\"T\"HH24:MI:SS.FF3\"Z\"') updated_at from genesis_orders where application_id=:id order by order_id",{id:isolationId},options)).rows;
       const otherBefore=await isolationSnapshot();assert.equal(otherBefore.length,40,'Known other-owned partition required for isolation probe');
       assert.equal(otherBefore.some(row=>row.ORDER_ID===1040),true,'Other-owned sentinel required');
-      const removed=await db.execute('delete from genesis_orders where application_id=:id and order_id=1040',{id:applicationId});assert.equal(removed.rowsAffected,1);await db.commit();
-      const probe=await oracledb.getConnection({user:oracle.user,password:oracle.password,connectString:oracle.connectString});let attachedProbe=false;
-      try {
-        await probe.execute('begin apex_util.set_security_group_id(:workspace_id);apex_session.attach(p_app_id=>:application_id,p_page_id=>1,p_session_id=>:session_id);end;',{workspace_id:policy.workspaceId,application_id:applicationId,session_id:Number(session)});attachedProbe=true;
-        security.crossOwnedReadDenied=(await probe.execute('select count(*) from GENESIS_ORDERS_SAFE_V where order_id=1040')).rows[0][0]===0;
-        try{await probe.execute("begin genesis_order_lab.update_status(1040,'SHIPPED');end;");security.crossOwnedWriteDenied=false;}catch(error){security.crossOwnedWriteDenied=error.errorNum===20131;}
-      }finally{if(attachedProbe)await probe.execute('begin apex_session.detach;end;');await probe.rollback();await probe.close();await fixture.reset();}
+      await withRestoredFixture(fixture,async()=>{
+        ensureActive();const removed=await db.execute('delete from genesis_orders where application_id=:id and order_id=1040',{id:applicationId});assert.equal(removed.rowsAffected,1);await db.commit();
+        const probe=await oracledb.getConnection({user:oracle.user,password:oracle.password,connectString:oracle.connectString});let attachedProbe=false;
+        try {
+          probe.callTimeout=10000;ensureActive();
+          await probe.execute('begin apex_util.set_security_group_id(:workspace_id);apex_session.attach(p_app_id=>:application_id,p_page_id=>1,p_session_id=>:session_id);end;',{workspace_id:policy.workspaceId,application_id:applicationId,session_id:Number(session)});attachedProbe=true;
+          security.crossOwnedReadDenied=(await probe.execute('select count(*) from GENESIS_ORDERS_SAFE_V where order_id=1040')).rows[0][0]===0;
+          try{await probe.execute("begin genesis_order_lab.update_status(1040,'SHIPPED');end;");security.crossOwnedWriteDenied=false;}catch(error){security.crossOwnedWriteDenied=error.errorNum===20131;}
+        }finally{try{if(attachedProbe)await probe.execute('begin apex_session.detach;end;');await probe.rollback();}finally{await closeApplicationResources({database:probe});}}
+      });
       assert.deepEqual(await isolationSnapshot(),otherBefore,'Other-owned partition changed during denial probe');
       candidate.crossPartitionProbe={shadowApplicationId:isolationId,sentinelOrderId:1040,currentSentinelTemporarilyAbsent:true,readDenied:security.crossOwnedReadDenied,writeDenied:security.crossOwnedWriteDenied,shadowUnchanged:true,currentFixtureRestored:true};
       await phase('TESTING');
-      const tasks=await runOrderLabTasks({page,applicationId,home,fixture,principal:oracle.apexUser.toUpperCase()});candidate.taskEvidence=tasks;
+      const tasks=await runOrderLabTasks({page,applicationId,home,fixture,principal:oracle.apexUser.toUpperCase(),signal});candidate.taskEvidence=tasks;
       assert.deepEqual(await isolationSnapshot(),otherBefore,'Other-owned partition changed during actual UI tasks');
       candidate.security=security;
       const measurement=await browserMeasurements({page,home,fixture,directory});candidate.browserMeasurements=measurement;candidate.runtimeErrors=runtimeErrors;
       let componentCount=0;for(const view of ['apex_application_pages','apex_application_page_regions','apex_application_page_items','apex_application_page_da']) componentCount+=(await db.execute(`select count(*) from ${view} where application_id=:id and page_id not in(0,9999)`,{id:applicationId})).rows[0][0];
       for(const source of result.sourceHashes)assert.equal(digest(await readFile(join(root,source.path))),source.sha256,'Evaluator source changed during the run');
       const metrics=oracleMetricsFromObservations(candidate.genomeHash,{compilerValidated:compiler.compilerValid,importVerified:imported.importVerified,authenticationVerified:candidate.authenticationVerified,runtimeVerified:candidate.runtimeVerified,fixtureVerified:candidate.fixtureVerified,databaseChangeVerified:tasks.databaseChangeVerified,securityVerified:Object.values(security).every(value=>value===true),tasks:tasks.tasks,...measurement,runtimeErrors:runtimeErrors.length,componentCount});
-      candidate.metrics=metrics;await save(join(directory,'candidate-evidence.json'),candidate);
+      candidate.metrics=metrics;await save(join(directory,'candidate-evidence.json'),candidate);ensureActive();
       await db.execute('begin apxgen_app_evolution.evaluate(:organism_id,:metrics);apxgen_app_evolution.decide(:organism_id);end;',{organism_id:activeOrganism,metrics:{val:JSON.stringify(metrics),type:oracledb.CLOB}});await db.commit();
       const decision=(await db.execute('select state,eligible,fitness,selected,reason from apxgen_app_organisms where organism_id=:id',{id:activeOrganism},options)).rows[0];candidate.oracleDecision=decision;
       candidate.oracleEvents=(await db.execute("select event_id,state,detail,to_char(sys_extract_utc(recorded_at),'YYYY-MM-DD\"T\"HH24:MI:SS.FF3\"Z\"') recorded_at from apxgen_app_events where organism_id=:id order by event_id",{id:activeOrganism},options)).rows;
@@ -243,8 +271,10 @@ export async function runApplicationSmoke(configPath, { applicationIds,canaryApp
     result.failure=safeFailure(error);
     if(activeOrganism){try{await db.execute('begin apxgen_app_evolution.reject(:id,:reason);end;',{id:activeOrganism,reason:'Real smoke incomplete; inspect private recorded evidence'});await db.commit();}catch{await db.rollback();}}
   }finally{
-    if(runId){result.oracleRun=(await db.execute('select state,materializations,materialization_budget,current_generation,best_organism_id from apxgen_app_runs where run_id=:id',{id:runId},options)).rows[0];result.completedCandidates=result.candidates.filter(candidate=>candidate.oracleDecision).length;result.protocolCompleted=result.completedCandidates===2&&result.oracleRun.STATE==='COMPLETE';if(runDirectory)await save(join(runDirectory,'run-evidence.json'),result);}
-    if(browser)await browser.close();await db.close();
+    signal?.removeEventListener('abort',closeOnAbort);
+    try{
+      if(runId){result.oracleRun=(await db.execute('select state,materializations,materialization_budget,current_generation,best_organism_id from apxgen_app_runs where run_id=:id',{id:runId},options)).rows[0];result.completedCandidates=result.candidates.filter(candidate=>candidate.oracleDecision).length;result.protocolCompleted=result.completedCandidates===2&&result.oracleRun.STATE==='COMPLETE';if(runDirectory)await save(join(runDirectory,'run-evidence.json'),result);}
+    }finally{await closeApplicationResources({browser,database:db});}
   }
   return result;
 }

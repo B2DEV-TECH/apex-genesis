@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "enabled": false,
+  "schema": null,
+  "workspace": null,
+  "workspaceId": null,
+  "controlApplicationId": null,
+  "workerEnabled": false,
+  "workerBinding": null,
+  "populationMode": "GA_ONLY",
+  "capabilityVersion": "order-lab-queued-feasibility/1.0",
+  "supportedSeed": 50000,
+  "maxGenerations": 1,
+  "maxMaterializations": 2,
+  "protectedApplicationIds": [120, 121, 130, 131, 132, 133]
+}

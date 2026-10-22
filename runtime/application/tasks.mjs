@@ -48,28 +48,31 @@ export function assertStatusUpdateAudit(before,after,orderId,status,principal){
 // Uses actual APEX pages supplied by the trusted worker. No renderer, fixture
 // page, score calculation, login trace or model-generated selectors are used.
 // This task adapter is intentionally limited to the compiler-supported page form.
-export async function runOrderLabTasks({page,applicationId,home,fixture,principal}){
+export async function runOrderLabTasks({page,applicationId,home,fixture,principal,signal}){
+ const ensureActive=()=>signal?.throwIfAborted();ensureActive();
  assert.ok(Number.isSafeInteger(applicationId)&&applicationId>0);
  assert.equal(typeof home,'function');
  assert.equal(typeof principal,'string');
  for(const method of ['reset','snapshot','auditSnapshot'])assert.equal(typeof fixture?.[method],'function');
  const results={};
  async function ready(){
+  ensureActive();
   await home();await page.getByRole('button',{name:'Apply filters',exact:true}).waitFor();
   assert.equal(Number(await page.evaluate(()=>globalThis.apex?.env?.APP_ID)),applicationId,'Wrong running APEX application');
  }
  async function trial(task,action){
-  await fixture.reset();const before=await fixture.snapshot(),beforeAudit=await fixture.auditSnapshot();assert.equal(before.length,40,'Equivalent 40-order fixture required');assert.equal(beforeAudit.length,40);
+  ensureActive();await fixture.reset();ensureActive();const before=await fixture.snapshot(),beforeAudit=await fixture.auditSnapshot();assert.equal(before.length,40,'Equivalent 40-order fixture required');assert.equal(beforeAudit.length,40);
   await ready();let actions=0,navigationSteps=0;
   const act=async operation=>{
+   ensureActive();
    actions++;let navigated=false;
    const onNavigate=frame=>{if(frame===page.mainFrame())navigated=true;};
    page.on('framenavigated',onNavigate);
-   try{await operation();}finally{page.off('framenavigated',onNavigate);if(navigated)navigationSteps++;}
+   try{await operation();ensureActive();}finally{page.off('framenavigated',onNavigate);if(navigated)navigationSteps++;}
   };
   const start=performance.now();
-  try{await action({before,beforeAudit,act});results[task]={success:true,actions,navigationSteps,elapsedMs:Math.ceil(performance.now()-start),completedAt:new Date().toISOString()};}
-  catch(error){results[task]={success:error.name==='AssertionError'?false:null,actions,navigationSteps,elapsedMs:Math.ceil(performance.now()-start),completedAt:new Date().toISOString(),outcome:error.name==='AssertionError'?'TASK_ASSERTION_FAILED':'EVALUATOR_LIMITATION'};return false;}
+  try{await action({before,beforeAudit,act});ensureActive();results[task]={success:true,actions,navigationSteps,elapsedMs:Math.ceil(performance.now()-start),completedAt:new Date().toISOString()};}
+  catch(error){if(signal?.aborted)throw error;results[task]={success:error.name==='AssertionError'?false:null,actions,navigationSteps,elapsedMs:Math.ceil(performance.now()-start),completedAt:new Date().toISOString(),outcome:error.name==='AssertionError'?'TASK_ASSERTION_FAILED':'EVALUATOR_LIMITATION'};return false;}
   return true;
  }
  async function filter(orderId,status,act){

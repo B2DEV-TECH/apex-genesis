@@ -249,10 +249,30 @@ rejection, per-application hash isolation and deterministic reset. It rolls back
 all test changes and performs no APEX session creation. Its output explicitly says
 `runtimeUpdateVerified:false` and `browserTasksVerified:false`.
 
-This fixture integration has not run because no genuine organism/slot registrations
-have been supplied. Successful status update, principal/expired-lease rejection in
-a real authenticated app, CSRF/session protection, concurrent lock behavior and the
-three browser tasks remain required acceptance checks after a trusted descendant
-is materialized. The supported session APIs used by future server-side diagnostic
-checks are described in [Oracle's APEX_SESSION reference](https://docs.oracle.com/en/database/oracle/apex/26.1/aeapi/APEX_SESSION.html);
-such checks must not be relabeled as browser authentication or task evidence.
+This standalone fixture integration script has not been run separately. The real
+feasibility runner has since imported two applications, authenticated through their
+actual APEX login, completed all three browser tasks and independently verified
+the intended database update, row version, principal and unchanged other records.
+Its denial probes also checked direct-owner execution, an unapproved APEX
+principal and another owned partition. These are distinct recorded checks; they
+do not establish every concurrent-session or CSRF scenario.
+See the [actual verification record](../testing/living-applications-progress.md).
+The supported session APIs for server-side diagnostic checks are described in
+[Oracle's APEX_SESSION reference](https://docs.oracle.com/en/database/oracle/apex/26.1/aeapi/APEX_SESSION.html);
+such diagnostics must not be relabeled as browser authentication or task evidence.
+
+## Bounded terminal-run recycling
+
+`scripts/application/recycle-application.mjs` extends preservation to an explicitly
+approved terminal non-incumbent in the four-slot development pool. It requires
+separate migration 011, the exact schema/workspace/database and immutable
+run/organism/genome/definition identity. The earlier one-target cleanup helper
+and its historical authorization remain unchanged.
+
+Preparation preserves every original candidate file and full fixture, registry,
+history, import and canary snapshots before releasing the exact old lease. The
+disposal phase performs a genuine SQL export and verifies all preservation bytes
+again. Its unique permanent cleanup attempt commits before the workspace removal
+API; a crash or uncertain outcome blocks automatic retries. The current executor
+refuses every RUNNING owner run and pins the incumbent even in a completed run.
+Active-run slot reuse for longer experiments remains a separate acceptance gate.

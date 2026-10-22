@@ -1,0 +1,75 @@
+{
+  "formatVersion": "1.0",
+  "kind": "offline-apexlang-control-validation",
+  "status": "compiler_validated",
+  "compilerValid": true,
+  "connected": false,
+  "runtimeVerified": false,
+  "definitionHash": "baea7eaf2fecd5ace854f4b87a57405410cf39be02454e7426238b88444cc566",
+  "files": [
+    {
+      "path": ".apex/apexlang.json",
+      "sha256": "1e4d481e2b249e9579fb0e21ec7534b535573b7534e53ec8d8f7b204d841a101"
+    },
+    {
+      "path": "application.apx",
+      "sha256": "8b0ce4a9f553f2c443b9256571bcb636790df51b035950c7230cf2d4e2cb44b7"
+    },
+    {
+      "path": "pages/p00000-global-page.apx",
+      "sha256": "00df156b213512f9c44abe57d9358324a2b043c891b94905065e8157d006f7ee"
+    },
+    {
+      "path": "pages/p00001-create.apx",
+      "sha256": "19ff9b5d3010d81de61433ad5d93d214d55910564a2be67fd8bcd9748e0cfdb0"
+    },
+    {
+      "path": "pages/p00002-evolve.apx",
+      "sha256": "3e1252dde16a2e72044e05d5f7e823966a0617f48c14d867811ecced1acefdca"
+    },
+    {
+      "path": "pages/p00003-watch.apx",
+      "sha256": "decad92f1d30890f326fb2a31a424f7456ac6eddc8947e22b337633e6ce57b24"
+    },
+    {
+      "path": "pages/p09999-login.apx",
+      "sha256": "296920a7b66213b228e3a7e35e46647bfee19f193e5d3ea3cf9c6c95153d527a"
+    },
+    {
+      "path": "shared-components/authentications.apx",
+      "sha256": "4b525f3023225c4f91b53c58fabec81ef146d5dfabd1c677cb7c71866d179382"
+    },
+    {
+      "path": "shared-components/lists/navigation-bar.apx",
+      "sha256": "28855cec6e6b434d7f8497d4e0609497641c019392aeb76705c08089d57b765c"
+    },
+    {
+      "path": "shared-components/lists/navigation-menu.apx",
+      "sha256": "c74d33389c04b5cf0000bb0868862bc7f9617b1bc4abf0d4b3599e974da270c0"
+    },
+    {
+      "path": "shared-components/static-files.apx",
+      "sha256": "5a7cce1f92535a01dea566e45af15c88502f55e93b2fd53495f5c65735dcc490"
+    },
+    {
+      "path": "shared-components/static-files/control-boot.js",
+      "sha256": "49a2a960f2d3fe3f4e361b2fc2a2e5ca7e883879bd7b32c8ec359aeb211e9c75"
+    },
+    {
+      "path": "shared-components/static-files/control-contract.mjs",
+      "sha256": "d011b177cc1d866d5741de8778adbb67f4f46eb29bb847c92f99a18bb73a301e"
+    },
+    {
+      "path": "shared-components/themes/universal-theme/theme.apx",
+      "sha256": "d78b66cd4330e69c24ff87e0d68d722e497347a593ce719e3f52883b9c7af3d1"
+    }
+  ],
+  "compiler": {
+    "version": "SQLcl: Release 26.3.0.0 Production Build: 26.3.0.260.1620",
+    "executableSha256": "1a0fe799c0f0cf17f7f5767e49b6250f903ac6d7c69b6c70ef966e518684fc07",
+    "compilerJarSha256": "8be7e04267ea5744e1fce51f4f5e7dd88f101eb5cd21025a5d66239ac362b7b0",
+    "exitCode": 0
+  },
+  "observedAt": "2026-10-22T15:16:13.204Z",
+  "outputSha256": "2138ae8c3cca131a704e6b0f44788b1822331c3df6a78472a73d930fa158d8a9"
+}

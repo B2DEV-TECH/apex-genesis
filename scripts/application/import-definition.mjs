@@ -6,6 +6,7 @@ import oracledb from 'oracledb';
 import { validateSandboxPolicy, assertSandboxIdentity } from '../../runtime/application/sandbox.mjs';
 import { hashApplicationDefinition } from './build-definition.mjs';
 import { acceptsCompilerResult, executeSqlcl, fingerprintSqlcl } from './validate-definition.mjs';
+import {verifyQueuedImportLease} from '../../runtime/application/queue-import-guard.mjs';
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const readJson = async path => JSON.parse((await readFile(path, 'utf8')).replace(/^\uFEFF/, ''));
@@ -75,7 +76,8 @@ async function observeAdmission(db, policy, request) {
   };
 }
 
-export async function importApplicationDefinition({ configPath, appPath, compilerEvidencePath, applicationId, runId, organismId, leaseToken, alias, expectedDatabase, evidenceDir, timeoutMs = 120000 } = {}) {
+export async function importApplicationDefinition({ configPath, appPath, compilerEvidencePath, applicationId, runId, organismId, leaseToken, alias, expectedDatabase, evidenceDir, queueRequestId, timeoutMs = 120000 } = {}) {
+  if(queueRequestId!==undefined&&!opaqueId.test(queueRequestId))throw new TypeError('Explicit native queue request identity required');
   if (![configPath, appPath, compilerEvidencePath, evidenceDir].every(safePath) || !Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 300000) throw new TypeError('Explicit safe configuration, source and evidence paths are required');
   const source = resolve(appPath), destination = resolve(evidenceDir);
   const compare = value => process.platform === 'win32' ? value.toLowerCase() : value;
@@ -98,6 +100,7 @@ export async function importApplicationDefinition({ configPath, appPath, compile
     db = await oracledb.getConnection({ user: oracle.user, password: oracle.password, connectString: oracle.connectString });
     const observed = await observeAdmission(db, policy, request);
     assertImportObservation(policy, request, observed);
+    evidence.queueAdmission=await verifyQueuedImportLease(db,{runId,requestId:queueRequestId,policy,timeoutMs});
     evidence.identityVerified = true;
     evidence.workspace = policy.workspace;
     evidence.parsingSchema = policy.schema;
@@ -110,6 +113,9 @@ export async function importApplicationDefinition({ configPath, appPath, compile
     evidence.attemptId = attemptId;
     evidence.attemptLedgerWrites = 1;
     evidence.importAttempted = true;
+    // Recheck after committing the permanent attempt and immediately before
+    // launching the external importer. No automatic retry follows a lost claim.
+    await verifyQueuedImportLease(db,{runId,requestId:queueRequestId,policy,timeoutMs});
     const result = await executeSqlcl(sqlclPath, ['-thin', '-nohistory', '-noupdates', '-S', '/nolog'], { timeoutMs,
       input: `prompt\nset echo off\nset define off\nwhenever sqlerror exit failure rollback\nconnect ${oracle.user}/"${oracle.password}"@${oracle.connectString}\napex import -input "${source.replaceAll('\\', '/')}" -workspace ${policy.workspace} -schema ${policy.schema} -id ${applicationId} -alias ${alias}\nexit\n` });
     output = sanitizeImportOutput(result.stdout + result.stderr, { password: oracle.password, connectString: oracle.connectString, leaseToken });

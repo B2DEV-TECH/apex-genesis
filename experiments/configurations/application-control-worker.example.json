@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "enabled": false,
+  "mode": "GA_ONLY",
+  "paidRequestBudget": 0,
+  "binding": "DISABLED_NOT_A_BINDING",
+  "pool": {
+    "applicationIds": [150, 151],
+    "canaryApplicationId": 152
+  },
+  "capabilities": {
+    "seed": 50000,
+    "advances": 1,
+    "materializations": 2
+  },
+  "leaseSeconds": 300,
+  "heartbeatSeconds": 30
+}

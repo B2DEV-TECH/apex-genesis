@@ -38,7 +38,10 @@ usability improvement is established**. Earlier failed attempts remain recorded.
 
 The proposed `v0.3.0-alpha.1` release is **not tagged or complete**. Application
 evolution is currently GA_ONLY; no new paid model calls were made. Native
-Create/Evolve/Watch controls, wider controlled trials, AI ledger integration,
+control application 134 is imported: authentication, reader/operator permissions
+and creation of one genuine bounded draft passed. Its execution worker remains
+disabled; the native Start-to-completion path is still an acceptance gate.
+Wider controlled trials, AI ledger integration,
 unattended application evolution, article and video remain
 separate acceptance gates. [Live engineering record](docs/testing/living-applications-progress.md)
 and [implementation plan](docs/superpowers/plans/2026-10-22-living-applications.md).
@@ -90,6 +93,11 @@ boundaries. Paid application evolution and unattended materialization are disabl
 Separate [compiler-only prototypes](apex/order-lab/prototypes/README.md) validate
 interactive reports, modal editing and corrected top navigation without warnings.
 They have not been imported or enabled in the production builder.
+
+The [native control application](apex/living-control/README.md) uses a separate
+Oracle request queue. Its first registered capability fixes seed 50000, one
+challenger generation, two materializations and zero paid requests. Public
+replay and authenticated experiment controls remain separate entry points.
 
 ## A database-owned evolutionary loop
 

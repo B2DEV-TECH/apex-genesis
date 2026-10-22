@@ -19,16 +19,19 @@ const inside=(root,path)=>path===root||path.startsWith(root+sep);
 const jsonBytes=object=>Buffer.from(JSON.stringify(object));
 const parse=bytes=>parseLivingJson(bytes.toString('utf8').replace(/^\uFEFF/,''));
 const timestamp=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)&&Number.isFinite(Date.parse(value));
-const evaluatorPaths=new Set(['scripts/application/run-smoke.mjs','runtime/application/tasks.mjs','database/packages/apxgen_app_fitness.sql','experiments/configurations/application-feasibility-v1.json','database/packages/genesis_order_lab.sql','database/migrations/007_order_lab_fixture.sql']);
-const requiredEvaluatorPaths=[...evaluatorPaths].slice(0,4);
+const defaultProtocolPath='experiments/configurations/application-feasibility-v1.json';
+const queuedProtocolPath='experiments/configurations/application-queued-feasibility-v1.json';
+const evaluatorPaths=new Set(['scripts/application/run-smoke.mjs','runtime/application/tasks.mjs','database/packages/apxgen_app_fitness.sql',defaultProtocolPath,'database/packages/genesis_order_lab.sql','database/migrations/007_order_lab_fixture.sql',queuedProtocolPath,'runtime/application/resources.mjs','runtime/application/queue-import-guard.mjs','runtime/application/control-worker.mjs','scripts/application/run-control-once.mjs']);
+const requiredEvaluatorPaths=[...evaluatorPaths].slice(0,3);
 
 /** Digests bind recorded identities, never a fresh checkout relabelled as history. */
 export function deriveSmokeHashes(run){
  check(Array.isArray(run?.sourceHashes)&&run.sourceHashes.length>=4&&run.sourceHashes.length<=512,'Recorded source hashes are required');
  const seen=new Set(),sources=run.sourceHashes.map(source=>{check(source&&Object.keys(source).length===2,'Invalid recorded source identity');safeLivingPath(source.path);check(!seen.has(source.path.toLowerCase()),'Duplicate recorded source path');seen.add(source.path.toLowerCase());check(sha.test(source.sha256),'Invalid recorded source hash');return {path:source.path,sha256:source.sha256};}).sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0);
  check(sha.test(run.protocolHash)&&typeof run.browserVersion==='string'&&/^\d+(?:\.\d+){2,3}$/.test(run.browserVersion),'Recorded evaluator protocol and browser identity are required');
- for(const path of requiredEvaluatorPaths)check(sources.some(source=>source.path===path),'Missing recorded evaluator source');
- check(sources.find(source=>source.path==='experiments/configurations/application-feasibility-v1.json').sha256===run.protocolHash,'Recorded protocol hash contradicts source identity');
+ const protocolPath=run.protocolSourcePath??defaultProtocolPath;check([defaultProtocolPath,queuedProtocolPath].includes(protocolPath),'Unsupported recorded evaluator protocol source');
+ for(const path of [...requiredEvaluatorPaths,protocolPath])check(sources.some(source=>source.path===path),'Missing recorded evaluator source');
+ check(sources.find(source=>source.path===protocolPath).sha256===run.protocolHash,'Recorded protocol hash contradicts source identity');
  return {sourceHash:digest(JSON.stringify(sources)),evaluatorHash:digest(JSON.stringify({sources:sources.filter(source=>evaluatorPaths.has(source.path)),protocolHash:run.protocolHash,browserVersion:run.browserVersion}))};
 }
 
