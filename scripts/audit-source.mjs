@@ -4,14 +4,25 @@ import {join} from 'node:path';
 const git=(args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:128*1024*1024,windowsHide:true});
 const paths=git(['ls-files','-z']).split('\0').filter(Boolean),failures=[];
 const secrets=[];
+function collectCredentialValues(configuration){
+ const pending=[configuration];
+ while(pending.length){
+  const value=pending.pop();if(!value||typeof value!=='object')continue;
+  for(const[key,child]of Object.entries(value)){
+   if((key==='password'||key==='apexPassword')&&typeof child==='string'&&child.length>=12)secrets.push(child);
+   else if(child&&typeof child==='object')pending.push(child);
+  }
+ }
+}
 async function collectLocalSecrets(directory){
  for(const entry of await readdir(directory,{withFileTypes:true}).catch(error=>{if(error.code==='ENOENT')return [];throw error;})){
   if(entry.isSymbolicLink())continue;
   const file=join(directory,entry.name);
   if(entry.isDirectory())await collectLocalSecrets(file);
   else if(entry.isFile()&&/oracle.*\.json$/i.test(entry.name)){
-   const c=JSON.parse((await readFile(file,'utf8')).replace(/^\uFEFF/,''));
-   for(const k of ['password','apexPassword'])if(typeof c[k]==='string'&&c[k].length>=12)secrets.push(c[k]);
+   const content=(await readFile(file,'utf8')).replace(/^\uFEFF/,'');let configuration;
+   try{configuration=JSON.parse(content);}catch{throw new Error('Local Oracle configuration is invalid');}
+   collectCredentialValues(configuration);
   }
  }
 }

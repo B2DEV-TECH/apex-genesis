@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0",
+  "purpose": "NATIVE_CONTROL_UPDATE_ONLY",
+  "enabled": false,
+  "schema": "APXGEN_ORDER_LAB",
+  "workspace": "APXGEN_ORDER_LAB",
+  "workspaceId": 8303111957118921,
+  "applicationId": 134,
+  "alias": "GENESIS-LIVING-CONTROL",
+  "protectedApplicationIds": [
+    120,
+    121,
+    130,
+    131,
+    132,
+    133
+  ],
+  "expectedDatabase": {
+    "databaseName": "FREEPDB1",
+    "containerName": "FREEPDB1"
+  },
+  "oldDefinitionHash": "7351764d60ec6556adb764aff945922e757d1325032dbe7ca3ed89ad716f7eb5",
+  "newDefinitionHash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "baselineSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "originalAttemptSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "originalReceiptSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "newCompilerEvidenceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "compilerFingerprint": {
+    "executableSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "compilerJarSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "mmdVersion": "26.2.0+3479",
+  "maxCompilerAgeSeconds": 3600,
+  "timeoutMs": 120000,
+  "preservedRequestId": "7bcff90329154f549db36272a84dc707",
+  "expectedPrincipal": "GENESIS_TEST",
+  "reviewedCompilerWarnings": null,
+  "sourceHashes": [
+    {
+      "path": "apex/living-control/update-control.mjs",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "path": "runtime/application/coordinator-lock.mjs",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "path": "runtime/application/resources.mjs",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "path": "scripts/application/build-definition.mjs",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "path": "scripts/application/import-definition.mjs",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "path": "scripts/application/validate-definition.mjs",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "runtimeTimeoutMs": 120000
+}

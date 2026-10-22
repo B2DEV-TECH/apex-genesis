@@ -19,6 +19,26 @@ function knownCohort(name){assert.ok(Object.hasOwn(cohorts,name),'Only the fixed
 const tasks=['locateOrder','filterOrders','updateOrder'];
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 
+export async function verifyRenderedLivingScreenshots(page,{candidates,manifest,viewport}){
+ assert.equal(candidates.length,2,'The genuine parent/child pair is required');assert.equal(candidates[1].parentId,candidates[0].id);
+ assert.equal(await page.locator('#viewport').inputValue(),viewport.width+'\u00d7'+viewport.height,'The displayed viewport must match the recorded screenshot');
+ const cards=page.locator('#evidence-images .application-card'),entries=new Map(manifest.files.map(entry=>[entry.path,entry])),observations=[];
+ assert.equal(await cards.count(),2,'Both genuine applications must be displayed');
+ for(let index=0;index<candidates.length;index++){
+  const candidate=candidates[index],card=cards.nth(index),matches=candidate.screenshots.filter(image=>image.viewport.width===viewport.width&&image.viewport.height===viewport.height);
+  assert.equal(matches.length,1,'Exactly one candidate screenshot must match the displayed viewport');const screenshot=matches[0];safeLivingPath(screenshot.path);
+  const entry=entries.get(screenshot.path);assert.ok(entry,'The displayed screenshot must be manifested');assert.match(entry.sha256,/^[a-f0-9]{64}$/);assert.ok(Number.isSafeInteger(entry.bytes)&&entry.bytes>0);
+  assert.equal(await card.locator('h3').textContent(),'Application '+candidate.applicationId,'The screenshot card must match its genuine candidate');assert.equal(await card.evaluate((node,role)=>node.classList.contains(role),index===0?'parent':'descendant'),true);
+  const image=card.locator('img');assert.equal(await image.count(),1);const displayed=await image.evaluate(node=>({source:node.currentSrc,complete:node.complete,width:node.naturalWidth,height:node.naturalHeight}));
+  assert.equal(displayed.complete,true);assert.equal(displayed.width,viewport.width);assert.ok(displayed.height>0);assert.match(displayed.source,/^data:image\/png;base64,[A-Za-z0-9+/]+={0,2}$/,'The displayed screenshot must use PNG bytes from verified evidence');
+  const encoded=displayed.source.slice('data:image/png;base64,'.length),bytes=Buffer.from(encoded,'base64');assert.equal(bytes.toString('base64'),encoded,'The displayed PNG encoding must be canonical');
+  const binding=' for candidate '+candidate.id+' at '+viewport.width+'\u00d7'+viewport.height;
+  assert.equal(bytes.length,entry.bytes,'Displayed screenshot bytes differ'+binding);const sha256=digest(bytes);assert.equal(sha256,entry.sha256,'Displayed screenshot hash differs'+binding);
+  observations.push({candidateId:candidate.id,applicationId:candidate.applicationId,viewport:{...viewport},path:screenshot.path,bytes:bytes.length,sha256});
+ }
+ return observations;
+}
+
 export function deployedLivingUrl(value,{cohort='original'}={}){
  const expected=knownCohort(cohort);
  const url=new URL(value);
@@ -41,7 +61,7 @@ export async function checkLivingDeployment(value,{cohort='original'}={}){
  await mkdir(reviewRoot,{recursive:false});
  const browser=await chromium.launch({channel:process.env.APXGEN_BROWSER_CHANNEL||(process.platform==='win32'?'msedge':undefined)});
  const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
- let checks=0;
+ let checks=0;const displayedScreenshots=[];
  page.on('pageerror',error=>errors.push('pageerror: '+error.message));
  page.on('console',message=>{if(message.type()==='error')errors.push('console: '+message.text()+' '+message.location().url);});
  page.on('response',response=>{if(response.status()>=400&&new URL(response.url()).origin===requested.origin)errors.push('http '+response.status()+': '+new URL(response.url()).pathname);});
@@ -90,14 +110,14 @@ export async function checkLivingDeployment(value,{cohort='original'}={}){
   for(const width of [390,768,1440]){
    await page.setViewportSize({width,height:1000});const option=await page.locator('#viewport option').evaluateAll((options,width)=>options.find(option=>option.value.startsWith(String(width)+'\u00d7'))?.value,width);assert.ok(option,'Actual recorded viewport is unavailable');await page.locator('#viewport').selectOption(option);await imagesReady();
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'Horizontal page overflow at '+width);
-   const naturalWidths=await page.locator('#evidence-images img').evaluateAll(images=>images.map(image=>image.naturalWidth));assert.deepEqual(naturalWidths,[width,width]);
+   displayedScreenshots.push(...await verifyRenderedLivingScreenshots(page,{candidates,manifest,viewport:{width,height:Number(option.split('\u00d7')[1])}}));
    await axe();await page.screenshot({path:join(reviewRoot,'deployed-exhibition-'+width+'.png'),fullPage:true,animations:'disabled'});checks++;
   }
   for(const [name,file]of [['Interface Evolution','index.html'],['Continuous Evolution','live.html']]){
    const link=page.getByRole('link',{name,exact:true});assert.equal(await link.getAttribute('href'),'./'+file);const target=new URL(await link.getAttribute('href'),page.url());assert.equal(target.origin,requested.origin);const historical=await context.request.get(target.href,{timeout:30000});assert.equal(historical.status(),200,name+' must remain available');assert.equal(new URL(historical.url()).origin,requested.origin);assert.match(await historical.text(),/Genesis exhibitions|APEX Genesis/);checks++;
   }
   assert.equal(await page.getByRole('link',{name:'Living Applications',exact:true}).getAttribute('aria-current'),'page');assert.deepEqual(errors,[]);checks++;
-  const result={suite:'living-applications-deployed',cohort,passed:true,checks,url:page.url(),browser:browser.version(),manifestSha256,runId,applications:expected.map(candidate=>candidate.applicationId),fitness:89.675,parentRetained:true,viewports:[390,768,1440],reviewRoot,experimentalEvidenceCreated:false,interceptedResponses:false};
+  const result={suite:'living-applications-deployed',cohort,passed:true,checks,url:page.url(),browser:browser.version(),manifestSha256,runId,applications:expected.map(candidate=>candidate.applicationId),fitness:89.675,parentRetained:true,viewports:[390,768,1440],displayedScreenshotHashesVerified:true,displayedScreenshots,reviewRoot,experimentalEvidenceCreated:false,interceptedResponses:false};
   await writeFile(join(reviewRoot,'deployment-review.json'),JSON.stringify(result,null,2),{flag:'wx'});return result;
  }catch(error){try{await page.screenshot({path:join(reviewRoot,'failed-deployment-review.png'),fullPage:true,animations:'disabled'});}catch{}throw error;}
  finally{await browser.close();}
