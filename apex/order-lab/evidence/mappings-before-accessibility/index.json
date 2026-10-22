@@ -1,0 +1,247 @@
+{
+  "formatVersion": "1.0",
+  "runtimeVerified": false,
+  "compilerValid": true,
+  "entries": [
+    {
+      "variant": "00",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "above",
+        "summary": "before",
+        "navigation": "side",
+        "density": "comfortable"
+      },
+      "genomeHash": "6df8f3e711099b4f51f463e192638683d59d629a096578d22ec15b556a634853",
+      "definitionHash": "2759b6662b930620b13ff768b0349316c89f6f38abd5eaacbb8f19ecd9db9c43",
+      "compilerValid": true,
+      "evidence": "variant-00/compiler-validation.json"
+    },
+    {
+      "variant": "01",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "beside",
+        "summary": "before",
+        "navigation": "side",
+        "density": "comfortable"
+      },
+      "genomeHash": "bcb287dc667a3a6be5b6d68530bab256f969ca256bdd1200b16755892eae3a2d",
+      "definitionHash": "f9f8d001df54d71ffd4d9600772d0c580ac6ef26339cd16f1ee3f4cbee82ceb2",
+      "compilerValid": true,
+      "evidence": "variant-01/compiler-validation.json"
+    },
+    {
+      "variant": "02",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "above",
+        "summary": "after",
+        "navigation": "side",
+        "density": "comfortable"
+      },
+      "genomeHash": "d58c13a957acee433d6f8a482757af163c5a97fbc58adfd18357b61c489f3d95",
+      "definitionHash": "b205788552e0a335bd0cae7d61b0f7724313e398f883e9dc37c50fdfae1e5b5d",
+      "compilerValid": true,
+      "evidence": "variant-02/compiler-validation.json"
+    },
+    {
+      "variant": "03",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "beside",
+        "summary": "after",
+        "navigation": "side",
+        "density": "comfortable"
+      },
+      "genomeHash": "3f72463f0a003964f80d0bfe27658e024239319e75f57a3ddc107350432e10e3",
+      "definitionHash": "c545dfd874162b3f832fd8d55008ba94720fb8c6d7be41b0f0fab4990a440c3a",
+      "compilerValid": true,
+      "evidence": "variant-03/compiler-validation.json"
+    },
+    {
+      "variant": "04",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "above",
+        "summary": "before",
+        "navigation": "top",
+        "density": "comfortable"
+      },
+      "genomeHash": "c22b2daa9efa868078402a37f898f61fe2432bb5b12b23401a0b9d937746f9ef",
+      "definitionHash": "79f466ee948e54b991c8b11a8d7ba6207212269a6f8269692b06d2db9927a62c",
+      "compilerValid": true,
+      "evidence": "variant-04/compiler-validation.json"
+    },
+    {
+      "variant": "05",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "beside",
+        "summary": "before",
+        "navigation": "top",
+        "density": "comfortable"
+      },
+      "genomeHash": "2c7ce690de1a6a1ceb1886d7a0dce7609e3740015b5542e9bc8c72445f1d629c",
+      "definitionHash": "e214489d0f0c8f50c5e8f1709da2f99bec51adb81f3a5bcbe87940d953fbebf0",
+      "compilerValid": true,
+      "evidence": "variant-05/compiler-validation.json"
+    },
+    {
+      "variant": "06",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "above",
+        "summary": "after",
+        "navigation": "top",
+        "density": "comfortable"
+      },
+      "genomeHash": "7b8607e88ee574dba86099bbcaa0e2ea3c6e3bca0c9c79cbf6e89a67e91e513b",
+      "definitionHash": "e1c1275f457c810f12716eab55af1f24bbb34a85d7ecfca442340471956864e8",
+      "compilerValid": true,
+      "evidence": "variant-06/compiler-validation.json"
+    },
+    {
+      "variant": "07",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "beside",
+        "summary": "after",
+        "navigation": "top",
+        "density": "comfortable"
+      },
+      "genomeHash": "324a3c5c8cca3728821d3a0455e71abbd127a90794abf764bfe0c4b7f67f5fb1",
+      "definitionHash": "4bad0ced9434aae118e4eb56dc4f7f317e69b42a827491c9238c65b69bf9caab",
+      "compilerValid": true,
+      "evidence": "variant-07/compiler-validation.json"
+    },
+    {
+      "variant": "08",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "above",
+        "summary": "before",
+        "navigation": "side",
+        "density": "compact"
+      },
+      "genomeHash": "80c28f21d1e87075ff6a660249a94ec38396a9b5a18337086747664f6b1f9e7c",
+      "definitionHash": "3221b1c0b445c70be1111484e4dc6146e126f1f970851e0f68954fd109518bf5",
+      "compilerValid": true,
+      "evidence": "variant-08/compiler-validation.json"
+    },
+    {
+      "variant": "09",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "beside",
+        "summary": "before",
+        "navigation": "side",
+        "density": "compact"
+      },
+      "genomeHash": "268938a3eddeefb61977751d9d5dcca6cd21a6730cb35f9f18a9c23cb78af0bd",
+      "definitionHash": "fa0e3b365cefa4c5a0ff40dffe6ec3cb701ddc9cb204a7f055866cff9e30c007",
+      "compilerValid": true,
+      "evidence": "variant-09/compiler-validation.json"
+    },
+    {
+      "variant": "10",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "above",
+        "summary": "after",
+        "navigation": "side",
+        "density": "compact"
+      },
+      "genomeHash": "eb0f8264bfc1dbd0cfeb91eb30edbb6def00db735c77c8dfa02e834583f918bf",
+      "definitionHash": "29ec7c5d5c1f6ffd9120fdd549033f3086786bd8f6fa8685f276d1edc1815e98",
+      "compilerValid": true,
+      "evidence": "variant-10/compiler-validation.json"
+    },
+    {
+      "variant": "11",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "beside",
+        "summary": "after",
+        "navigation": "side",
+        "density": "compact"
+      },
+      "genomeHash": "f28c51dcb5889ef8b5177dedfb4dd13aed17d1e5bc817ad72cac0e3dfb69e16c",
+      "definitionHash": "3b59db3384dd484e1ecca7135aa1a6f7c28f85c00368b127a8721f2ba0be4e21",
+      "compilerValid": true,
+      "evidence": "variant-11/compiler-validation.json"
+    },
+    {
+      "variant": "12",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "above",
+        "summary": "before",
+        "navigation": "top",
+        "density": "compact"
+      },
+      "genomeHash": "9619a8101e1876de0c7020ccc8479db3d10dcb36838be0b9d26feacfda9101ed",
+      "definitionHash": "0910a6a45b0a343cafc5c806312440777ae6e2b76a921bcf11b26d36e4829e06",
+      "compilerValid": true,
+      "evidence": "variant-12/compiler-validation.json"
+    },
+    {
+      "variant": "13",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "beside",
+        "summary": "before",
+        "navigation": "top",
+        "density": "compact"
+      },
+      "genomeHash": "531f50fcae7f834c5769d3f7ce53483f577c2ff29db8634d26e42261042c27a8",
+      "definitionHash": "05decdfe1cc334cb81adbd1e577627e73b29fc17c1cd965d61bf8847437586f1",
+      "compilerValid": true,
+      "evidence": "variant-13/compiler-validation.json"
+    },
+    {
+      "variant": "14",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "above",
+        "summary": "after",
+        "navigation": "top",
+        "density": "compact"
+      },
+      "genomeHash": "7ff7506365cca6989e73c5ff86b830df253fc384859ed1249868adddef22720c",
+      "definitionHash": "9cb946195aa813e9e0b51c0ded1d5a65f1a948063c915deeafdf58db7b302ea3",
+      "compilerValid": true,
+      "evidence": "variant-14/compiler-validation.json"
+    },
+    {
+      "variant": "15",
+      "traits": {
+        "report": "classicReport",
+        "edit": "page",
+        "filters": "beside",
+        "summary": "after",
+        "navigation": "top",
+        "density": "compact"
+      },
+      "genomeHash": "cd5054b5ba09236bc820a959adb90eaefbbec1283bbbce917ab0473ab1f02472",
+      "definitionHash": "75f6c2cfe02c18de34df21f82ffec760eca39aec209ca6a462bb6d15effbb944",
+      "compilerValid": true,
+      "evidence": "variant-15/compiler-validation.json"
+    }
+  ]
+}

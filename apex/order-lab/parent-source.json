@@ -1,0 +1,35 @@
+{
+  "source": "apex/application",
+  "mmdVersion": "26.2.0+3479",
+  "files": [
+    {
+      "path": "apex/application/.apex/apexlang.json",
+      "sha256": "1e4d481e2b249e9579fb0e21ec7534b535573b7534e53ec8d8f7b204d841a101"
+    },
+    {
+      "path": "apex/application/application.apx",
+      "sha256": "d06c6ec13d5851f91257d2c0d490a8df331a651b18f10f32e4783f69e6d33b66"
+    },
+    {
+      "path": "apex/application/pages/p00000-global-page.apx",
+      "sha256": "00df156b213512f9c44abe57d9358324a2b043c891b94905065e8157d006f7ee"
+    },
+    {
+      "path": "apex/application/pages/p09999-login.apx",
+      "sha256": "1c79875130720f698a686b21f0c12486ca3e94021261b42d1301f1d46cdd363c"
+    },
+    {
+      "path": "apex/application/shared-components/authentications.apx",
+      "sha256": "4b525f3023225c4f91b53c58fabec81ef146d5dfabd1c677cb7c71866d179382"
+    },
+    {
+      "path": "apex/application/shared-components/lists/navigation-bar.apx",
+      "sha256": "c350bc4d66a69f6e4fe3f3ca6b7aaf03c45f26612be179479085cb9e533fb2ef"
+    },
+    {
+      "path": "apex/application/shared-components/themes/universal-theme/theme.apx",
+      "sha256": "d78b66cd4330e69c24ff87e0d68d722e497347a593ce719e3f52883b9c7af3d1"
+    }
+  ],
+  "parentSourceHash": "1455daa10ec48ff362ca60ccb3c956de2d4ff4c02f9c2c4778e20b352bc17943"
+}

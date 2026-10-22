@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://b2dev.tech/genesis/schemas/application-genome-2.0.json",
+  "title": "Genesis Order Lab application DNA 2.0",
+  "description": "Bounded Genesis traits. These properties are not APEXlang syntax. Compiler-verified template mappings are required before materialization.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "application", "dataSource", "tasks", "traits"],
+  "properties": {
+    "schemaVersion": {"const": "2.0"},
+    "application": {"const": "GENESIS_ORDER_LAB"},
+    "dataSource": {"const": "GENESIS_ORDERS_SAFE_V"},
+    "tasks": {"const": ["locateOrder", "filterOrders", "updateOrder"]},
+    "traits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report", "edit", "filters", "summary", "navigation", "density"],
+      "properties": {
+        "report": {"enum": ["classicReport", "interactiveReport"]},
+        "edit": {"enum": ["page", "modal"]},
+        "filters": {"enum": ["above", "beside"]},
+        "summary": {"enum": ["before", "after"]},
+        "navigation": {"enum": ["side", "top"]},
+        "density": {"enum": ["comfortable", "compact"]}
+      }
+    }
+  }
+}

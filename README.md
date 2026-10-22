@@ -14,7 +14,36 @@ and optional AI-guided mutation. By **Geraldo Viana Jr. / B2DEV TECH**.
 [5:47 demonstration](https://b2dev.tech/media/videos/apex-genesis/v0.1.0-alpha.1/apex-genesis-demo.mp4) ·
 [Installation](docs/installation/README.md) · [Recorded results](experiments/published-results/README.md)
 
-## What actually runs
+## Current 0.3 development status
+
+**The first genuine parent/descendant APEX application loop has completed.**
+Run `61baf73fb822430bb27310d22c0744e8` imported, authenticated, tested and scored
+two real Genesis Order Lab applications in the dedicated development sandbox.
+
+| Verified observation | Parent | Descendant |
+| --- | --- | --- |
+| APEX application ID | 133 | 130 (safely recycled owned slot) |
+| Structural change | Filters above the report | Filters beside the report |
+| Locate / filter / update tasks | All passed | All passed |
+| Accessibility, focus, responsiveness and security gates | Passed | Passed |
+| Independent database update and row-version checks | Passed | Passed |
+| Oracle task-proxy fitness | 89.675 | 89.675 |
+| Oracle selection | Retained | Rejected on the tie |
+
+Oracle generated the child, preserved its lineage and made the selection decision.
+Both definitions passed SQLcl validation and isolated import. Real Chromium
+interactions ran against their authenticated APEX pages at three viewport sizes.
+This is one seed and one advance: **no algorithmic superiority, AI benefit or human
+usability improvement is established**. Earlier failed attempts remain recorded.
+
+The proposed `v0.3.0-alpha.1` release is **not tagged or complete**. Application
+evolution is currently GA_ONLY; no new paid model calls were made. Native
+Create/Evolve/Watch controls, wider controlled trials, AI ledger integration,
+unattended application evolution, production replay, article and video remain
+separate acceptance gates. [Live engineering record](docs/testing/living-applications-progress.md)
+and [implementation plan](docs/superpowers/plans/2026-10-22-living-applications.md).
+
+## Historical interface experiment
 
 Oracle owns seeded initialization, parent selection, crossover, mutation, elitism,
 diversity monitoring, immutable genomes, lineage, evaluation leases and generation
@@ -31,6 +60,23 @@ The separate original offline pilot remains archived. AI is **disabled by defaul
 on installation. [Full comparison](experiments/published-results/HAIKU.md) |
 [Release limits](docs/releases/v0.1.0-alpha.1.md) |
 [Claude operational handoff](docs/operations/CLAUDE_HANDOFF.md).
+
+## Living Applications (in development)
+
+The 0.3 extension adds bounded application DNA, trusted Order Lab APEXlang
+templates, an explicitly allowlisted materialization sandbox, real browser tasks
+and a separate Oracle fitness definition. SQLcl 26.3 has validated all sixteen
+currently supported report/form layout combinations. The real two-application
+loop above additionally verifies import, runtime and fixed-task execution.
+
+Run `npm run serve` and open `/living.html` for the evidence-driven exhibition.
+It remains empty until a genuine application evidence manifest is supplied.
+The existing interface and continuous-evolution archives retain their own scores
+and provenance. [Application design](docs/architecture/living-applications.md),
+[Order Lab setup](docs/installation/order-lab-fixture.md),
+[task-proxy definition](docs/research/application-fitness-v2.md), and
+[public evidence format](docs/installation/living-evidence.md) describe the new
+boundaries. Paid application evolution and unattended materialization are disabled.
 
 ## A database-owned evolutionary loop
 

@@ -1,0 +1,33 @@
+{
+  "protocol": "order-lab-materialization-feasibility/1.0",
+  "status": "registered before the first materialization run",
+  "purpose": "Verify genuine APEX import, runtime, three fixed tasks and Oracle selection. This is not a comparison of search algorithms.",
+  "experimentType": "APEX_APPLICATION",
+  "mode": "GA_ONLY",
+  "seed": 50000,
+  "genomeSchemaVersion": "2.0",
+  "fitnessDefinition": "order-lab-task-proxy/2.0.0",
+  "fitnessProtocol": "application-fitness-2.0",
+  "fixtureVersion": "order-lab/1.0",
+  "generationZero": "Fixed baseline application",
+  "advances": 1,
+  "variation": "One Oracle-owned binary trait mutation of the surviving baseline",
+  "selection": "An eligible challenger survives only if its measured Oracle score strictly exceeds the incumbent. Ties retain the incumbent.",
+  "candidateBudget": 2,
+  "materializationBudget": 2,
+  "automaticImportRetries": 0,
+  "paidRequests": 0,
+  "taskOrder": ["locateOrder", "filterOrders", "updateOrder"],
+  "taskTargetOrder": 1002,
+  "taskFilterStatus": "DELAYED",
+  "taskUpdateStatus": "SHIPPED",
+  "viewports": [{"width":390,"height":1000},{"width":768,"height":1000},{"width":1440,"height":1000}],
+  "performance": "Median of three warm authenticated page loads with equivalent reset fixtures",
+  "limitations": [
+    "One seed and one advance cannot establish evolutionary or AI superiority.",
+    "Automated task effort and timing are engineering proxies, not a human usability study.",
+    "Only compiler-verified classic-report and separate-page edit mappings may be imported.",
+    "A failed import consumes its reservation and cannot be retried for the same organism.",
+    "Source, evaluator, fixtures and compiler fingerprints must be retained with every outcome."
+  ]
+}

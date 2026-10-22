@@ -3,6 +3,10 @@
 *.apx text eol=lf
 *.mjs text eol=lf
 *.css text eol=lf
+*.html text eol=lf
 *.md text eol=lf
 *.json text eol=lf
 *.png binary
+# Preserve compiler output bytes and generated source formatting for hash checks.
+apex/order-lab/evidence/** -text -whitespace
+apex/order-lab/template/** whitespace=-blank-at-eof

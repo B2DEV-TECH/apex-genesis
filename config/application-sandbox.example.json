@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0",
+  "enabled": false,
+  "environment": "development",
+  "schema": "GENESIS_ORDER_LAB",
+  "workspace": "GENESIS_ORDER_LAB",
+  "workspaceId": 0,
+  "applicationIds": [],
+  "protectedApplicationIds": [120, 121],
+  "fixtureWritesAuthorized": false,
+  "maxConcurrentImports": 1,
+  "maxMaterializationsPerRun": 22
+}

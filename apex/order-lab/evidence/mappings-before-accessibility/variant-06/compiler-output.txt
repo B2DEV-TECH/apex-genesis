@@ -1,0 +1,41 @@
+
+APEXlang Compile Warnings:
+File: application.apx
+Line: 18
+Column: 8
+Type: INVALID_LOV
+Warning: Invalid template option value : navigationMenu - templateOptions (STRING) : js-defaultCollapsed
+Valid values are : 
+js-tabLike
+-js-menu-callout
+-js-addActions
+-js-showSubMenuIcons
+-#DEFAULT#
+
+File: application.apx
+Line: 18
+Column: 8
+Type: INVALID_LOV
+Warning: Invalid template option value : navigationMenu - templateOptions (STRING) : js-navCollapsed--hidden
+Valid values are : 
+js-tabLike
+-js-menu-callout
+-js-addActions
+-js-showSubMenuIcons
+-#DEFAULT#
+
+File: application.apx
+Line: 18
+Column: 8
+Type: INVALID_LOV
+Warning: Invalid template option value : navigationMenu - templateOptions (STRING) : t-TreeNav--styleA
+Valid values are : 
+js-tabLike
+-js-menu-callout
+-js-addActions
+-js-showSubMenuIcons
+-#DEFAULT#
+
+
+Validation successful.
+
