@@ -3,7 +3,7 @@ import {loadLivingEvidence} from './living-evidence.mjs';
 const $=selector=>document.querySelector(selector);
 const names={generated:'Generated',validated:'Validated',imported:'Imported','runtime-verified':'Runtime verified',verified:'Tasks verified',ineligible:'Ineligible',rejected:'Rejected','validation-failed':'Validation failed','import-failed':'Import failed','runtime-failed':'Runtime failed','task-failed':'Task failed',ambiguous:'Ambiguous'};
 let evidence=null,run=[],generations=[],position=0,timer=null;
-function element(tag,text,className){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(className)node.className=className;return node;}
+function element(tag,text,className){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(className)node.className=className;if(tag==='pre'){node.tabIndex=0;node.setAttribute('role','region');node.setAttribute('aria-label','Recorded candidate evidence');}return node;}
 function pause(){if(timer!==null)clearInterval(timer);timer=null;$('#play').textContent='Play';$('#play').setAttribute('aria-label','Play recorded generations');}
 function play(){pause();if(generations.length<2)return;if(position===generations.length-1)position=0;renderComparison();$('#play').textContent='Pause';$('#play').setAttribute('aria-label','Pause recorded generations');timer=setInterval(()=>{if(position>=generations.length-1){pause();return;}position++;renderComparison();},1800/Number($('#speed').value));}
 function dataImage(screenshot){let binary='';for(let i=0;i<screenshot.bytes.length;i+=8192)binary+=String.fromCharCode(...screenshot.bytes.subarray(i,i+8192));return 'data:'+screenshot.mimeType+';base64,'+btoa(binary);}

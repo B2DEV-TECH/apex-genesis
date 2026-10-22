@@ -1,0 +1,72 @@
+{
+  "formatVersion": "1.0",
+  "status": "compiler_rejected",
+  "compilerValid": false,
+  "runtimeVerified": false,
+  "connected": false,
+  "definitionHash": "816f29334c1dc82d670ac5d5b29193831434233d5c33a8dc5518657cc457ff03",
+  "files": [
+    {
+      "path": ".apex/apexlang.json",
+      "sha256": "1e4d481e2b249e9579fb0e21ec7534b535573b7534e53ec8d8f7b204d841a101"
+    },
+    {
+      "path": "application.apx",
+      "sha256": "c7b7a22346d9f0c14882b9937e9351658ffb3e629f417dbf50d8f6374192f7ee"
+    },
+    {
+      "path": "deployments/default.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "pages/p00000-global-page.apx",
+      "sha256": "00df156b213512f9c44abe57d9358324a2b043c891b94905065e8157d006f7ee"
+    },
+    {
+      "path": "pages/p00001-orders.apx",
+      "sha256": "43c39c8d97114707c3999c0014a95805f322639a3616ad1c8ec3ee4b12897346"
+    },
+    {
+      "path": "pages/p00002-edit-order.apx",
+      "sha256": "9c616e53075407fa3941fae263b7a0ba7f2e83165a2648f4fe0d9def64c6ef9f"
+    },
+    {
+      "path": "pages/p09999-login.apx",
+      "sha256": "296920a7b66213b228e3a7e35e46647bfee19f193e5d3ea3cf9c6c95153d527a"
+    },
+    {
+      "path": "shared-components/authentications.apx",
+      "sha256": "4b525f3023225c4f91b53c58fabec81ef146d5dfabd1c677cb7c71866d179382"
+    },
+    {
+      "path": "shared-components/lists/navigation-bar.apx",
+      "sha256": "28855cec6e6b434d7f8497d4e0609497641c019392aeb76705c08089d57b765c"
+    },
+    {
+      "path": "shared-components/lists/navigation-menu.apx",
+      "sha256": "01981e1642d9ba9263d535a5aaa31557c7b7c9ee2678fb67e7bb7d3d6cd87351"
+    },
+    {
+      "path": "shared-components/static-files.apx",
+      "sha256": "6024a74143b05fbff2c4d6a2cec76aea5bc08d152b76d6cbc873d8a1c35b8d19"
+    },
+    {
+      "path": "shared-components/static-files/order-lab.css",
+      "sha256": "17e0d96a7f5c16c37c6a933ec2b8431de19a10c681ea1381cf8041585f8482e3"
+    },
+    {
+      "path": "shared-components/themes/universal-theme/theme.apx",
+      "sha256": "d78b66cd4330e69c24ff87e0d68d722e497347a593ce719e3f52883b9c7af3d1"
+    }
+  ],
+  "compiler": {
+    "version": "SQLcl: Release 26.3.0.0 Production Build: 26.3.0.260.1620",
+    "executable": "C:\\sqlcl\\bin\\sql.exe",
+    "executableSha256": "1a0fe799c0f0cf17f7f5767e49b6250f903ac6d7c69b6c70ef966e518684fc07",
+    "compilerJarSha256": "8be7e04267ea5744e1fce51f4f5e7dd88f101eb5cd21025a5d66239ac362b7b0",
+    "exitCode": 0,
+    "error": null
+  },
+  "observedAt": "2026-10-22T14:39:03.318Z",
+  "outputSha256": "c06f6b9b5982571aeae52bb11f67b68f460f564dc588ce40cd3841752b908ee6"
+}

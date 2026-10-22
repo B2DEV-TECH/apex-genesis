@@ -1,0 +1,120 @@
+{
+  "formatVersion": "1.0",
+  "kind": "apexlang-application-definition",
+  "application": "GENESIS_ORDER_LAB",
+  "genome": {
+    "schemaVersion": "2.0",
+    "application": "GENESIS_ORDER_LAB",
+    "dataSource": "GENESIS_ORDERS_SAFE_V",
+    "tasks": [
+      "locateOrder",
+      "filterOrders",
+      "updateOrder"
+    ],
+    "traits": {
+      "report": "classicReport",
+      "edit": "page",
+      "filters": "above",
+      "summary": "before",
+      "navigation": "side",
+      "density": "comfortable"
+    }
+  },
+  "genomeHash": "6df8f3e711099b4f51f463e192638683d59d629a096578d22ec15b556a634853",
+  "definitionHash": "a3fcadef1911fd2c00aeff8109b2a924a5ae533640b56a7cb5a18aebe415bfae",
+  "parentDefinitionHash": null,
+  "parentSourceHash": "1455daa10ec48ff362ca60ccb3c956de2d4ff4c02f9c2c4778e20b352bc17943",
+  "parentSource": {
+    "source": "apex/application",
+    "mmdVersion": "26.2.0+3479",
+    "files": [
+      {
+        "path": "apex/application/.apex/apexlang.json",
+        "sha256": "1e4d481e2b249e9579fb0e21ec7534b535573b7534e53ec8d8f7b204d841a101"
+      },
+      {
+        "path": "apex/application/application.apx",
+        "sha256": "d06c6ec13d5851f91257d2c0d490a8df331a651b18f10f32e4783f69e6d33b66"
+      },
+      {
+        "path": "apex/application/pages/p00000-global-page.apx",
+        "sha256": "00df156b213512f9c44abe57d9358324a2b043c891b94905065e8157d006f7ee"
+      },
+      {
+        "path": "apex/application/pages/p09999-login.apx",
+        "sha256": "1c79875130720f698a686b21f0c12486ca3e94021261b42d1301f1d46cdd363c"
+      },
+      {
+        "path": "apex/application/shared-components/authentications.apx",
+        "sha256": "4b525f3023225c4f91b53c58fabec81ef146d5dfabd1c677cb7c71866d179382"
+      },
+      {
+        "path": "apex/application/shared-components/lists/navigation-bar.apx",
+        "sha256": "c350bc4d66a69f6e4fe3f3ca6b7aaf03c45f26612be179479085cb9e533fb2ef"
+      },
+      {
+        "path": "apex/application/shared-components/themes/universal-theme/theme.apx",
+        "sha256": "d78b66cd4330e69c24ff87e0d68d722e497347a593ce719e3f52883b9c7af3d1"
+      }
+    ],
+    "parentSourceHash": "1455daa10ec48ff362ca60ccb3c956de2d4ff4c02f9c2c4778e20b352bc17943"
+  },
+  "mmdVersion": "26.2.0+3479",
+  "compilerValidated": false,
+  "runtimeVerified": false,
+  "fixtureRequired": true,
+  "files": [
+    {
+      "path": ".apex/apexlang.json",
+      "sha256": "1e4d481e2b249e9579fb0e21ec7534b535573b7534e53ec8d8f7b204d841a101"
+    },
+    {
+      "path": "application.apx",
+      "sha256": "c7b7a22346d9f0c14882b9937e9351658ffb3e629f417dbf50d8f6374192f7ee"
+    },
+    {
+      "path": "deployments/default.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "pages/p00000-global-page.apx",
+      "sha256": "00df156b213512f9c44abe57d9358324a2b043c891b94905065e8157d006f7ee"
+    },
+    {
+      "path": "pages/p00001-orders.apx",
+      "sha256": "7c8ff5dedc9eaf547f194bc223f096fb5acb593b62373d98b9de348aba0c7adb"
+    },
+    {
+      "path": "pages/p00002-edit-order.apx",
+      "sha256": "9c616e53075407fa3941fae263b7a0ba7f2e83165a2648f4fe0d9def64c6ef9f"
+    },
+    {
+      "path": "pages/p09999-login.apx",
+      "sha256": "296920a7b66213b228e3a7e35e46647bfee19f193e5d3ea3cf9c6c95153d527a"
+    },
+    {
+      "path": "shared-components/authentications.apx",
+      "sha256": "4b525f3023225c4f91b53c58fabec81ef146d5dfabd1c677cb7c71866d179382"
+    },
+    {
+      "path": "shared-components/lists/navigation-bar.apx",
+      "sha256": "28855cec6e6b434d7f8497d4e0609497641c019392aeb76705c08089d57b765c"
+    },
+    {
+      "path": "shared-components/lists/navigation-menu.apx",
+      "sha256": "01981e1642d9ba9263d535a5aaa31557c7b7c9ee2678fb67e7bb7d3d6cd87351"
+    },
+    {
+      "path": "shared-components/static-files.apx",
+      "sha256": "6024a74143b05fbff2c4d6a2cec76aea5bc08d152b76d6cbc873d8a1c35b8d19"
+    },
+    {
+      "path": "shared-components/static-files/order-lab.css",
+      "sha256": "17e0d96a7f5c16c37c6a933ec2b8431de19a10c681ea1381cf8041585f8482e3"
+    },
+    {
+      "path": "shared-components/themes/universal-theme/theme.apx",
+      "sha256": "d78b66cd4330e69c24ff87e0d68d722e497347a593ce719e3f52883b9c7af3d1"
+    }
+  ]
+}

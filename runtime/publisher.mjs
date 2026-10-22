@@ -164,17 +164,19 @@ function spawnText(command,args,{cwd,timeoutMs=120000}={}){
 export function r2Target(cfg){
  const p=cfg.publication;const wrangler=resolve(ROOT,p.wrangler),cwd=resolve(ROOT,p.wranglerCwd);
  return {name:'R2',
-  async put(key,file){await spawnText(process.execPath,[wrangler,'r2','object','put',p.bucket+'/'+key,'--file',file,'--content-type','application/json','--remote'],{cwd});},
-  async get(key){
+  async put(key,file,{contentType='application/json'}={}){await spawnText(process.execPath,[wrangler,'r2','object','put',p.bucket+'/'+key,'--file',file,'--content-type',contentType,'--remote'],{cwd});},
+  async getBytes(key){
    const response=await fetch(p.publicBase+key+'?v='+Date.now(),{cache:'no-store',headers:{'cache-control':'no-cache'},signal:AbortSignal.timeout(30000)});
-   if(!response.ok)throw new Error('Public read returned HTTP '+response.status);
-   return Buffer.from(await response.arrayBuffer()).toString('utf8');
-  }};
+   if(!response.ok){const error=new Error('Public read returned HTTP '+response.status);error.status=response.status;throw error;}
+   return Buffer.from(await response.arrayBuffer());
+  },
+  async get(key){return (await this.getBytes(key)).toString('utf8');}};
 }
 export function directoryTarget(dir){
  return {name:'DIRECTORY',
   async put(key,file){const dest=join(dir,key);await mkdir(dirname(dest),{recursive:true});const tmp=dest+'.'+process.pid+'.tmp';await copyFile(file,tmp);await rename(tmp,dest);},
-  async get(key){return readFile(join(dir,key),'utf8');}};
+  async getBytes(key){return readFile(join(dir,key));},
+  async get(key){return (await this.getBytes(key)).toString('utf8');}};
 }
 export function resolveTarget(cfg,label){
  // Verification data (TEST labels) can never reach the public bucket.

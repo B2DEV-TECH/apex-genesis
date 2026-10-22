@@ -1,5 +1,38 @@
 # Living Applications evidence packaging
 
+## Publish through the existing R2 transport
+
+`scripts/application/publish-evidence.mjs` reuses `runtime/publisher.mjs` and the
+existing B2DEV media bucket. Its independent `genesis/living/v1/` namespace leaves
+the continuous archive's `genesis/live/v1/latest.json` untouched.
+
+The publisher validates a completed public package with the exhibition loader,
+rejects orphan files and private-capable image metadata, and uploads only those
+verified bytes. Objects live under `packages/<manifest-sha256>/`. Existing objects
+must match; they are never overwritten with different bytes. Every upload is read
+back from the public endpoint and hashed. The package manifest is uploaded after
+its files, and the application `latest.json` pointer moves last. A failed pointer
+verification restores the previous pointer only while the current value remains
+the publisher's own value. Receipts stay in a fresh private working directory.
+
+Use the existing publication configuration with an explicit absolute
+`publication.applicationLockPath` shared by every application publisher. It also
+contains `target`, `bucket`, `publicBase`, `wrangler` and `wranglerCwd`, using the
+same fields as the current transport. A `DIRECTORY` target exercises the complete
+flow locally without uploading anything.
+
+```powershell
+node scripts/application/publish-evidence.mjs <verified-package> <local-publication-config.json> <new-private-work-directory>
+```
+
+This is a single-publisher workflow. The current Wrangler object transport does
+not offer atomic conditional pointer writes. A shared local lease and conflict
+checks protect this workstation; distributed writers are unsupported. A failed
+first pointer has no previous value to restore. The website therefore pins an
+immutable manifest hash rather than automatically following the mutable pointer.
+No retry, background publication or old supervisor change is enabled by this
+command.
+
 The public exhibition reads an independent, versioned application dataset. It does
 not read Oracle, launch applications, start experiments or reuse the historical
 dashboard scores. No application dataset or illustrative result is bundled with
@@ -171,7 +204,7 @@ import evidence without a fabricated runtime observation or screenshot. Historic
 exhibition files stay untouched.
 
 A deployed copy may pin an actual immutable package without a query string by
-adding `meta[name="genesis-evidence-manifest"]` with its safe relative manifest
+adding `meta[name="genesis-evidence-manifest"]` with its safe same-origin manifest
 path and `meta[name="genesis-evidence-manifest-sha256"]` with the package’s exact
 `manifestSha256`. The source HTML intentionally contains neither setting. When
 `?dataset=` is present it explicitly overrides the default path; its optional
@@ -200,3 +233,69 @@ The browser check uses existing Edge on Windows and Playwright Chromium elsewher
 `APXGEN_BROWSER_CHANNEL` can select an already-installed browser channel. It writes
 no application evidence or screenshots. Packaging and preview alone do not establish
 that an application is deployed or that a cohort or release has completed.
+
+## Stage an actual smoke run
+
+`stage-smoke-evidence.mjs` converts one original private `run-evidence.json` into
+sanitized input for the packager. It requires the application worker configuration
+with exactly `oracleConfigPath`, `sandboxPolicyPath` and `sqlclPath`; relative
+configuration paths resolve beside that file. Supply the configuration explicitly
+or through `APXGEN_APPLICATION_CONFIG`. There is no historical LAB fallback.
+
+```powershell
+node scripts/application/stage-smoke-evidence.mjs .local/order-lab/runs/<real-run-id>/run-evidence.json .local/order-lab/staging/<new-staging-directory> .local/order-lab/worker.json
+node scripts/application/package-evidence.mjs .local/order-lab/staging/<new-staging-directory>/input .local/order-lab/staging/<new-staging-directory>/request.json .local/order-lab/public-evidence/<new-package-directory>
+node tests/browser/living.mjs .local/order-lab/public-evidence/<new-package-directory>
+```
+
+The API is `stageSmokeEvidence({runEvidencePath, outputRoot, configPath})`. It returns
+`{request, inputRoot, requestPath, runId, candidates, files}`, where `request` contains
+exactly the packager's `candidates`, `sourceHash` and `evaluatorHash`. The optional
+`packageSmokeEvidence({...options, outputDir})` also invokes the ordinary packager.
+Both output directories must be new. Nothing uploads or publishes in these steps.
+
+The adapter opens an explicit Oracle read-only transaction, verifies the authorized
+schema/workspace mapping, and reads the finished run's immutable candidate decisions,
+phase events and import-attempt ledger. Every local candidate must match its canonical
+Oracle genome, lineage, definition identity, allocated application and cached decision.
+Cached metrics, events and import attempts must agree when present. It never starts
+an APEX session, invokes a worker, resets fixtures or changes a run. Credentials and
+private account names are consumed only for reconciliation and excluded from output.
+
+Validation needs the original compiler output, matching source hashes and the actual
+`VALIDATED` event. Import needs the guarded import result, its compiler binding,
+verified metadata, one verified durable attempt and the actual `IMPORTED` event.
+Runtime needs actual authentication, anonymous-access blocking and `RUNTIME_VERIFIED`.
+Task counters and completion times come from recorded browser tasks and agree with
+stored Oracle metrics. Fitness is emitted only with an actual `EVALUATED` event.
+The zero defaults recorded by `reject()` for an incomplete run remain an unscored
+rejection. An imported application that fails before runtime therefore retains its
+real application ID and import evidence, with null runtime, tasks and fitness.
+
+The source hash is SHA-256 of compact JSON of the full recorded `{path, sha256}` list,
+sorted by path. The evaluator hash is SHA-256 of compact JSON with keys `sources`,
+`protocolHash`, `browserVersion`, in that order. `sources` is the sorted recorded
+subset for `run-smoke.mjs`, `runtime/application/tasks.mjs`,
+`database/packages/apxgen_app_fitness.sql`, the feasibility configuration, and the
+recorded Order Lab fixture package/migration when present. The first four are required;
+the configuration hash must equal the recorded protocol hash. Current checkout bytes
+never replace historical recorded hashes. Runs with different source identities are
+packaged separately.
+
+Every original definition file must still match its private definition manifest and
+definition hash. The public artifact is a sanitized source bundle containing the
+original `.apx` and `.css` bytes. Private compiler/deployment configuration and logs
+are omitted; this bundle is not a complete reproducible compiler project. Its public
+artifact hash binds the bundle index, independently from the private definition hash.
+
+Only original PNGs explicitly recorded as a Playwright viewport clip below the
+account header are copied. Their SHA-256 and pixel dimensions must match the recorded
+clip; the adapter does not edit pixels. Older body-region captures without this proof
+are omitted. A selected candidate without safe captures is refused, while an
+unselected outcome can remain in the ledger without images. `TEST` and synthetic runs
+are refused before database access or staging output. The unit tests use clearly marked
+in-memory synthetic input and cannot publish it.
+
+```powershell
+node --test tests/unit/application-stage-evidence.test.mjs tests/unit/living-evidence.test.mjs tests/unit/application-publication.test.mjs
+```

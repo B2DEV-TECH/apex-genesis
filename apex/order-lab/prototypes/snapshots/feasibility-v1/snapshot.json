@@ -1,0 +1,22 @@
+{
+  "kind": "immutable-successful-source-snapshot",
+  "sourceRun": "61baf73fb822430bb27310d22c0744e8",
+  "sourceOrganism": "ef731773b1124b1a870ebcc00c28a0ca",
+  "definitionHash": "a3fcadef1911fd2c00aeff8109b2a924a5ae533640b56a7cb5a18aebe415bfae",
+  "preservedSourceReferences": [
+    {
+      "path": "apex/order-lab/evidence/mappings/index.json",
+      "sha256": "a0f46eacab77452d1072cb44814e13107612ff273b83364cde481ee9cdc720aa"
+    },
+    {
+      "path": "scripts/application/build-definition.mjs",
+      "sha256": "5798893df0aae41413db054d76f79c350f263c6e63897ab9d1d3b1c5cebcb823"
+    },
+    {
+      "path": "scripts/application/validate-definition.mjs",
+      "sha256": "a7309e42f1d2cd26b467df930aeb2a83754fb9b40eaae9f7854f142900fb6e6b"
+    }
+  ],
+  "prototypeImports": 0,
+  "prototypeRuntimeVerified": false
+}

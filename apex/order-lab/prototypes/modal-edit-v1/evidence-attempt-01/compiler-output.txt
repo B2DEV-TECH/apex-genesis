@@ -1,0 +1,17 @@
+
+APEXlang Compile Warnings:
+File: pages/p00002-edit-order.apx
+Line: 25
+Column: 12
+Type: INVALID_LOV
+Warning: Invalid Slot value: layout - slot (STRING) : body
+Valid values are : 
+dialogHeader
+-dialogFooter
+-contentBody
+-afterHeader
+-beforeFooter
+
+
+Validation successful.
+

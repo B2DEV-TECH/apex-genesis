@@ -131,9 +131,11 @@ function statusOf(candidate){
 }
 
 export async function loadLivingEvidence(manifestPath,{baseUrl=globalThis.location?.href,fetcher=globalThis.fetch,allowTestFixtures=false,expectedManifestSha256}={}){
- safeLivingPath(manifestPath);requireValue(manifestPath.endsWith('.json'),'Manifest evidence path must be JSON');
+ // Only the manifest may be root-relative, so an exhibition under /genesis/
+ // can consume the existing same-origin /media/ publication transport.
+ safeLivingPath(typeof manifestPath==='string'&&manifestPath.startsWith('/')?manifestPath.slice(1):manifestPath);requireValue(manifestPath.endsWith('.json'),'Manifest evidence path must be JSON');
  if(expectedManifestSha256!==undefined)hash(expectedManifestSha256,'expected manifest');
- const manifestUrl=new URL(manifestPath,baseUrl);requireValue(['https:','http:'].includes(manifestUrl.protocol),'Unsupported evidence origin');
+ const manifestUrl=new URL(manifestPath,baseUrl);requireValue(['https:','http:'].includes(manifestUrl.protocol)&&manifestUrl.origin===new URL(baseUrl).origin,'Unsupported evidence origin');
  const root=new URL('.',manifestUrl);
  async function responseBytes(url,limit){
   const response=await fetcher(url,{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(20000)});requireValue(response.ok,'Evidence file is unavailable');

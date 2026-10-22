@@ -34,6 +34,11 @@ function fixture(){
 }
 const load=(f,extra={})=>loadLivingEvidence('fixture/manifest.json',{baseUrl:'https://example.test/living.html',fetcher:f.fetcher,allowTestFixtures:true,...extra});
 
+test('a nested exhibition can read a root-relative manifest on its own origin',async()=>{
+ const f=fixture(),result=await loadLivingEvidence('/fixture/manifest.json',{baseUrl:'https://example.test/genesis/living.html',fetcher:f.fetcher,allowTestFixtures:true});assert.equal(result.candidates.length,1);
+ for(const path of ['//other.test/fixture/manifest.json','/../fixture/manifest.json','/fixture//manifest.json'])await assert.rejects(loadLivingEvidence(path,{baseUrl:'https://example.test/genesis/living.html',fetcher:f.fetcher,allowTestFixtures:true}),/path|origin/i);
+});
+
 test('Living Applications rejects TEST evidence in the public loader',async()=>{
  const f=fixture();await assert.rejects(load(f,{allowTestFixtures:false}),/TEST|test fixture/i);
  f.manifest.testOnly=false;await assert.rejects(load(f,{allowTestFixtures:false}),/TEST|test fixture/i);

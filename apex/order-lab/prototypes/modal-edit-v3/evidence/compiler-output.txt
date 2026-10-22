@@ -1,0 +1,10 @@
+
+APEXlang Compile Errors:
+File: pages/p00002-edit-order.apx
+Line: 187
+Column: 16
+Type: INVALID_PROPERTY
+Error: Invalid property: event
+
+
+

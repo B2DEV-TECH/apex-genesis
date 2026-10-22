@@ -39,9 +39,17 @@ usability improvement is established**. Earlier failed attempts remain recorded.
 The proposed `v0.3.0-alpha.1` release is **not tagged or complete**. Application
 evolution is currently GA_ONLY; no new paid model calls were made. Native
 Create/Evolve/Watch controls, wider controlled trials, AI ledger integration,
-unattended application evolution, production replay, article and video remain
+unattended application evolution, article and video remain
 separate acceptance gates. [Live engineering record](docs/testing/living-applications-progress.md)
 and [implementation plan](docs/superpowers/plans/2026-10-22-living-applications.md).
+
+**[Watch the genuine application replay](https://b2dev.tech/genesis/living).**
+The deployed exhibition passed 22 real browser checks, including its pinned
+evidence hashes, both applications, playback, three viewports, accessibility,
+historical links and zero browser errors. The immutable R2 package contains
+49 verified objects. Progress is reviewable in [draft PR #8](https://github.com/B2DEV-TECH/apex-genesis/pull/8).
+[Recorded feasibility results and source fingerprints](experiments/published-results/living-feasibility/README.md)
+are available independently of the replay.
 
 ## Historical interface experiment
 
@@ -71,12 +79,17 @@ loop above additionally verifies import, runtime and fixed-task execution.
 
 Run `npm run serve` and open `/living.html` for the evidence-driven exhibition.
 It remains empty until a genuine application evidence manifest is supplied.
+The deployed B2DEV copy pins the verified feasibility package above.
 The existing interface and continuous-evolution archives retain their own scores
 and provenance. [Application design](docs/architecture/living-applications.md),
 [Order Lab setup](docs/installation/order-lab-fixture.md),
 [task-proxy definition](docs/research/application-fitness-v2.md), and
 [public evidence format](docs/installation/living-evidence.md) describe the new
 boundaries. Paid application evolution and unattended materialization are disabled.
+
+Separate [compiler-only prototypes](apex/order-lab/prototypes/README.md) validate
+interactive reports, modal editing and corrected top navigation without warnings.
+They have not been imported or enabled in the production builder.
 
 ## A database-owned evolutionary loop
 

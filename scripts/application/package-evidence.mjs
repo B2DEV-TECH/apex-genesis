@@ -21,7 +21,7 @@ function publicationPath(path){
 
 // Screenshots retain their original bytes. Reject metadata that could silently
 // carry private browser or machine context; never rewrite experimental evidence.
-function assertImageMetadataSafe(bytes,path){
+export function assertImageMetadataSafe(bytes,path){
  if(path.endsWith('.png')){
   check(bytes.length>=33&&bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])),'Malformed screenshot PNG');let offset=8,ended=false,hasPixels=false;
   while(offset+12<=bytes.length){const length=bytes.readUInt32BE(offset),type=bytes.toString('ascii',offset+4,offset+8);check(offset+length+12<=bytes.length,'Malformed screenshot PNG chunk');check(!['tEXt','zTXt','iTXt','eXIf'].includes(type),'Screenshot contains private-capable metadata; supply a clean recorded capture');if(type==='IDAT')hasPixels=true;offset+=length+12;if(type==='IEND'){check(length===0&&offset===bytes.length,'Screenshot has trailing private-capable data');ended=true;break;}}

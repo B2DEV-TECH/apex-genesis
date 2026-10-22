@@ -63,6 +63,34 @@ received the same score and was rejected under the preregistered strict-improvem
 tie policy. The run consumed two of two materializations and completed generation 1.
 Paid requests: zero. This one-seed feasibility test is not an algorithm comparison.
 
+## Public evidence and production replay
+
+The genuine two-candidate package is published through the existing B2DEV R2
+transport: 49 objects, each verified by public readback. Immutable manifest SHA256:
+`80f6c970568ee4683afe3d48b2dcf8af1066b752ff642d4ebd9242cfe5c659ac`.
+The page pins this hash and shows the eligible, rejected child alongside its parent.
+The publication commit passed all 85 tracked unit tests and three separate
+compiler-prototype integrity tests. Source and Git history credential checks passed.
+
+The [production exhibition](https://b2dev.tech/genesis/living) passed 22 real Edge
+browser checks without response interception: both actual application identities,
+89.675 tie and Oracle selection, real screenshots at 390/768/1,440 pixels,
+play/pause/step/speed, axe audits at all widths, both historical exhibition links,
+and zero browser, console or network errors. Source:
+[`tests/browser/living-deployed.mjs`](../../tests/browser/living-deployed.mjs).
+
+The website's type checks, worker checks, lint and 46 tests passed. Its static
+build used the documented Webpack CLI option because Turbopack rejects this
+worktree's external dependency junction. A production favicon 404 was fixed by
+referencing the site's existing icon, then the strict browser check passed.
+Website commits: `5b812fe` and `cee7924`; deployed Worker version:
+`d88585fb-52b2-49bf-a91a-1f0ef2fe8ef8`.
+
+Both historical website datasets were independently reverified: 1,015 pilot files
+and 1,520 Haiku files. The original supervisor remains RUNNING with its original
+lease, process and GA_ONLY configuration; application evolution has not changed
+its scheduling or historical ledger.
+
 ## Remaining acceptance gates
 
 The top-navigation compiler variants report template-option warnings despite
@@ -72,6 +100,6 @@ expose these warnings for review before broader trials.
 
 Broader controlled experiments,
 native Create/Evolve/Watch controls, safe slot recycling, autonomous integration,
-freshly authorized AI integration with the original ledger, production exhibition,
+freshly authorized AI integration with the original ledger,
 paired research, article and video require their own evidence. No release tag has
 been assigned. No paid model request has been made by the new mode.

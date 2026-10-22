@@ -1,0 +1,150 @@
+page 2 (
+    name: Edit order
+    alias: EDIT-ORDER
+    title: Edit order | Genesis Order Lab
+    appearance {
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    region order-details (
+        name: Order details
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+            columnSpan: 12
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P2_ORDER_ID (
+        type: hidden
+        layout {
+            sequence: 1
+            region: @order-details
+            slot: regionBody
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P2_CUSTOMER_NAME (
+        type: displayOnly
+        label {
+            label: Customer
+        }
+        layout {
+            sequence: 10
+            region: @order-details
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P2_STATUS (
+        type: selectList
+        label {
+            label: Status
+        }
+        layout {
+            sequence: 20
+            region: @order-details
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: staticValues
+            staticValues: ```
+STATIC:New;NEW,Processing;PROCESSING,Delayed;DELAYED,Shipped;SHIPPED,Completed;COMPLETED
+```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        validation {
+            valueRequired: true
+        }
+    )
+    button save-order (
+        buttonName: SAVE_ORDER
+        label: Save status
+        layout {
+            sequence: 30
+            region: @order-details
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+        }
+    )
+    button return-to-orders (
+        buttonName: RETURN_TO_ORDERS
+        label: Back to orders
+        layout {
+            sequence: 40
+            region: @order-details
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 1
+            }
+        }
+    )
+    process load-order (
+        name: Load order
+        type: executeCode
+        advanced {
+            executionMappingIdentifier: 9100001
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        source {
+            plsqlCode: ```plsql
+select customer_name, status into :P2_CUSTOMER_NAME, :P2_STATUS
+  from GENESIS_ORDERS_SAFE_V
+ where order_id = to_number(:P2_ORDER_ID);
+```
+        }
+    )
+    process save-order (
+        name: Save order status
+        type: executeCode
+        advanced {
+            executionMappingIdentifier: 9100002
+        }
+        execution {
+            sequence: 10
+            point: processing
+        }
+        source {
+            plsqlCode: ```plsql
+if :REQUEST = 'SAVE_ORDER' then
+    genesis_order_lab.update_status(p_order_id => to_number(:P2_ORDER_ID), p_status => :P2_STATUS);
+end if;
+```
+        }
+    )
+)

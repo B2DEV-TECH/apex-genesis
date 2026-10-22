@@ -1,0 +1,14 @@
+list navigation-menu (
+    name: Navigation Menu
+    entry orders (
+        label: Orders
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 1
+            }
+        }
+    )
+)

@@ -2,6 +2,12 @@
 
 ## Unreleased — Living Applications
 
+- Publish the genuine two-application feasibility replay through the existing R2
+  transport, with an immutable root hash and 22 passing production browser checks.
+- Add read-only Oracle evidence reconciliation, referenced-file publication,
+  binary hash verification, isolated pointer handling and public provenance.
+- Preserve compiler-only interactive-report, modal-edit and clean top-navigation
+  prototypes; these capabilities remain outside the imported production builder.
 - Separate application genome 2.0 with six bounded structural/presentation traits;
   immutable proposal validation and Oracle-owned deterministic mutation/crossover.
 - Trusted Order Lab APEXlang templates; sixteen layout combinations verified by
